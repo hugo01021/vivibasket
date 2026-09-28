@@ -21,6 +21,12 @@ npm run dev        # http://localhost:3000
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run data:check` | contrôle de cohérence du dataset mock (volumes, sommes de scores, timings) |
 
+## Déploiement (Vercel)
+
+Le fichier `vercel.json` force le préréglage **Next.js** : Vercel produit alors lui-même sa sortie (`.vercel/output` avec `static` et `functions`).
+Dans *Project Settings → Build & Development Settings*, laissez **Output Directory** vide (pas d'override).
+Chaque push sur une branche crée un déploiement de preview ; la production suit la branche `main`.
+
 ## Documentation
 
 L'architecture, les modèles de données, le moteur de données mockées et la charte visuelle sont décrits dans [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
