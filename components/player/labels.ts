@@ -1,0 +1,71 @@
+import type { Position } from "@/types";
+
+/** Libellés français des postes. */
+export const POSITION_LABELS: Record<Position, string> = {
+  PG: "Meneur",
+  SG: "Arrière",
+  SF: "Ailier",
+  PF: "Ailier fort",
+  C: "Pivot",
+  G: "Arrière",
+  F: "Ailier",
+  "G-F": "Arrière-ailier",
+  "F-C": "Ailier fort-pivot",
+};
+
+/** Codes pays ISO-3 (codes CIO) présents dans les données → nom français. */
+const COUNTRY_NAMES: Record<string, string> = {
+  AND: "Andorre",
+  ANG: "Angola",
+  ARG: "Argentine",
+  AUS: "Australie",
+  AUT: "Autriche",
+  BAH: "Bahamas",
+  BEL: "Belgique",
+  BIH: "Bosnie-Herzégovine",
+  BRA: "Brésil",
+  BUL: "Bulgarie",
+  CAN: "Canada",
+  CMR: "Cameroun",
+  COD: "RD Congo",
+  CPV: "Cap-Vert",
+  CRO: "Croatie",
+  CZE: "Tchéquie",
+  DEN: "Danemark",
+  DOM: "République dominicaine",
+  ESP: "Espagne",
+  FIN: "Finlande",
+  FRA: "France",
+  GBR: "Grande-Bretagne",
+  GEO: "Géorgie",
+  GER: "Allemagne",
+  GRE: "Grèce",
+  GUI: "Guinée",
+  ISR: "Israël",
+  ITA: "Italie",
+  JPN: "Japon",
+  LAT: "Lettonie",
+  LTU: "Lituanie",
+  MCO: "Monaco",
+  MLI: "Mali",
+  MNE: "Monténégro",
+  NED: "Pays-Bas",
+  NGA: "Nigeria",
+  PHI: "Philippines",
+  POL: "Pologne",
+  POR: "Portugal",
+  ROU: "Roumanie",
+  RUS: "Russie",
+  SEN: "Sénégal",
+  SLO: "Slovénie",
+  SRB: "Serbie",
+  SSD: "Soudan du Sud",
+  SUI: "Suisse",
+  TUR: "Turquie",
+  UAE: "Émirats arabes unis",
+  USA: "États-Unis",
+};
+
+export function countryName(code: string): string {
+  return COUNTRY_NAMES[code] ?? code;
+}

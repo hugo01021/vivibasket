@@ -138,7 +138,7 @@ Typographie Manrope (chiffres tabulaires), coins 14 px, écussons d'équipes gé
 1. ✅ Initialisation, structure, types, données mockées, couche `lib/api`
 2. ✅ Layout global : header, navigation, menu mobile, thème dark (première version)
 3. ✅ Page d'accueil (première version : direct, matchs du jour, filtres, navigation par jour)
-4. Page d'un match et ses onglets
-5. Pages compétitions, équipes, joueurs
-6. Favoris et recherche
+4. ✅ Page d’un match et ses onglets
+5. ✅ Pages compétitions, équipes, joueurs, analyses
+6. ✅ Favoris et recherche (+ routes `/api/*`)
 7. Finitions : responsive, accessibilité, performances
