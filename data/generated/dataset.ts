@@ -449,7 +449,8 @@ function buildDataset(now: Date): Dataset {
       const competition = competitionById.get(competitionId)!;
       playerSeasonStats.set(statsKey(playerId, competitionId), {
         playerId,
-        teamId: playerById.get(playerId)?.teamId ?? compLogs[0].teamId,
+        // Équipe alignée dans cette compétition (sélection nationale en FIBA/JO, club ailleurs)
+        teamId: compLogs[0].teamId,
         competitionId,
         season: competition.season,
         gamesPlayed: gp,
