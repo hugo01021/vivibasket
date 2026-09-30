@@ -1,6 +1,6 @@
-# Basket Analytics
+# Vivibasket
 
-Webapp de résultats et d'analyse de basket (NBA, EuroLeague, EuroCup, Liga ACB, Betclic Élite, FIBA) : matchs en direct, résultats, classements, statistiques avancées, forme des équipes et analyse IA.
+Site d'analyse de matchs de basket, dans l'esprit de setwin.net pour le tennis : un outil central pour analyser une affiche (probabilités, forme, confrontations directes, bilans, blessés), les matchs du jour, et derrière, résultats, classements, statistiques avancées et forme des équipes (NBA, EuroLeague, EuroCup, Liga ACB, Betclic Élite, FIBA).
 
 Next.js 16 · TypeScript · Tailwind CSS 4 · Recharts. Données mockées réalistes derrière une couche d'abstraction (`lib/api`) prête à recevoir une vraie API.
 
@@ -29,4 +29,6 @@ Chaque push sur une branche crée un déploiement de preview ; la production sui
 
 ## Documentation
 
-L'architecture, les modèles de données, le moteur de données mockées et la charte visuelle sont décrits dans [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+L'architecture, les modèles de données et le moteur de données mockées sont décrits dans [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) ; la charte visuelle dans [docs/DESIGN.md](docs/DESIGN.md).
+
+Les données de l'accueil (équipes proposées, matchs du jour) sont dans `data/matches.ts`, l'analyse fictive dans `lib/home-analysis.ts` : ce sont les deux points à brancher sur une vraie API.

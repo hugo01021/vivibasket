@@ -46,6 +46,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           Aller au contenu
         </a>
+        {/* Grain très léger sur tout le site (voir .grain dans globals.css) */}
+        <div className="grain" aria-hidden="true" />
         {children}
       </body>
     </html>

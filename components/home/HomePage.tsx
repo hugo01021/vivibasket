@@ -46,7 +46,6 @@ export function HomePage() {
 
   return (
     <>
-      <div className="grain" aria-hidden="true" />
       <Header variant="home" />
       <main id="contenu" className="flex-1">
         <AnalyzeMatch

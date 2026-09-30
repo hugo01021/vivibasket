@@ -1,13 +1,13 @@
-# Basket Analytics — architecture
+# Vivibasket — architecture
 
-Webapp de résultats et d'analyse 100 % basket. Navigation dense et rapide (matchs, compétitions, équipes, joueurs), différenciation par la couche d'analyse (stats avancées, forme, analyse IA). Identité visuelle propre : dark mode natif, noir profond + orange basket.
+Webapp de résultats et d'analyse 100 % basket. Navigation dense et rapide (matchs, compétitions, équipes, joueurs), différenciation par la couche d'analyse (stats avancées, forme, analyse IA). Identité visuelle : outil de stats sobre et dense, noir `#0a0a0a` + orange `#ff6b00`, décrite dans [DESIGN.md](DESIGN.md).
 
 ## Stack
 
 | Brique | Choix |
 | --- | --- |
 | Framework | Next.js 16 (App Router, Server Components, Turbopack) + TypeScript strict |
-| UI | Tailwind CSS 4 (tokens de thème dans `app/globals.css`), police Manrope via `next/font` |
+| UI | Tailwind CSS 4 (tokens de thème dans `app/globals.css`), polices Manrope (texte) et Barlow Condensed (titres) via `next/font` |
 | Graphiques | Recharts 3 |
 | Données | Provider mock déterministe derrière `lib/api` (interface `BasketDataProvider`), branchable sur API-Sports / balldontlie |
 | Favoris | `localStorage` (hook `useFavorites`, étape 6) |
@@ -18,29 +18,33 @@ Webapp de résultats et d'analyse 100 % basket. Navigation dense et rapide (matc
 ```
 vivibasket/
 ├── app/                              # Routes (App Router)
-│   ├── layout.tsx                    # Layout global : header, navigation, footer, thème
-│   ├── globals.css                   # Tokens de couleur / typo (Tailwind @theme)
-│   ├── page.tsx                      # Accueil : en direct, matchs du jour, filtres, navigation par jour
+│   ├── layout.tsx                    # Layout racine : polices, thème (pas de header : chaque groupe a le sien)
+│   ├── globals.css                   # Tokens de couleur / typo (Tailwind @theme), grain de l'accueil
+│   ├── page.tsx                      # Accueil : analyser un match + matchs du jour (components/home)
 │   ├── not-found.tsx
-│   ├── match/[id]/page.tsx           # Page match : Résumé · Stats · Joueurs · Analyse · Play-by-play
-│   ├── competitions/page.tsx         # Liste des compétitions par catégorie
-│   ├── competitions/[slug]/page.tsx  # Classement · calendrier · résultats
-│   ├── equipes/page.tsx              # NBA · EuroLeague · International
-│   ├── equipes/[id]/page.tsx         # Infos, effectif, derniers matchs, stats, forme
-│   ├── joueurs/page.tsx              # Leaders + recherche
-│   ├── joueurs/[id]/page.tsx         # Profil, stats de saison, derniers matchs
-│   ├── analyses/page.tsx             # Hub des analyses
-│   ├── analyses/forme/page.tsx       # Forme des équipes
-│   ├── analyses/stats-avancees/page.tsx
-│   ├── analyses/ia/page.tsx
-│   ├── favoris/page.tsx
-│   ├── recherche/page.tsx
+│   ├── (site)/                       # Pages de l'application, avec header complet + footer
+│   │   ├── layout.tsx
+│   │   ├── matchs/page.tsx           # Calendrier : en direct, matchs du jour, filtres, navigation par jour
+│   │   ├── match/[id]/page.tsx       # Page match : Résumé · Stats · Joueurs · Analyse · Play-by-play
+│   │   ├── competitions/page.tsx     # Liste des compétitions par catégorie
+│   │   ├── competitions/[slug]/page.tsx  # Classement · calendrier · résultats
+│   │   ├── equipes/page.tsx          # NBA · EuroLeague · International
+│   │   ├── equipes/[id]/page.tsx     # Infos, effectif, derniers matchs, stats, forme
+│   │   ├── joueurs/page.tsx          # Leaders + recherche
+│   │   ├── joueurs/[id]/page.tsx     # Profil, stats de saison, derniers matchs
+│   │   ├── analyses/page.tsx         # Hub des analyses
+│   │   ├── analyses/forme/page.tsx   # Forme des équipes
+│   │   ├── analyses/stats-avancees/page.tsx
+│   │   ├── analyses/ia/page.tsx
+│   │   ├── favoris/page.tsx
+│   │   └── recherche/page.tsx
 │   └── api/
 │       ├── analysis/route.ts         # POST { matchId } → MatchAnalysis (mock, LLM plus tard)
 │       ├── search/route.ts           # GET ?q= → SearchResult[]
 │       └── matches/route.ts          # GET (favoris côté client)
 ├── components/
-│   ├── layout/      Header, Logo, Footer (menu mobile inclus dans Header)
+│   ├── home/        HomePage, AnalyzeMatch, TeamInput, AnalysisResult, TodayMatches (accueil)
+│   ├── layout/      Header (variantes accueil / site, menu mobile inclus), Logo, Footer
 │   ├── match/       MatchCard, MatchRow, MatchGroup, MatchStatus, ScoreHeader, BoxScoreTable, PlayByPlayList, MatchTabs
 │   ├── analysis/    StatComparison, FormBar, RatingCompare, AiInsights, ScoreProgressionChart, KeyStatsChart
 │   ├── team/        TeamBadge, TeamHeader, RosterTable, FormIndicator
@@ -48,6 +52,7 @@ vivibasket/
 │   ├── competition/ CompetitionFilter, StandingsTable, CalendarList
 │   └── ui/          Tabs, SectionTitle, EmptyState, LiveDot, StatCard, FavoriteButton
 ├── data/                             # Données mockées (TS)
+│   ├── matches.ts                    # Accueil : équipes de l'autocomplétion et matchs du jour (à remplacer par l'API)
 │   ├── competitions.ts               # 9 compétitions
 │   ├── teams.ts                      # 107 équipes (+ indice de force pour le simulateur)
 │   ├── players.ts                    # 414 joueurs saisis à la main (effectifs vedettes + joueurs clés)
@@ -71,6 +76,8 @@ vivibasket/
 │   │   └── index.ts                  # `api` (provider actif, sélection par DATA_PROVIDER)
 │   ├── time.ts                       # Fuseau Europe/Paris, journée sportive
 │   ├── format.ts                     # Dates, heures, pourcentages, noms
+│   ├── home-analysis.ts              # Analyse fictive déterministe d'une affiche (accueil)
+│   ├── site.ts                       # Nom du site, logo, contact
 │   ├── stats.ts                      # Possessions, ORTG/DRTG, pace, eFG%, TS%, four factors
 │   ├── favorites.ts                  # localStorage (étape 6)
 │   └── utils.ts                      # cn(), slugify, groupBy…
@@ -121,17 +128,7 @@ Limites assumées : rosters partiellement générés hors équipes vedettes, cal
 
 ## Charte visuelle
 
-| Token | Valeur | Usage |
-| --- | --- | --- |
-| `bg` | `#0B0B0D` | fond de page |
-| `surface` / `surface-2` / `surface-3` | `#141418` / `#1B1B21` / `#23232B` | cartes, survol, puces |
-| `border` / `border-strong` | `#26262E` / `#34343F` | séparateurs |
-| `fg` / `fg-muted` / `fg-subtle` | `#F4F1EC` / `#9A9AA6` / `#6B6B78` | texte |
-| `accent` / `accent-hover` / `accent-soft` | `#FF7A1A` / `#FF8F3D` / `#2B1A0E` | orange basket : actions, actif, scores en direct |
-| `live` | `#FF4D3D` | indicateur direct (pulsation) |
-| `win` / `loss` / `info` | `#4ADE80` / `#F87171` / `#5B8CFF` | tonalités d'analyse, forme |
-
-Typographie Manrope (chiffres tabulaires), coins 14 px, écussons d'équipes générés à partir des couleurs (aucun logo officiel), couleur d'accent par compétition pour les filtres et les en-têtes.
+Décrite dans [DESIGN.md](DESIGN.md) ; les tokens vivent dans `app/globals.css` (`@theme`) et sont exposés comme utilitaires Tailwind (`bg-surface`, `text-fg-muted`, `border-border`, `text-accent`, `font-display`…). En bref : noir `#0a0a0a`, orange `#ff6b00`, blanc cassé `#f4f1ec`, gris `#8a8a8a`, bordures blanc 8 %, coins 4–6 px, titres Barlow Condensed en capitales, chiffres tabulaires, vert/rouge atténués réservés aux V/D. Aucune couleur d'équipe ni de compétition à l'écran (les champs `colors` / `accentColor` restent dans les données pour plus tard).
 
 ## Étapes
 
