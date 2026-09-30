@@ -14,7 +14,9 @@ export interface HomeCompetition {
 
 export interface HomeTeam {
   name: string;
-  /** Abréviation affichée dans les espaces serrés (probabilité favorite, H2H). */
+  /** Nom court pour les écrans étroits (« Knicks », « Le Mans »). */
+  shortName: string;
+  /** Abréviation à trois lettres (écusson, H2H). */
   short: string;
   competitions: HomeCompetitionId[];
 }
@@ -30,94 +32,97 @@ export interface TodayMatch {
   homeWinProb: number;
 }
 
+/** [nom complet, abréviation, nom court facultatif (sinon le nom complet)] */
+type TeamSeed = [string, string] | [string, string, string];
+
 export const HOME_COMPETITIONS: HomeCompetition[] = [
   { id: "nba", label: "NBA" },
   { id: "euroleague", label: "EuroLeague" },
   { id: "betclic-elite", label: "Betclic Élite" },
 ];
 
-const NBA: [string, string][] = [
-  ["Atlanta Hawks", "ATL"],
-  ["Boston Celtics", "BOS"],
-  ["Brooklyn Nets", "BKN"],
-  ["Charlotte Hornets", "CHA"],
-  ["Chicago Bulls", "CHI"],
-  ["Cleveland Cavaliers", "CLE"],
-  ["Dallas Mavericks", "DAL"],
-  ["Denver Nuggets", "DEN"],
-  ["Detroit Pistons", "DET"],
-  ["Golden State Warriors", "GSW"],
-  ["Houston Rockets", "HOU"],
-  ["Indiana Pacers", "IND"],
-  ["LA Clippers", "LAC"],
-  ["Los Angeles Lakers", "LAL"],
-  ["Memphis Grizzlies", "MEM"],
-  ["Miami Heat", "MIA"],
-  ["Milwaukee Bucks", "MIL"],
-  ["Minnesota Timberwolves", "MIN"],
-  ["New Orleans Pelicans", "NOP"],
-  ["New York Knicks", "NYK"],
-  ["Oklahoma City Thunder", "OKC"],
-  ["Orlando Magic", "ORL"],
-  ["Philadelphia 76ers", "PHI"],
-  ["Phoenix Suns", "PHX"],
-  ["Portland Trail Blazers", "POR"],
-  ["Sacramento Kings", "SAC"],
-  ["San Antonio Spurs", "SAS"],
-  ["Toronto Raptors", "TOR"],
-  ["Utah Jazz", "UTA"],
-  ["Washington Wizards", "WAS"],
+const NBA: TeamSeed[] = [
+  ["Atlanta Hawks", "ATL", "Hawks"],
+  ["Boston Celtics", "BOS", "Celtics"],
+  ["Brooklyn Nets", "BKN", "Nets"],
+  ["Charlotte Hornets", "CHA", "Hornets"],
+  ["Chicago Bulls", "CHI", "Bulls"],
+  ["Cleveland Cavaliers", "CLE", "Cavaliers"],
+  ["Dallas Mavericks", "DAL", "Mavericks"],
+  ["Denver Nuggets", "DEN", "Nuggets"],
+  ["Detroit Pistons", "DET", "Pistons"],
+  ["Golden State Warriors", "GSW", "Warriors"],
+  ["Houston Rockets", "HOU", "Rockets"],
+  ["Indiana Pacers", "IND", "Pacers"],
+  ["LA Clippers", "LAC", "Clippers"],
+  ["Los Angeles Lakers", "LAL", "Lakers"],
+  ["Memphis Grizzlies", "MEM", "Grizzlies"],
+  ["Miami Heat", "MIA", "Heat"],
+  ["Milwaukee Bucks", "MIL", "Bucks"],
+  ["Minnesota Timberwolves", "MIN", "Timberwolves"],
+  ["New Orleans Pelicans", "NOP", "Pelicans"],
+  ["New York Knicks", "NYK", "Knicks"],
+  ["Oklahoma City Thunder", "OKC", "Thunder"],
+  ["Orlando Magic", "ORL", "Magic"],
+  ["Philadelphia 76ers", "PHI", "76ers"],
+  ["Phoenix Suns", "PHX", "Suns"],
+  ["Portland Trail Blazers", "POR", "Trail Blazers"],
+  ["Sacramento Kings", "SAC", "Kings"],
+  ["San Antonio Spurs", "SAS", "Spurs"],
+  ["Toronto Raptors", "TOR", "Raptors"],
+  ["Utah Jazz", "UTA", "Jazz"],
+  ["Washington Wizards", "WAS", "Wizards"],
 ];
 
-const EUROLEAGUE: [string, string][] = [
+const EUROLEAGUE: TeamSeed[] = [
   ["Real Madrid", "RMB"],
   ["FC Barcelona", "BAR"],
   ["Olympiacos", "OLY"],
   ["Panathinaikos", "PAO"],
-  ["Fenerbahçe Beko", "FEN"],
-  ["Anadolu Efes", "EFS"],
-  ["AS Monaco", "MON"],
-  ["Paris Basketball", "PAR"],
-  ["Maccabi Tel Aviv", "MTA"],
-  ["Hapoel Tel Aviv", "HTA"],
-  ["Partizan Belgrade", "PTZ"],
-  ["Crvena Zvezda", "CZV"],
-  ["Žalgiris Kaunas", "ZAL"],
-  ["Virtus Bologna", "VIR"],
-  ["Olimpia Milano", "EA7"],
-  ["Bayern Munich", "BAY"],
+  ["Fenerbahçe Beko", "FEN", "Fenerbahçe"],
+  ["Anadolu Efes", "EFS", "Efes"],
+  ["AS Monaco", "MON", "Monaco"],
+  ["Paris Basketball", "PAR", "Paris"],
+  ["Maccabi Tel Aviv", "MTA", "Maccabi"],
+  ["Hapoel Tel Aviv", "HTA", "Hapoel TA"],
+  ["Partizan Belgrade", "PTZ", "Partizan"],
+  ["Crvena Zvezda", "CZV", "Étoile Rouge"],
+  ["Žalgiris Kaunas", "ZAL", "Žalgiris"],
+  ["Virtus Bologna", "VIR", "Virtus"],
+  ["Olimpia Milano", "EA7", "Milano"],
+  ["Bayern Munich", "BAY", "Bayern"],
   ["Baskonia", "BAS"],
-  ["Valencia Basket", "VAL"],
-  ["Dubai Basketball", "DUB"],
-  ["LDLC ASVEL", "ASV"],
+  ["Valencia Basket", "VAL", "Valencia"],
+  ["Dubai Basketball", "DUB", "Dubai"],
+  ["LDLC ASVEL", "ASV", "ASVEL"],
 ];
 
-const BETCLIC_ELITE: [string, string][] = [
-  ["Paris Basketball", "PAR"],
-  ["AS Monaco", "MON"],
-  ["LDLC ASVEL", "ASV"],
-  ["JL Bourg", "JLB"],
-  ["Cholet Basket", "CHO"],
-  ["SIG Strasbourg", "SIG"],
-  ["Nanterre 92", "NAN"],
-  ["Le Mans Sarthe Basket", "MSB"],
-  ["BCM Gravelines-Dunkerque", "BCM"],
-  ["Limoges CSP", "CSP"],
-  ["Élan Chalon", "ELA"],
-  ["ESSM Le Portel", "ESS"],
-  ["JDA Dijon", "JDA"],
-  ["Saint-Quentin Basket", "SQB"],
-  ["Boulazac Basket Dordogne", "BBD"],
-  ["SLUC Nancy", "SLU"],
+const BETCLIC_ELITE: TeamSeed[] = [
+  ["Paris Basketball", "PAR", "Paris"],
+  ["AS Monaco", "MON", "Monaco"],
+  ["LDLC ASVEL", "ASV", "ASVEL"],
+  ["JL Bourg", "JLB", "Bourg"],
+  ["Cholet Basket", "CHO", "Cholet"],
+  ["SIG Strasbourg", "SIG", "Strasbourg"],
+  ["Nanterre 92", "NAN", "Nanterre"],
+  ["Le Mans Sarthe Basket", "MSB", "Le Mans"],
+  ["BCM Gravelines-Dunkerque", "BCM", "Gravelines"],
+  ["Limoges CSP", "CSP", "Limoges"],
+  ["Élan Chalon", "ELA", "Chalon"],
+  ["ESSM Le Portel", "ESS", "Le Portel"],
+  ["JDA Dijon", "JDA", "Dijon"],
+  ["Saint-Quentin Basket", "SQB", "Saint-Quentin"],
+  ["Boulazac Basket Dordogne", "BBD", "Boulazac"],
+  ["SLUC Nancy", "SLU", "Nancy"],
 ];
 
 function buildTeams(): HomeTeam[] {
   const byName = new Map<string, HomeTeam>();
-  const add = (list: [string, string][], competition: HomeCompetitionId) => {
-    for (const [name, short] of list) {
+  const add = (list: TeamSeed[], competition: HomeCompetitionId) => {
+    for (const [name, short, shortName = name] of list) {
       const existing = byName.get(name);
       if (existing) existing.competitions.push(competition);
-      else byName.set(name, { name, short, competitions: [competition] });
+      else byName.set(name, { name, shortName, short, competitions: [competition] });
     }
   };
   add(NBA, "nba");

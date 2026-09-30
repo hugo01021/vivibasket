@@ -104,16 +104,16 @@ export function AnalysisResult({ analysis }: { analysis: MatchAnalysis }) {
           <div className="mb-1.5 flex items-baseline justify-between font-display font-bold tabular-nums">
             <span className={cn("text-3xl", homeFavorite ? "text-accent" : "text-fg-muted")}>{home.winProb} %</span>
             <span className="font-sans text-[11px] font-normal uppercase tracking-[0.08em] text-dim">Probabilité de victoire</span>
-            <span className={cn("text-3xl", !homeFavorite ? "text-info" : "text-fg-muted")}>{away.winProb} %</span>
+            <span className={cn("text-3xl", !homeFavorite ? "text-accent" : "text-fg-muted")}>{away.winProb} %</span>
           </div>
           <div
             className="flex h-2 overflow-hidden rounded-[2px] bg-surface-3"
             role="img"
             aria-label={`${home.team.name} ${home.winProb} %, ${away.team.name} ${away.winProb} %`}
           >
-            <div className={homeFavorite ? "bg-accent" : "bg-accent/45"} style={{ width: `${home.winProb}%` }} />
+            <div className={homeFavorite ? "bg-accent" : "bg-info/70"} style={{ width: `${home.winProb}%` }} />
             <div className="w-px bg-bg" />
-            <div className={cn("flex-1", !homeFavorite ? "bg-info" : "bg-info/45")} />
+            <div className={cn("flex-1", !homeFavorite ? "bg-accent" : "bg-info/70")} />
           </div>
         </div>
 

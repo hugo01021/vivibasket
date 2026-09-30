@@ -9,7 +9,7 @@ import { AnalyzeMatch } from "./AnalyzeMatch";
 import { TodayMatches } from "./TodayMatches";
 
 /** Accueil : le formulaire d'analyse et la liste du jour partagent l'état des deux équipes. */
-export function HomePage() {
+export function HomePage({ dateLabel }: { dateLabel: string }) {
   const [home, setHome] = useState("");
   const [away, setAway] = useState("");
   const [analysis, setAnalysis] = useState<MatchAnalysis | null>(null);
@@ -58,7 +58,7 @@ export function HomePage() {
           error={error}
           revealKey={revealKey}
         />
-        <TodayMatches onAnalyze={analyzeFromList} />
+        <TodayMatches dateLabel={dateLabel} onAnalyze={analyzeFromList} />
       </main>
       <Footer />
     </>
