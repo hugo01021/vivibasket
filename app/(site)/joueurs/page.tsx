@@ -36,7 +36,7 @@ function first(value: string | string[] | undefined): string | undefined {
 
 function SearchForm({ query }: { query: string }) {
   return (
-    <form action="/joueurs" method="get" role="search" className="flex max-w-xl gap-2">
+    <form action="/joueurs" method="get" role="search" className="flex max-w-xl flex-col gap-2 sm:flex-row">
       <label htmlFor="recherche-joueur" className="sr-only">
         Rechercher un joueur
       </label>
@@ -47,11 +47,11 @@ function SearchForm({ query }: { query: string }) {
         defaultValue={query}
         placeholder="Nom d’un joueur…"
         autoComplete="off"
-        className="h-10 min-w-0 flex-1 rounded-full border border-border bg-surface px-4 text-sm text-fg placeholder:text-fg-subtle focus:border-accent focus:outline-none"
+        className="h-10 min-w-0 flex-1 rounded-md border border-border bg-surface px-3.5 text-sm text-fg placeholder:text-fg-muted transition-colors hover:border-border-strong focus:border-accent focus:outline-none"
       />
       <button
         type="submit"
-        className="h-10 shrink-0 rounded-full bg-accent px-4 text-sm font-bold text-accent-ink transition-colors hover:bg-accent-hover"
+        className="h-10 shrink-0 rounded-md bg-accent px-4 text-sm font-bold text-bg transition-colors hover:bg-accent-hover"
       >
         Rechercher
       </button>
@@ -68,7 +68,7 @@ async function SearchResults({ query }: { query: string }) {
       <SectionTitle
         count={players.length}
         action={
-          <Link href="/joueurs" className="text-sm font-semibold text-fg-muted hover:text-accent">
+          <Link href="/joueurs" className="inline-flex min-h-10 items-center text-sm text-fg-muted transition-colors hover:text-fg">
             ← Leaders
           </Link>
         }
@@ -78,23 +78,27 @@ async function SearchResults({ query }: { query: string }) {
       {players.length === 0 ? (
         <EmptyState title="Aucun joueur trouvé">Vérifiez l’orthographe ou essayez avec le nom de famille seul.</EmptyState>
       ) : (
-        <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="divide-y divide-border border-b border-border">
           {players.map((player) => {
             const team = teamMap.get(player.teamId);
             return (
               <li key={player.id}>
                 <Link
                   href={`/joueurs/${player.id}`}
-                  className="flex items-center gap-3 rounded-card border border-border bg-surface px-3 py-2.5 shadow-card transition-colors hover:border-border-strong hover:bg-surface-2"
+                  className="flex items-center gap-3 py-2.5 text-sm transition-colors hover:bg-surface-2 sm:px-2"
                 >
-                  {team && <TeamBadge team={team} size="md" />}
+                  {team ? (
+                    <TeamBadge team={team} size="md" />
+                  ) : (
+                    <span aria-hidden="true" className="h-8 w-8 shrink-0 rounded-[4px] border border-border bg-surface-2" />
+                  )}
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{fullPlayerName(player)}</span>
+                    <span className="block truncate font-semibold text-fg">{fullPlayerName(player)}</span>
                     <span className="block truncate text-xs text-fg-muted">
                       {team?.name ?? "Sans club"} · {POSITION_LABELS[player.position]}
                     </span>
                   </span>
-                  <span className="text-sm font-bold text-fg-subtle tabular">#{player.jerseyNumber}</span>
+                  <span className="text-xs text-fg-muted tabular">#{player.jerseyNumber}</span>
                 </Link>
               </li>
             );
@@ -120,21 +124,23 @@ async function Leaders({ competitionSlug }: { competitionSlug?: string }) {
   const competitionNames = new Map(competitions.map((c) => [c.id, c.name]));
   const options: ChipOption[] = [
     { value: "", label: "Toutes" },
-    ...competitions.map((c) => ({ value: c.slug, label: c.name, color: c.accentColor })),
+    ...competitions.map((c) => ({ value: c.slug, label: c.name })),
   ];
   const empty = boards.every((b) => b.leaders.length === 0);
 
   return (
-    <section aria-labelledby="titre-leaders" className="space-y-3">
-      <SectionTitle className="mb-0">
-        <span id="titre-leaders">Leaders statistiques{requested ? ` · ${requested.name}` : ""}</span>
-      </SectionTitle>
-      <CompetitionChips
-        options={options}
-        active={requested?.slug ?? ""}
-        buildHref={(value) => (value ? `/joueurs?competition=${value}` : "/joueurs")}
-      />
-      <p className="text-xs text-fg-subtle">Moyennes par match · minimum 3 matchs joués.</p>
+    <section aria-labelledby="titre-leaders" className="space-y-4">
+      <div>
+        <h2 id="titre-leaders" className="mb-3 font-display text-2xl font-bold uppercase leading-none">
+          Leaders statistiques{requested ? ` · ${requested.name}` : ""}
+        </h2>
+        <CompetitionChips
+          options={options}
+          active={requested?.slug ?? ""}
+          buildHref={(value) => (value ? `/joueurs?competition=${value}` : "/joueurs")}
+        />
+        <p className="mt-2 text-xs text-fg-muted">Moyennes par match · minimum 3 matchs joués.</p>
+      </div>
       {empty ? (
         <EmptyState title="Pas encore de statistiques">
           {requested ? `${requested.name} n’a pas encore débuté cette saison.` : "Aucun match joué pour le moment."}
@@ -164,11 +170,11 @@ export default async function PlayersPage({ searchParams }: { searchParams: Sear
   const competition = first(params.competition);
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
+    <div className="space-y-8">
+      <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Joueurs</h1>
-          <p className="text-sm text-fg-muted">Leaders de la saison et recherche parmi tous les effectifs.</p>
+          <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">Joueurs</h1>
+          <p className="mt-2 text-sm text-fg-muted">Leaders de la saison et recherche parmi tous les effectifs.</p>
         </div>
         <SearchForm query={query} />
       </div>

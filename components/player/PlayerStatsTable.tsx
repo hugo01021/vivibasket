@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Competition, PlayerSeasonStats } from "@/types";
 import { formatMinutes, formatNumber, formatPct, formatSigned } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 const COLUMNS: Array<{ key: string; label: string; title: string; value: (s: PlayerSeasonStats) => string }> = [
   { key: "gp", label: "MJ", title: "Matchs joués", value: (s) => String(s.gamesPlayed) },
@@ -30,51 +31,51 @@ export function PlayerStatsTable({
   competitions: Map<string, Competition>;
 }) {
   return (
-    <div className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[56rem] text-sm tabular">
-          <caption className="sr-only">Moyennes par match et par compétition</caption>
-          <thead>
-            <tr className="border-b border-border text-xs text-fg-subtle">
-              <th scope="col" className="sticky left-0 bg-surface px-4 py-2 text-left font-semibold">
-                Compétition
+    <div className="overflow-x-auto rounded-md border border-border bg-surface">
+      <table className="w-full min-w-[56rem] text-sm tabular">
+        <caption className="sr-only">Moyennes par match et par compétition</caption>
+        <thead>
+          <tr className="border-b border-border text-[11px] uppercase tracking-[0.08em] text-fg-muted">
+            <th scope="col" className="sticky left-0 bg-surface px-4 py-2 text-left font-semibold">
+              Compétition
+            </th>
+            {COLUMNS.map((c) => (
+              <th key={c.key} scope="col" className="px-2 py-2 text-right font-semibold whitespace-nowrap">
+                <abbr title={c.title} className="no-underline">
+                  {c.label}
+                </abbr>
               </th>
-              {COLUMNS.map((c) => (
-                <th key={c.key} scope="col" className="px-2 py-2 text-right font-semibold whitespace-nowrap">
-                  <abbr title={c.title} className="no-underline">
-                    {c.label}
-                  </abbr>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border">
+          {stats.map((s) => {
+            const competition = competitions.get(s.competitionId);
+            return (
+              <tr key={s.competitionId}>
+                <th scope="row" className="sticky left-0 bg-surface px-4 py-2.5 text-left font-semibold whitespace-nowrap">
+                  {competition ? (
+                    <Link href={`/competitions/${competition.slug}`} className="text-fg transition-colors hover:text-accent">
+                      {competition.name}
+                    </Link>
+                  ) : (
+                    s.competitionId
+                  )}
+                  <span className="ml-2 text-xs font-normal text-fg-muted">{s.season}</span>
                 </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {stats.map((s) => {
-              const competition = competitions.get(s.competitionId);
-              return (
-                <tr key={s.competitionId} className="hover:bg-surface-2">
-                  <th scope="row" className="sticky left-0 bg-surface px-4 py-2.5 text-left font-semibold whitespace-nowrap">
-                    {competition ? (
-                      <Link href={`/competitions/${competition.slug}`} className="inline-flex items-center gap-2 hover:text-accent">
-                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: competition.accentColor }} aria-hidden="true" />
-                        {competition.name}
-                      </Link>
-                    ) : (
-                      s.competitionId
-                    )}
-                    <span className="ml-2 text-xs font-normal text-fg-subtle">{s.season}</span>
-                  </th>
-                  {COLUMNS.map((c) => (
-                    <td key={c.key} className={`px-2 py-2.5 text-right whitespace-nowrap ${c.key === "pts" ? "font-bold text-fg" : "text-fg-muted"}`}>
-                      {c.value(s)}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                {COLUMNS.map((c) => (
+                  <td
+                    key={c.key}
+                    className={cn("px-2 py-2.5 text-right whitespace-nowrap", c.key === "pts" ? "font-bold text-fg" : "text-fg-muted")}
+                  >
+                    {c.value(s)}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

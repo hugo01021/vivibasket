@@ -29,20 +29,14 @@ export default async function AiAnalysisPage() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-3">
+      <div>
         <AnalysisPageHeader title="Analyse IA">
           Pour chaque match en direct ou programmé aujourd’hui : un résumé, la probabilité de victoire avant-match et les
           points clés à suivre.
         </AnalysisPageHeader>
-        <p className="flex max-w-3xl items-start gap-2 rounded-card border border-info/30 bg-info/10 px-3 py-2 text-xs text-fg-muted">
-          <span aria-hidden="true" className="font-bold text-info">
-            i
-          </span>
-          <span>
-            <span className="font-semibold text-fg">Version de démonstration.</span> Ces analyses sont générées
-            automatiquement à partir de règles statistiques (forme, ratings, box scores). Elles seront à terme rédigées par
-            un modèle de langage.
-          </span>
+        <p className="mt-3 max-w-2xl text-xs text-fg-muted">
+          <span className="font-semibold text-fg">Version de démonstration.</span> Ces analyses sont générées automatiquement à
+          partir de règles statistiques (forme, ratings, box scores). Elles seront à terme rédigées par un modèle de langage.
         </p>
       </div>
 

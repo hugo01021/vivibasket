@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 
 export default function FavoritesPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight">Favoris</h1>
-        <p className="text-sm text-fg-muted">Enregistrés dans ce navigateur, sans compte.</p>
+        <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">Favoris</h1>
+        <p className="mt-2 text-sm text-fg-muted">Enregistrés dans ce navigateur, sans compte.</p>
       </div>
       <FavoritesList />
     </div>

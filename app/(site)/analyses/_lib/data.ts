@@ -31,7 +31,7 @@ export async function loadCompetitionTeamStats(slug: string | undefined): Promis
     competition,
     stats,
     teams: new Map(teams.map((t) => [t.id, t])),
-    options: competitions.map((c) => ({ value: c.slug, label: c.name, color: c.accentColor })),
+    options: competitions.map((c) => ({ value: c.slug, label: c.name })),
   };
 }
 

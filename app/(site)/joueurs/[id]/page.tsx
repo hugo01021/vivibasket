@@ -46,7 +46,7 @@ export default async function PlayerPage({ params }: { params: Params }) {
   return (
     <div className="space-y-8">
       <nav aria-label="Fil d’Ariane" className="text-sm text-fg-muted">
-        <Link href="/joueurs" className="hover:text-accent">
+        <Link href="/joueurs" className="transition-colors hover:text-fg">
           Joueurs
         </Link>
         <span aria-hidden="true" className="mx-1.5 text-fg-subtle">
@@ -63,13 +63,13 @@ export default async function PlayerPage({ params }: { params: Params }) {
             <span id="titre-chiffres">
               Chiffres clés
               {mainCompetition && (
-                <span className="ml-2 text-sm font-semibold text-fg-muted">
+                <span className="ml-2 font-sans text-xs font-normal normal-case tracking-normal text-fg-muted">
                   {mainCompetition.name} {main.season}
                 </span>
               )}
             </span>
           </SectionTitle>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
             <StatCard label="Points" value={formatNumber(main.pointsPerGame)} hint={`Record : ${main.highs.points}`} />
             <StatCard label="Rebonds" value={formatNumber(main.reboundsPerGame)} hint={`Record : ${main.highs.rebounds}`} />
             <StatCard label="Passes" value={formatNumber(main.assistsPerGame)} hint={`Record : ${main.highs.assists}`} />

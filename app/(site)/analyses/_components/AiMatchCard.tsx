@@ -4,10 +4,11 @@ import { cn } from "@/lib/utils";
 import { MatchStatus } from "@/components/match/MatchStatus";
 import { TeamBadge } from "@/components/team/TeamBadge";
 
-const TONE_DOT: Record<InsightTone, string> = {
-  positive: "bg-win",
-  negative: "bg-loss",
-  neutral: "bg-fg-subtle",
+/** Marqueur textuel du point clé (pas de couleur : vert / rouge sont réservés aux V/D). */
+const TONE_MARK: Record<InsightTone, string> = {
+  positive: "+",
+  negative: "−",
+  neutral: "·",
 };
 
 const TONE_LABEL: Record<InsightTone, string> = {
@@ -20,7 +21,7 @@ function pct(value: number): number {
   return Math.round(value * 100);
 }
 
-/** Probabilité de victoire (avant-match), barre à deux segments étiquetés. */
+/** Probabilité de victoire (avant-match) : domicile en orange (accent), extérieur en bleu (info), barre à deux segments. */
 export function WinProbabilityBar({
   analysis,
   homeTeam,
@@ -34,22 +35,23 @@ export function WinProbabilityBar({
   const away = 100 - home;
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between text-xs font-semibold tabular">
-        <span className="text-fg">
+      <div className="mb-1.5 flex items-baseline justify-between gap-2 font-display font-bold tabular">
+        <span className="text-lg leading-none text-accent">
           {homeTeam.abbreviation} {home} %
         </span>
-        <span className="text-fg-subtle">Probabilité de victoire</span>
-        <span className="text-fg">
+        <span className="font-sans text-[11px] font-normal uppercase tracking-[0.08em] text-fg-muted">Probabilité de victoire</span>
+        <span className="text-lg leading-none text-info">
           {away} % {awayTeam.abbreviation}
         </span>
       </div>
       <div
-        className="flex h-2 gap-0.5 overflow-hidden rounded-full"
+        className="flex h-2 overflow-hidden rounded-[2px] bg-surface-3"
         role="img"
         aria-label={`Probabilité de victoire : ${homeTeam.name} ${home} %, ${awayTeam.name} ${away} %`}
       >
-        <span className="rounded-l-full bg-accent" style={{ width: `${home}%` }} />
-        <span className="rounded-r-full bg-info" style={{ width: `${away}%` }} />
+        <span className="bg-accent" style={{ width: `${home}%` }} />
+        <span className="w-px bg-bg" />
+        <span className="flex-1 bg-info" />
       </div>
     </div>
   );
@@ -78,50 +80,48 @@ export function AiMatchCard({
   return (
     <article
       aria-labelledby={headingId}
-      className={cn(
-        "flex flex-col rounded-card border bg-surface shadow-card",
-        live ? "border-accent/40" : "border-border",
-      )}
+      className={cn("flex flex-col rounded-md border bg-surface", live ? "border-accent/40" : "border-border")}
     >
-      <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2 text-xs">
-        <span className="flex min-w-0 items-center gap-1.5 text-fg-muted">
-          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: competition.accentColor }} aria-hidden="true" />
-          <span className="truncate">
-            {competition.name} · {match.round}
-          </span>
+      <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2 text-[11px] uppercase tracking-[0.08em] text-fg-muted">
+        <span className="truncate">
+          {competition.name} · {match.round}
         </span>
         <MatchStatus match={match} />
       </div>
 
       <div className="flex flex-1 flex-col gap-4 p-4">
         <h2 id={headingId} className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
-          <span className="flex min-w-0 items-center justify-end gap-2 font-bold">
-            <span className="truncate text-right">{homeTeam.shortName}</span>
-            <TeamBadge team={homeTeam} size="md" />
+          {/* Noms sur deux lignes si besoin plutôt que tronqués */}
+          <span className="flex min-w-0 items-center justify-end gap-2 font-display text-lg font-bold uppercase leading-tight">
+            <span className="min-w-0 text-right">{homeTeam.shortName}</span>
+            <TeamBadge team={homeTeam} size="sm" />
           </span>
           <span
             className={cn(
-              "min-w-[4.5rem] rounded-md px-2 py-1 text-center text-base font-extrabold tabular",
-              live ? "bg-accent-soft text-accent" : showScore ? "bg-surface-3 text-fg" : "text-fg-subtle",
+              "min-w-[4.5rem] text-center tabular",
+              showScore ? "font-display text-2xl font-bold leading-none" : "text-xs text-fg-muted",
+              live ? "text-accent" : "text-fg",
             )}
           >
             {showScore ? `${match.homeScore} – ${match.awayScore}` : "vs"}
           </span>
-          <span className="flex min-w-0 items-center gap-2 font-bold">
-            <TeamBadge team={awayTeam} size="md" />
-            <span className="truncate">{awayTeam.shortName}</span>
+          <span className="flex min-w-0 items-center gap-2 font-display text-lg font-bold uppercase leading-tight">
+            <TeamBadge team={awayTeam} size="sm" />
+            <span className="min-w-0">{awayTeam.shortName}</span>
           </span>
         </h2>
 
-        <p className="text-sm leading-relaxed text-fg">{analysis.summary}</p>
+        <p className="text-sm leading-relaxed text-fg/85">{analysis.summary}</p>
 
         <WinProbabilityBar analysis={analysis} homeTeam={homeTeam} awayTeam={awayTeam} />
 
         {analysis.insights.length > 0 && (
-          <ul className="space-y-2.5">
+          <ul className="space-y-2 border-t border-border pt-3">
             {analysis.insights.slice(0, maxInsights).map((insight, i) => (
-              <li key={i} className="flex gap-2.5 text-sm">
-                <span className={cn("mt-1.5 h-2 w-2 shrink-0 rounded-full", TONE_DOT[insight.tone])} aria-hidden="true" />
+              <li key={i} className="flex gap-2 text-sm">
+                <span aria-hidden="true" className="w-3 shrink-0 text-center font-bold text-fg-muted">
+                  {TONE_MARK[insight.tone]}
+                </span>
                 <span className="min-w-0">
                   <span className="sr-only">{TONE_LABEL[insight.tone]} : </span>
                   <span className="font-semibold text-fg">{insight.title}</span>
@@ -134,9 +134,9 @@ export function AiMatchCard({
 
         <Link
           href={`/match/${match.id}?onglet=analyse`}
-          className="mt-auto inline-flex items-center gap-1 self-start text-sm font-semibold text-accent hover:text-accent-hover"
+          className="mt-auto inline-flex h-10 items-center self-start rounded-[4px] border border-border px-3 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent sm:h-8"
         >
-          Analyse complète <span aria-hidden="true">→</span>
+          Analyse complète
           <span className="sr-only">
             {" "}
             de {homeTeam.name} – {awayTeam.name}

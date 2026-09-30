@@ -12,7 +12,7 @@ const birthDateFormatter = new Intl.DateTimeFormat("fr-FR", {
   timeZone: "UTC",
 });
 
-/** En-tête de la fiche joueur : identité, club, mensurations, favori. */
+/** En-tête de la fiche joueur : identité, club, mensurations, favori. En-tête plat, sans couleurs d'équipe. */
 export function PlayerHeader({ player, team }: { player: Player; team: Team | null }) {
   const name = fullPlayerName(player);
   const age = ageFromBirthDate(player.birthDate);
@@ -28,50 +28,41 @@ export function PlayerHeader({ player, team }: { player: Player; team: Team | nu
   ];
 
   return (
-    <header className="relative overflow-hidden rounded-card border border-border bg-surface shadow-card">
-      {team && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-1"
-          style={{ background: `linear-gradient(90deg, ${team.colors.primary}, ${team.colors.secondary})` }}
-        />
-      )}
-      <div className="flex flex-col gap-5 p-4 sm:p-6 md:flex-row md:items-center">
-        <div className="flex min-w-0 flex-1 items-center gap-4">
-          <span
-            aria-hidden="true"
-            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-border-strong bg-surface-3 text-2xl font-extrabold text-accent tabular sm:h-20 sm:w-20 sm:text-3xl"
-          >
-            {player.jerseyNumber}
-          </span>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-fg-muted">{player.firstName}</p>
-            <h1 className="truncate text-2xl font-extrabold tracking-tight sm:text-3xl">{player.lastName}</h1>
-            <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-fg-muted">
-              <span>
-                <span className="sr-only">Numéro </span>#{player.jerseyNumber} · {POSITION_LABELS[player.position]} ({player.position})
-              </span>
-              {team && (
-                <span className="inline-flex items-center gap-2">
-                  <span aria-hidden="true">·</span>
-                  <Link href={`/equipes/${team.id}`} className="inline-flex items-center gap-1.5 font-semibold text-fg hover:text-accent">
-                    <TeamBadge team={team} size="xs" />
-                    {team.name}
-                  </Link>
-                </span>
-              )}
-            </p>
-          </div>
+    <header className="border-b border-border pb-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-balance font-display text-4xl font-bold uppercase leading-none sm:text-5xl">{name}</h1>
+          <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-fg-muted">
+            <span className="tabular">
+              <span className="sr-only">Numéro </span>#{player.jerseyNumber}
+            </span>
+            <span aria-hidden="true">·</span>
+            <span>
+              {POSITION_LABELS[player.position]} ({player.position})
+            </span>
+            {team && (
+              <>
+                <span aria-hidden="true">·</span>
+                <Link
+                  href={`/equipes/${team.id}`}
+                  className="inline-flex items-center gap-1.5 font-semibold text-fg transition-colors hover:text-accent"
+                >
+                  <TeamBadge team={team} size="xs" />
+                  {team.name}
+                </Link>
+              </>
+            )}
+          </p>
         </div>
-        <FavoriteButton kind="player" id={player.id} label={name} className="self-start md:self-center" />
+        <FavoriteButton kind="player" id={player.id} label={name} className="self-start" />
       </div>
-      <dl className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-4">
+      <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-border pt-4 sm:grid-cols-4">
         {facts.map((fact) => (
-          <div key={fact.label} className="bg-surface px-4 py-3 sm:px-6">
-            <dt className="text-xs font-semibold uppercase tracking-wide text-fg-subtle">{fact.label}</dt>
-            <dd className="mt-0.5 font-bold tabular">
+          <div key={fact.label}>
+            <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-fg-muted">{fact.label}</dt>
+            <dd className="mt-1 font-display text-2xl font-bold leading-none tabular">
               {fact.value}
-              {fact.hint && <span className="block text-xs font-normal text-fg-muted">{fact.hint}</span>}
+              {fact.hint && <span className="mt-1.5 block font-sans text-xs font-normal text-fg-muted">{fact.hint}</span>}
             </dd>
           </div>
         ))}

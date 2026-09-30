@@ -33,12 +33,10 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
 export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
   const query = readQuery((await searchParams).q);
   const tooShort = query.length > 0 && query.length < 2;
-  const [results, competitions, teams] = await Promise.all([
+  const [results, teams] = await Promise.all([
     query.length >= 2 ? api.search(query, 40) : Promise.resolve<SearchResult[]>([]),
-    api.getCompetitions(),
     api.getTeams(),
   ]);
-  const competitionMap = new Map(competitions.map((c) => [c.id, c]));
   const teamMap = new Map(teams.map((t) => [t.id, t]));
 
   // Écusson du club pour les joueurs trouvés.
@@ -50,30 +48,22 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
     ),
   );
 
+  /** Écusson monochrome (équipes, joueurs) ; rien pour les compétitions (pas de pastille de couleur). */
   function visualFor(result: SearchResult): ReactNode {
-    if (result.type === "competition") {
-      const competition = competitionMap.get(result.id);
-      return (
-        <span
-          aria-hidden="true"
-          className="h-8 w-8 shrink-0 rounded-full border border-border-strong"
-          style={{ backgroundColor: competition?.accentColor }}
-        />
-      );
-    }
+    if (result.type === "competition") return null;
     const team = teamMap.get(result.type === "team" ? result.id : (playerTeams.get(result.id) ?? ""));
     return team ? (
       <TeamBadge team={team} size="md" />
     ) : (
-      <span aria-hidden="true" className="h-8 w-8 shrink-0 rounded-full bg-surface-3" />
+      <span aria-hidden="true" className="h-8 w-8 shrink-0 rounded-[4px] border border-border bg-surface-2" />
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
-        <h1 className="text-2xl font-extrabold tracking-tight">Recherche</h1>
-        <form action="/recherche" method="get" role="search" className="flex max-w-2xl gap-2">
+    <div className="space-y-8">
+      <div className="space-y-4">
+        <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">Recherche</h1>
+        <form action="/recherche" method="get" role="search" className="flex max-w-2xl flex-col gap-2 sm:flex-row">
           <label htmlFor="recherche-page" className="sr-only">
             Rechercher une compétition, une équipe ou un joueur
           </label>
@@ -86,11 +76,11 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
             autoComplete="off"
             autoFocus={query === ""}
             maxLength={MAX_QUERY_LENGTH}
-            className="h-11 min-w-0 flex-1 rounded-full border border-border bg-surface px-4 text-base text-fg placeholder:text-fg-subtle focus:border-accent focus:outline-none"
+            className="h-11 min-w-0 flex-1 rounded-md border border-border bg-surface px-3.5 text-[15px] text-fg placeholder:text-fg-muted transition-colors hover:border-border-strong focus:border-accent focus:outline-none"
           />
           <button
             type="submit"
-            className="h-11 shrink-0 rounded-full bg-accent px-5 text-sm font-bold text-accent-ink transition-colors hover:bg-accent-hover"
+            className="h-11 shrink-0 rounded-md bg-accent px-4 text-sm font-bold text-bg transition-colors hover:bg-accent-hover"
           >
             Rechercher
           </button>
@@ -122,20 +112,17 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
             <SectionTitle count={items.length}>
               <span id={`titre-recherche-${type}`}>{title}</span>
             </SectionTitle>
-            <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            <ul className="divide-y divide-border border-b border-border">
               {items.map((result) => (
                 <li key={`${result.type}-${result.id}`}>
                   <Link
                     href={result.href}
-                    className="flex items-center gap-3 rounded-card border border-border bg-surface px-3 py-2.5 shadow-card transition-colors hover:border-border-strong hover:bg-surface-2"
+                    className="flex items-center gap-3 py-2.5 text-sm transition-colors hover:bg-surface-2 sm:px-2"
                   >
                     {visualFor(result)}
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate font-semibold">{result.label}</span>
+                      <span className="block truncate font-semibold text-fg">{result.label}</span>
                       {result.sublabel && <span className="block truncate text-xs text-fg-muted">{result.sublabel}</span>}
-                    </span>
-                    <span aria-hidden="true" className="text-fg-subtle">
-                      ›
                     </span>
                   </Link>
                 </li>

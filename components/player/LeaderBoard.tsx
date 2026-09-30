@@ -23,12 +23,12 @@ export function LeaderBoard({
 }) {
   const headingId = `leaders-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   return (
-    <section aria-labelledby={headingId} className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
+    <section aria-labelledby={headingId} className="overflow-hidden rounded-md border border-border bg-surface">
       <header className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-2.5">
-        <h2 id={headingId} className="text-sm font-bold">
+        <h2 id={headingId} className="font-display text-lg font-bold uppercase leading-none">
           {title}
         </h2>
-        <span className="text-xs text-fg-subtle">{hint ?? unit}</span>
+        <span className="text-[11px] uppercase tracking-[0.08em] text-fg-muted">{hint ?? unit}</span>
       </header>
       {leaders.length === 0 ? (
         <p className="px-4 py-6 text-center text-sm text-fg-muted">Pas encore assez de matchs joués.</p>
@@ -42,8 +42,8 @@ export function LeaderBoard({
               >
                 <span
                   className={cn(
-                    "w-5 shrink-0 text-right text-xs font-bold tabular",
-                    index === 0 ? "text-accent" : "text-fg-subtle",
+                    "w-5 shrink-0 text-right text-xs tabular",
+                    index === 0 ? "font-bold text-accent" : "text-fg-subtle",
                   )}
                 >
                   {index + 1}
@@ -57,7 +57,7 @@ export function LeaderBoard({
                     <span className="tabular">{stats.gamesPlayed} m.</span>
                   </span>
                 </span>
-                <span className={cn("text-base font-extrabold tabular", index === 0 ? "text-accent" : "text-fg")}>
+                <span className={cn("font-display text-lg font-bold leading-none tabular", index === 0 ? "text-accent" : "text-fg")}>
                   {formatValue(value)}
                 </span>
               </Link>

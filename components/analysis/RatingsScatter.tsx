@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import {
   CartesianGrid,
   ReferenceLine,
@@ -22,15 +23,16 @@ export interface RatingPoint {
   net: number;
 }
 
-// Valeurs des tokens de app/globals.css (les attributs SVG de Recharts n'acceptent pas les variables CSS partout).
+// Tokens de app/globals.css : aucune couleur en dur, le graphique suit la palette.
 const COLORS = {
-  accent: "#ff7a1a",
-  surface: "#141418",
-  grid: "#26262e",
-  axis: "#34343f",
-  muted: "#9a9aa6",
-  subtle: "#6b6b78",
-  fg: "#f4f1ec",
+  accent: "var(--color-accent)",
+  surface: "var(--color-surface)",
+  grid: "var(--color-border)",
+  axis: "var(--color-fg-muted)",
+  reference: "var(--color-info)",
+  cursor: "var(--color-border-strong)",
+  muted: "var(--color-fg-muted)",
+  fg: "var(--color-fg)",
 };
 
 const fmt = (value: number) => value.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -44,8 +46,8 @@ function RatingTooltip({ active, payload }: TooltipContentProps) {
   const point = active ? (payload?.[0]?.payload as RatingPoint | undefined) : undefined;
   if (!point) return null;
   return (
-    <div className="rounded-lg border border-border-strong bg-surface-2 px-3 py-2 text-xs shadow-card">
-      <p className="mb-1 font-bold text-fg">{point.name}</p>
+    <div className="rounded-[4px] border border-border bg-surface-2 px-3 py-2 text-xs">
+      <p className="mb-1 font-semibold text-fg">{point.name}</p>
       <dl className="grid grid-cols-[auto_auto] gap-x-3 gap-y-0.5 tabular">
         <dt className="text-fg-muted">ORTG</dt>
         <dd className="text-right font-semibold text-fg">{fmt(point.ortg)}</dd>
@@ -61,6 +63,7 @@ function RatingTooltip({ active, payload }: TooltipContentProps) {
 /**
  * Nuage de points ORTG (x) / DRTG (y, axe inversé : la meilleure défense en haut).
  * En haut à droite : les équipes qui attaquent ET défendent mieux que la moyenne.
+ * `height` s'applique à partir de `sm` ; sur mobile la hauteur est réduite (16 rem).
  */
 export function RatingsScatter({ points, height = 380 }: { points: RatingPoint[]; height?: number }) {
   const avgOrtg = mean(points.map((p) => p.ortg));
@@ -81,7 +84,7 @@ export function RatingsScatter({ points, height = 380 }: { points: RatingPoint[]
         <circle cx={cx} cy={cy} r={12} fill="transparent" />
         <circle cx={cx} cy={cy} r={isActive ? 7 : 5} fill={COLORS.accent} stroke={COLORS.surface} strokeWidth={2} />
         {showLabel && (
-          <text x={cx} y={cy - 10} textAnchor="middle" fontSize={10} fontWeight={700} fill={COLORS.muted}>
+          <text x={cx} y={cy - 10} textAnchor="middle" fontSize={11} fontWeight={700} fill={isActive ? COLORS.fg : COLORS.muted}>
             {point.abbreviation}
           </text>
         )}
@@ -90,21 +93,23 @@ export function RatingsScatter({ points, height = 380 }: { points: RatingPoint[]
   };
 
   return (
-    <figure className="rounded-card border border-border bg-surface p-3 shadow-card sm:p-4">
+    <figure className="rounded-md border border-border bg-surface p-3 sm:p-4">
       <div
         role="img"
         aria-label={`Nuage de points des ratings offensif et défensif de ${points.length} équipes. Le détail chiffré figure dans le tableau.`}
+        className="h-64 w-full sm:h-[var(--chart-h)]"
+        style={{ "--chart-h": `${height}px` } as CSSProperties}
       >
-        <ResponsiveContainer width="100%" height={height}>
-          <ScatterChart margin={{ top: 16, right: 16, bottom: 28, left: 4 }}>
-            <CartesianGrid stroke={COLORS.grid} strokeDasharray="3 3" />
+        <ResponsiveContainer width="100%" height="100%">
+          <ScatterChart margin={{ top: 16, right: 12, bottom: 28, left: 0 }}>
+            <CartesianGrid stroke={COLORS.grid} />
             <XAxis
               type="number"
               dataKey="ortg"
               name="ORTG"
               domain={([min, max]: readonly number[]) => [Math.floor(min - 2), Math.ceil(max + 2)]}
               allowDecimals={false}
-              tick={{ fill: COLORS.subtle, fontSize: 11 }}
+              tick={{ fill: COLORS.muted, fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: COLORS.axis }}
               label={{ value: "Rating offensif (ORTG) →", position: "insideBottom", offset: -18, fill: COLORS.muted, fontSize: 11 }}
@@ -117,14 +122,14 @@ export function RatingsScatter({ points, height = 380 }: { points: RatingPoint[]
               domain={([min, max]: readonly number[]) => [Math.floor(min - 2), Math.ceil(max + 2)]}
               allowDecimals={false}
               width={44}
-              tick={{ fill: COLORS.subtle, fontSize: 11 }}
+              tick={{ fill: COLORS.muted, fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: COLORS.axis }}
               label={{ value: "Rating défensif (DRTG) →", angle: -90, position: "insideLeft", offset: 12, fill: COLORS.muted, fontSize: 11, style: { textAnchor: "middle" } }}
             />
-            <ReferenceLine x={avgOrtg} stroke={COLORS.axis} strokeDasharray="4 4" />
-            <ReferenceLine y={avgDrtg} stroke={COLORS.axis} strokeDasharray="4 4" />
-            <Tooltip content={RatingTooltip} cursor={{ stroke: COLORS.axis, strokeDasharray: "3 3" }} isAnimationActive={false} />
+            <ReferenceLine x={avgOrtg} stroke={COLORS.reference} strokeDasharray="4 4" />
+            <ReferenceLine y={avgDrtg} stroke={COLORS.reference} strokeDasharray="4 4" />
+            <Tooltip content={RatingTooltip} cursor={{ stroke: COLORS.cursor, strokeDasharray: "3 3" }} isAnimationActive={false} />
             <Scatter data={points} shape={renderShape} isAnimationActive={false} />
           </ScatterChart>
         </ResponsiveContainer>
@@ -132,9 +137,11 @@ export function RatingsScatter({ points, height = 380 }: { points: RatingPoint[]
       <figcaption className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-fg-muted">
         <span>Axe vertical inversé : la meilleure défense (DRTG bas) est en haut.</span>
         <span>
-          <span className="font-semibold text-fg">↗ En haut à droite</span> : attaque et défense au-dessus de la moyenne.
+          <span className="font-semibold text-fg">En haut à droite</span> : attaque et défense au-dessus de la moyenne.
         </span>
-        <span>Pointillés : moyennes de la compétition.</span>
+        <span>
+          <span className="text-info">Pointillés</span> : moyennes de la compétition.
+        </span>
       </figcaption>
     </figure>
   );

@@ -4,8 +4,6 @@ import type { ReactNode } from "react";
 import type { TeamSeasonStats } from "@/types";
 import { api } from "@/lib/api";
 import { formatNumber, formatSigned } from "@/lib/format";
-import { FormIndicator } from "@/components/team/FormIndicator";
-import { TeamBadge } from "@/components/team/TeamBadge";
 import { LiveDot } from "@/components/ui/LiveDot";
 import { loadFeaturedAnalyses } from "./_lib/featured";
 
@@ -14,37 +12,40 @@ export const metadata: Metadata = {
   description: "Forme des équipes, stats avancées (ORTG, DRTG, pace, TS%) et analyse IA des matchs du jour.",
 };
 
-/** Nombre minimal de matchs pour figurer dans les aperçus toutes compétitions. */
+/** Nombre minimal de matchs pour figurer dans les repères toutes compétitions. */
 const MIN_GAMES = 3;
 
-function HubCard({
+/** Ligne du hub : titre, description courte et, à droite, un chiffre utile. */
+function HubLink({
   href,
   title,
   description,
-  eyebrow,
-  children,
+  value,
+  hint,
 }: {
   href: string;
   title: string;
   description: string;
-  eyebrow: ReactNode;
-  children: ReactNode;
+  value: ReactNode;
+  hint: ReactNode;
 }) {
   return (
-    <Link
-      href={href}
-      className="group flex flex-col rounded-card border border-border bg-surface shadow-card transition-colors hover:border-border-strong hover:bg-surface-2"
-    >
-      <div className="border-b border-border p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-accent">{eyebrow}</p>
-        <h2 className="mt-1 text-lg font-extrabold tracking-tight group-hover:text-accent">{title}</h2>
-        <p className="mt-1 text-sm text-fg-muted">{description}</p>
-      </div>
-      <div className="flex-1 p-4">{children}</div>
-      <span className="px-4 pb-4 text-sm font-semibold text-accent">
-        Explorer <span aria-hidden="true">→</span>
-      </span>
-    </Link>
+    <li>
+      <Link
+        href={href}
+        className="flex flex-col gap-3 py-4 transition-colors hover:bg-surface-2 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-2"
+      >
+        <span className="min-w-0">
+          <span className="block font-display text-2xl font-bold uppercase leading-none">{title}</span>
+          <span className="mt-1.5 block text-sm text-fg-muted">{description}</span>
+        </span>
+        {/* Mobile : valeur et libellé sur une ligne sous la description ; ≥ sm : bloc aligné à droite */}
+        <span className="flex shrink-0 items-baseline gap-2 sm:block sm:text-right">
+          <span className="font-display text-2xl font-bold leading-none tabular">{value}</span>
+          <span className="text-[11px] uppercase tracking-[0.08em] text-fg-muted sm:mt-1 sm:block">{hint}</span>
+        </span>
+      </Link>
+    </li>
   );
 }
 
@@ -55,114 +56,60 @@ export default async function AnalysesHubPage() {
     loadFeaturedAnalyses(),
   ]);
   const teamMap = new Map(teams.map((t) => [t.id, t]));
-  const competitionMap = new Map(competitions.map((c) => [c.id, c]));
   const allStats: TeamSeasonStats[] = (
     await Promise.all(competitions.map((c) => api.getCompetitionTeamStats(c.id)))
   )
     .flat()
     .filter((s) => s.gamesPlayed >= MIN_GAMES);
 
-  const inForm = [...allStats].sort((a, b) => b.formScore - a.formScore || b.netRating - a.netRating).slice(0, 4);
-  const bestNet = [...allStats].sort((a, b) => b.netRating - a.netRating).slice(0, 4);
+  // Repères toutes compétitions : la meilleure forme et le meilleur net rating.
+  const inForm = [...allStats].sort((a, b) => b.formScore - a.formScore || b.netRating - a.netRating)[0];
+  const bestNet = [...allStats].sort((a, b) => b.netRating - a.netRating)[0];
   const liveCount = featured.filter((f) => f.match.status === "live" || f.match.status === "halftime").length;
-  const spotlight = featured[0];
+  const teamName = (s: TeamSeasonStats) => teamMap.get(s.teamId)?.shortName ?? "";
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight">Analyses</h1>
-        <p className="max-w-3xl text-sm text-fg-muted">
-          Au-delà du score : la dynamique des équipes, leur efficacité pour 100 possessions et une lecture automatique des
-          matchs du jour.
+        <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">Analyses</h1>
+        <p className="mt-2 max-w-2xl text-sm text-fg-muted">
+          Forme récente des équipes, efficacité pour 100 possessions et lecture des matchs du jour.
         </p>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <HubCard
+      <ul className="divide-y divide-border border-y border-border">
+        <HubLink
           href="/analyses/forme"
-          eyebrow="Forme"
           title="Forme des équipes"
           description="Indice de forme /10, 5 derniers matchs, séries en cours."
-        >
-          <p className="mb-2 text-xs font-semibold text-fg-subtle">Les plus en forme · toutes compétitions</p>
-          <ol className="space-y-2">
-            {inForm.map((s) => {
-              const team = teamMap.get(s.teamId);
-              if (!team) return null;
-              return (
-                <li key={`${s.teamId}-${s.competitionId}`} className="flex items-center gap-2 text-sm">
-                  <TeamBadge team={team} size="sm" />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{team.shortName}</span>
-                    <span className="block truncate text-xs text-fg-subtle">{competitionMap.get(s.competitionId)?.name}</span>
-                  </span>
-                  <FormIndicator form={s.form} className="hidden sm:inline-flex lg:hidden xl:inline-flex" />
-                  <span className="w-8 text-right font-extrabold text-win tabular">{formatNumber(s.formScore)}</span>
-                </li>
-              );
-            })}
-          </ol>
-        </HubCard>
-
-        <HubCard
+          value={inForm ? formatNumber(inForm.formScore) : "—"}
+          hint={inForm ? `En forme · ${teamName(inForm)}` : "Pas encore de match joué"}
+        />
+        <HubLink
           href="/analyses/stats-avancees"
-          eyebrow="Stats avancées"
-          title="Ratings, pace et adresse"
-          description="ORTG, DRTG, net rating, pace, eFG% et TS% — avec le nuage attaque/défense."
-        >
-          <p className="mb-2 text-xs font-semibold text-fg-subtle">Meilleurs net ratings · toutes compétitions</p>
-          <ol className="space-y-2">
-            {bestNet.map((s) => {
-              const team = teamMap.get(s.teamId);
-              if (!team) return null;
-              return (
-                <li key={`${s.teamId}-${s.competitionId}`} className="flex items-center gap-2 text-sm">
-                  <TeamBadge team={team} size="sm" />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{team.shortName}</span>
-                    <span className="block truncate text-xs text-fg-subtle">{competitionMap.get(s.competitionId)?.name}</span>
-                  </span>
-                  <span className="text-right text-xs text-fg-muted tabular">
-                    {formatNumber(s.offensiveRating)} / {formatNumber(s.defensiveRating)}
-                  </span>
-                  <span className="w-12 text-right font-extrabold text-win tabular">{formatSigned(s.netRating)}</span>
-                </li>
-              );
-            })}
-          </ol>
-        </HubCard>
-
-        <HubCard
+          title="Stats avancées"
+          description="ORTG, DRTG, net rating, pace, eFG% et TS%, avec le nuage attaque / défense."
+          value={bestNet ? formatSigned(bestNet.netRating) : "—"}
+          hint={bestNet ? `Net rating · ${teamName(bestNet)}` : "Pas encore de match joué"}
+        />
+        <HubLink
           href="/analyses/ia"
-          eyebrow={
+          title="Analyse IA"
+          description="Résumé, probabilité de victoire et points clés des matchs du jour."
+          value={featured.length}
+          hint={
             <span className="inline-flex items-center gap-1.5">
-              Analyse IA
+              {featured.length > 1 ? "matchs analysés" : "match analysé"}
               {liveCount > 0 && (
-                <span className="inline-flex items-center gap-1 text-live">
-                  · <LiveDot /> {liveCount} en direct
-                </span>
+                <>
+                  <span aria-hidden="true">·</span>
+                  <LiveDot /> {liveCount} en direct
+                </>
               )}
             </span>
           }
-          title="Les matchs du jour décryptés"
-          description={`${featured.length} match${featured.length > 1 ? "s" : ""} analysé${featured.length > 1 ? "s" : ""} : résumé, probabilités, points clés.`}
-        >
-          {spotlight ? (
-            <div className="space-y-2 text-sm">
-              <p className="flex items-center gap-2 font-bold">
-                <TeamBadge team={spotlight.homeTeam} size="xs" />
-                {spotlight.homeTeam.shortName}
-                <span className="text-fg-subtle">–</span>
-                {spotlight.awayTeam.shortName}
-                <TeamBadge team={spotlight.awayTeam} size="xs" />
-              </p>
-              <p className="line-clamp-4 text-fg-muted">{spotlight.analysis.summary}</p>
-            </div>
-          ) : (
-            <p className="text-sm text-fg-muted">Aucun match au programme aujourd’hui.</p>
-          )}
-        </HubCard>
-      </div>
+        />
+      </ul>
     </div>
   );
 }

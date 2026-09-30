@@ -52,14 +52,14 @@ type FetchState = { key: string; data: FavoritesPayload | null; error: boolean }
 
 function Skeleton() {
   return (
-    <div aria-busy="true" aria-live="polite" className="space-y-6">
+    <div aria-busy="true" aria-live="polite" className="space-y-8">
       <span className="sr-only">Chargement de vos favoris…</span>
       {[0, 1].map((section) => (
-        <div key={section} className="space-y-3">
-          <div className="h-5 w-40 animate-pulse rounded bg-surface-3" />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div key={section}>
+          <div className="mb-3 h-6 w-40 animate-pulse rounded-[4px] bg-surface-3" />
+          <div className="divide-y divide-border border-b border-border">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="h-16 animate-pulse rounded-card border border-border bg-surface" />
+              <div key={i} className="h-12 animate-pulse bg-surface" />
             ))}
           </div>
         </div>
@@ -81,17 +81,17 @@ function MatchBlock({
 }) {
   if (matches.length === 0) return null;
   return (
-    <section className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
-      <header className="flex items-center justify-between gap-3 border-b border-border px-3 py-2 sm:px-4">
-        <h3 className="flex items-center gap-2 text-sm font-bold">
+    <section>
+      <header className="flex items-center justify-between gap-3 border-b border-border pb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
+        <h3 className="flex items-center gap-2">
           {icon}
           {title}
         </h3>
-        <span className="text-xs text-fg-subtle tabular">
+        <span className="font-normal tabular">
           {matches.length} match{matches.length > 1 ? "s" : ""}
         </span>
       </header>
-      <div className="divide-y divide-border">
+      <div className="divide-y divide-border border-b border-border">
         {matches.map((match) => {
           const home = teams.get(match.homeTeamId);
           const away = teams.get(match.awayTeamId);
@@ -103,7 +103,8 @@ function MatchBlock({
   );
 }
 
-function FavoriteCard({
+/** Ligne d'un favori : lien vers la fiche + bouton de retrait. */
+function FavoriteRow({
   href,
   visual,
   title,
@@ -112,18 +113,18 @@ function FavoriteCard({
   id,
 }: {
   href: string;
-  visual: ReactNode;
+  visual?: ReactNode;
   title: string;
   subtitle: string;
   kind: FavoriteKind;
   id: string;
 }) {
   return (
-    <li className="flex items-center gap-2 rounded-card border border-border bg-surface pr-2 shadow-card transition-colors hover:border-border-strong">
-      <Link href={href} className="flex min-w-0 flex-1 items-center gap-3 rounded-l-card px-3 py-2.5 hover:text-accent">
+    <li className="flex items-center gap-3 py-2 transition-colors hover:bg-surface-2 sm:px-2">
+      <Link href={href} className="flex min-w-0 flex-1 items-center gap-3 text-sm">
         {visual}
         <span className="min-w-0">
-          <span className="block truncate font-semibold">{title}</span>
+          <span className="block truncate font-semibold text-fg">{title}</span>
           <span className="block truncate text-xs text-fg-muted">{subtitle}</span>
         </span>
       </Link>
@@ -164,7 +165,7 @@ export function FavoritesList() {
           Appuyez sur l’étoile « Suivre » depuis la page d’une équipe, d’un joueur ou d’une compétition : vous retrouverez
           ici leurs matchs en direct, à venir et leurs derniers résultats.
         </EmptyState>
-        <div className="flex flex-wrap justify-center gap-2 text-sm">
+        <div className="flex flex-wrap justify-center gap-2">
           {[
             { href: "/equipes", label: "Parcourir les équipes" },
             { href: "/joueurs", label: "Parcourir les joueurs" },
@@ -173,7 +174,7 @@ export function FavoritesList() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full border border-border bg-surface px-3 py-1.5 font-semibold text-fg-muted hover:border-border-strong hover:text-fg"
+              className="inline-flex h-10 items-center rounded-[4px] border border-border px-3 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent sm:h-8"
             >
               {link.label}
             </Link>
@@ -195,7 +196,7 @@ export function FavoritesList() {
           <button
             type="button"
             onClick={() => setAttempt((n) => n + 1)}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-bold text-accent-ink hover:bg-accent-hover"
+            className="h-10 rounded-md bg-accent px-4 text-sm font-bold text-bg transition-colors hover:bg-accent-hover"
           >
             Réessayer
           </button>
@@ -224,9 +225,9 @@ export function FavoritesList() {
   return (
     <div className="space-y-8" aria-busy={stale}>
       {error && (
-        <p role="alert" className="rounded-card border border-loss/30 bg-loss/10 px-3 py-2 text-sm text-fg-muted">
+        <p role="alert" className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-fg-muted">
           La mise à jour a échoué : les informations affichées peuvent être incomplètes.{" "}
-          <button type="button" onClick={() => setAttempt((n) => n + 1)} className="font-semibold text-accent hover:text-accent-hover">
+          <button type="button" onClick={() => setAttempt((n) => n + 1)} className="font-semibold text-fg transition-colors hover:text-accent">
             Réessayer
           </button>
         </p>
@@ -238,7 +239,7 @@ export function FavoritesList() {
             <span id="titre-fav-matchs">Matchs de vos équipes</span>
           </SectionTitle>
           {hasMatches ? (
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid gap-x-8 gap-y-6 lg:grid-cols-2">
               <MatchBlock title="En direct" icon={<LiveDot />} matches={live} teams={lookupTeams} />
               <MatchBlock title="À venir" matches={upcoming} teams={lookupTeams} />
               <MatchBlock title="Derniers résultats" matches={recent} teams={lookupTeams} />
@@ -254,9 +255,9 @@ export function FavoritesList() {
           <SectionTitle count={teams.length}>
             <span id="titre-fav-equipes">Équipes</span>
           </SectionTitle>
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="divide-y divide-border border-b border-border">
             {teams.map((team) => (
-              <FavoriteCard
+              <FavoriteRow
                 key={team.id}
                 kind="team"
                 id={team.id}
@@ -275,9 +276,9 @@ export function FavoritesList() {
           <SectionTitle count={players.length}>
             <span id="titre-fav-joueurs">Joueurs</span>
           </SectionTitle>
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="divide-y divide-border border-b border-border">
             {players.map(({ player, team }) => (
-              <FavoriteCard
+              <FavoriteRow
                 key={player.id}
                 kind="player"
                 id={player.id}
@@ -286,7 +287,10 @@ export function FavoritesList() {
                   team ? (
                     <TeamBadge team={team} size="md" />
                   ) : (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-3 text-xs font-bold">
+                    <span
+                      aria-hidden="true"
+                      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] border border-border bg-surface-2 font-display text-xs font-bold tabular"
+                    >
                       {player.jerseyNumber}
                     </span>
                   )
@@ -304,20 +308,13 @@ export function FavoritesList() {
           <SectionTitle count={competitions.length}>
             <span id="titre-fav-competitions">Compétitions</span>
           </SectionTitle>
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="divide-y divide-border border-b border-border">
             {competitions.map((competition) => (
-              <FavoriteCard
+              <FavoriteRow
                 key={competition.id}
                 kind="competition"
                 id={competition.id}
                 href={`/competitions/${competition.slug}`}
-                visual={
-                  <span
-                    aria-hidden="true"
-                    className="h-8 w-8 shrink-0 rounded-full"
-                    style={{ backgroundColor: competition.accentColor }}
-                  />
-                }
                 title={competition.name}
                 subtitle={`${competition.region} · ${competition.stage}`}
               />

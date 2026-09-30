@@ -88,85 +88,90 @@ export default async function AdvancedStatsPage({ searchParams }: { searchParams
             <SectionTitle count={sorted.length}>
               <span id="titre-tableau">Tableau des équipes</span>
             </SectionTitle>
-            <div className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[40rem] text-sm tabular">
-                  <caption className="sr-only">
-                    Stats avancées des équipes de {competition.name}, triées par {sortColumn.label}
-                  </caption>
-                  <thead>
-                    <tr className="border-b border-border text-xs text-fg-subtle">
-                      <th scope="col" className="w-10 px-2 py-2 text-right font-semibold">#</th>
-                      <th scope="col" className="px-2 py-2 text-left font-semibold">Équipe</th>
-                      <th scope="col" className="px-2 py-2 text-right font-semibold">
-                        <abbr title="Matchs joués" className="no-underline">MJ</abbr>
-                      </th>
-                      {COLUMNS.map((c) => {
-                        const active = c.key === sortKey;
-                        return (
-                          <th
-                            key={c.key}
-                            scope="col"
-                            aria-sort={active ? (c.direction === "asc" ? "ascending" : "descending") : undefined}
-                            className="px-2 py-2 text-right font-semibold last:pr-4"
-                          >
-                            <Link
-                              href={hrefFor(competition.slug, c.key)}
-                              title={`Trier par ${c.title}`}
-                              scroll={false}
-                              className={cn(
-                                "inline-flex items-center gap-1 rounded px-1 py-0.5 whitespace-nowrap transition-colors",
-                                active ? "bg-accent-soft text-accent" : "hover:text-fg",
-                              )}
-                            >
-                              {c.label}
-                              <span aria-hidden="true" className={active ? "" : "opacity-0"}>
-                                {c.direction === "asc" ? "↑" : "↓"}
-                              </span>
-                            </Link>
-                          </th>
-                        );
-                      })}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {sorted.map((s, index) => {
-                      const team = teams.get(s.teamId);
-                      if (!team) return null;
+            <div className="overflow-x-auto rounded-md border border-border bg-surface">
+              <table className="w-full min-w-[40rem] text-sm tabular">
+                <caption className="sr-only">
+                  Stats avancées des équipes de {competition.name}, triées par {sortColumn.label}
+                </caption>
+                <thead>
+                  <tr className="border-b border-border text-[11px] uppercase tracking-[0.08em] text-fg-muted">
+                    {/* Rang et équipe collants : restent lisibles pendant le défilement horizontal (mobile) */}
+                    <th scope="col" className="sticky left-0 w-10 bg-surface px-2 py-2 text-right font-semibold">#</th>
+                    <th scope="col" className="sticky left-10 bg-surface px-2 py-2 text-left font-semibold">Équipe</th>
+                    <th scope="col" className="px-2 py-2 text-right font-semibold">
+                      <abbr title="Matchs joués" className="no-underline">MJ</abbr>
+                    </th>
+                    {COLUMNS.map((c) => {
+                      const active = c.key === sortKey;
                       return (
-                        <tr key={s.teamId} className="hover:bg-surface-2">
-                          <td className="px-2 py-2 text-right text-xs font-bold text-fg-subtle">{index + 1}</td>
-                          <th scope="row" className="px-2 py-2 text-left font-semibold">
-                            <Link href={`/equipes/${team.id}`} className="inline-flex items-center gap-2 whitespace-nowrap hover:text-accent">
-                              <TeamBadge team={team} size="sm" />
-                              <span className="hidden sm:inline">{team.name}</span>
-                              <span className="sm:hidden">{team.shortName}</span>
-                            </Link>
-                          </th>
-                          <td className="px-2 py-2 text-right text-fg-muted">{s.gamesPlayed}</td>
-                          {COLUMNS.map((c) => {
-                            const value = c.value(s);
-                            return (
-                              <td
-                                key={c.key}
-                                className={cn(
-                                  "px-2 py-2 text-right whitespace-nowrap last:pr-4",
-                                  c.key === sortKey ? "font-bold text-fg" : "text-fg-muted",
-                                  c.key === "net" && (value > 0 ? "text-win" : value < 0 ? "text-loss" : ""),
-                                )}
-                              >
-                                {c.format(value)}
-                              </td>
-                            );
-                          })}
-                        </tr>
+                        <th
+                          key={c.key}
+                          scope="col"
+                          aria-sort={active ? (c.direction === "asc" ? "ascending" : "descending") : undefined}
+                          className="px-2 py-2 text-right font-semibold last:pr-4"
+                        >
+                          <Link
+                            href={hrefFor(competition.slug, c.key)}
+                            title={`Trier par ${c.title}`}
+                            scroll={false}
+                            className={cn(
+                              "inline-flex items-center gap-1 whitespace-nowrap transition-colors",
+                              active ? "text-fg" : "hover:text-fg",
+                            )}
+                          >
+                            {c.label}
+                            <span aria-hidden="true" className={active ? "text-accent" : "opacity-0"}>
+                              {c.direction === "asc" ? "↑" : "↓"}
+                            </span>
+                          </Link>
+                        </th>
                       );
                     })}
-                  </tbody>
-                </table>
-              </div>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {sorted.map((s, index) => {
+                    const team = teams.get(s.teamId);
+                    if (!team) return null;
+                    return (
+                      <tr key={s.teamId} className="transition-colors hover:bg-surface-2">
+                        <td
+                          className={cn(
+                            "sticky left-0 bg-surface px-2 py-2 text-right text-xs tabular",
+                            index < 3 ? "font-bold text-accent" : "text-fg-subtle",
+                          )}
+                        >
+                          {index + 1}
+                        </td>
+                        <th scope="row" className="sticky left-10 bg-surface px-2 py-2 text-left font-semibold">
+                          <Link
+                            href={`/equipes/${team.id}`}
+                            className="inline-flex items-center gap-2 whitespace-nowrap text-fg transition-colors hover:text-accent"
+                          >
+                            <TeamBadge team={team} size="sm" />
+                            <span className="hidden sm:inline">{team.name}</span>
+                            <span className="sm:hidden">{team.shortName}</span>
+                          </Link>
+                        </th>
+                        <td className="px-2 py-2 text-right text-fg-muted">{s.gamesPlayed}</td>
+                        {COLUMNS.map((c) => (
+                          <td
+                            key={c.key}
+                            className={cn(
+                              "px-2 py-2 text-right whitespace-nowrap last:pr-4",
+                              c.key === sortKey ? "font-semibold text-fg" : "text-fg-muted",
+                            )}
+                          >
+                            {c.format(c.value(s))}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-            <p className="mt-2 text-xs text-fg-subtle">
+            <p className="mt-2 text-xs text-fg-muted">
               Cliquez sur un en-tête de colonne pour trier. DRTG : plus la valeur est basse, meilleure est la défense.
             </p>
           </section>
