@@ -29,7 +29,7 @@ export function TeamBadge({
       role="img"
       aria-label={team.name}
       className={cn(
-        "inline-flex shrink-0 select-none items-center justify-center rounded-[4px] border border-border bg-white/[0.04] font-display font-bold tracking-wide text-fg/90",
+        "inline-flex shrink-0 select-none items-center justify-center rounded-[4px] border border-border bg-surface-2 font-display font-bold tracking-wide text-fg/90",
         SIZES[size],
         className,
       )}

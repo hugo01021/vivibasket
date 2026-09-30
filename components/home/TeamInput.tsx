@@ -85,8 +85,8 @@ export function TeamInput({ label, value, onChange, placeholder, invalid = false
         onBlur={() => setOpen(false)}
         onKeyDown={onKeyDown}
         className={cn(
-          "h-12 w-full rounded-md border bg-white/[0.03] px-3.5 text-[15px] text-fg placeholder:text-dim/70 transition-colors focus:bg-white/[0.05] focus:outline-none",
-          invalid ? "border-accent/70" : "border-line hover:border-white/15 focus:border-white/25",
+          "h-12 w-full rounded-md border bg-surface px-3.5 text-[15px] text-fg placeholder:text-dim/70 transition-colors focus:bg-surface-2 focus:outline-none",
+          invalid ? "border-accent/70" : "border-line hover:border-border-strong focus:border-border-strong",
         )}
       />
       {expanded && (
@@ -110,7 +110,7 @@ export function TeamInput({ label, value, onChange, placeholder, invalid = false
               onMouseEnter={() => setActive(index)}
               className={cn(
                 "flex cursor-pointer items-baseline justify-between gap-3 px-3.5 py-2 text-sm",
-                index === active ? "bg-white/[0.06] text-fg" : "text-fg/85",
+                index === active ? "bg-surface-3 text-fg" : "text-fg/85",
               )}
             >
               <span className="truncate">{team.name}</span>

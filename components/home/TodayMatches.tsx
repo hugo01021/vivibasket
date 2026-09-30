@@ -50,7 +50,7 @@ export function TodayMatches({ onAnalyze }: TodayMatchesProps) {
           const prob = homeFav ? m.homeWinProb : 100 - m.homeWinProb;
           return (
             <li key={m.id}>
-              <div className="group grid grid-cols-[2.75rem_1fr_auto] items-center gap-3 py-3 transition-colors hover:bg-white/[0.025] sm:grid-cols-[3.5rem_1fr_9rem_auto] sm:gap-4 sm:px-2">
+              <div className="group grid grid-cols-[2.75rem_1fr_auto] items-center gap-3 py-3 transition-colors hover:bg-surface-2 sm:grid-cols-[3.5rem_1fr_9rem_auto] sm:gap-4 sm:px-2">
                 <time className="text-sm tabular-nums text-dim">{m.time}</time>
                 <div className="min-w-0">
                   <p className="text-sm leading-snug sm:truncate sm:text-[15px]">

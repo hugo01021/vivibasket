@@ -18,7 +18,7 @@ export function MatchRow({ match, homeTeam, awayTeam }: { match: Match; homeTeam
   const awayEmphasis = awayWon ? "bold" : homeWon ? "muted" : "normal";
 
   return (
-    <Link href={`/match/${match.id}`} className="block px-2 py-2.5 text-sm transition-colors hover:bg-white/[0.025] sm:px-3">
+    <Link href={`/match/${match.id}`} className="block px-2 py-2.5 text-sm transition-colors hover:bg-surface-2 sm:px-3">
       {/* Mobile : statut à gauche, équipes empilées */}
       <div className="flex items-center gap-3 sm:hidden">
         <div className="w-[4.25rem] shrink-0">

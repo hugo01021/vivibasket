@@ -34,7 +34,7 @@ export function MatchCard({
     <Link
       href={`/match/${match.id}`}
       className={cn(
-        "block rounded-md border bg-surface p-3.5 transition-colors hover:bg-white/[0.025]",
+        "block rounded-md border bg-surface p-3.5 transition-colors hover:bg-surface-2",
         live ? "border-accent/50 hover:border-accent" : "border-border hover:border-border-strong",
       )}
     >

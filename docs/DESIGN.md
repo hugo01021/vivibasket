@@ -23,7 +23,7 @@ Aucune autre couleur : pas de couleurs d'équipes ni de compétitions (`team.col
 - Coins : `rounded-md` (6 px, = `rounded-card`) pour les cartes et champs, `rounded-[4px]` (= `rounded-chip`) pour les boutons secondaires et petites pastilles. **Jamais `rounded-full`** sauf pour un point (LiveDot).
 - Bordures : 1 px, `border-border`. Pas d'ombre portée (`shadow-card` vaut `none`), pas de glassmorphism (`backdrop-blur`) hors header.
 - Cartes : `rounded-md border border-border bg-surface`. Beaucoup de contenus se passent de carte : une liste avec `divide-y divide-border` suffit.
-- Fonds de survol : `hover:bg-white/[0.03]` pour une ligne, `hover:border-border-strong` pour une carte cliquable.
+- Fonds de survol : `hover:bg-surface-2` pour une ligne, `hover:border-border-strong` pour une carte cliquable.
 
 ## Typographie
 
