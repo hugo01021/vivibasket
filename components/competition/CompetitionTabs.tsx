@@ -23,19 +23,12 @@ export function CompetitionTabs({ tabs, active }: { tabs: CompetitionTab[]; acti
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "-mb-px inline-flex h-11 items-center gap-1.5 border-b-2 px-3 text-sm font-semibold whitespace-nowrap transition-colors",
-                  isActive ? "border-accent text-fg" : "border-transparent text-fg-muted hover:border-border-strong hover:text-fg",
+                  isActive ? "border-accent text-fg" : "border-transparent text-fg-muted hover:text-fg",
                 )}
               >
                 {tab.label}
                 {typeof tab.count === "number" && (
-                  <span
-                    className={cn(
-                      "rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular",
-                      isActive ? "bg-accent-soft text-accent" : "bg-surface-3 text-fg-muted",
-                    )}
-                  >
-                    {tab.count}
-                  </span>
+                  <span className={cn("text-[11px] font-semibold tabular", isActive ? "text-accent" : "text-fg-subtle")}>{tab.count}</span>
                 )}
               </Link>
             </li>

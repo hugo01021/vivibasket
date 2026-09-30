@@ -11,41 +11,28 @@ const SIZES: Record<Size, string> = {
   xl: "h-16 w-16 text-lg",
 };
 
-function luminance(hex: string): number {
-  const value = hex.replace("#", "");
-  const full = value.length === 3 ? value.split("").map((c) => c + c).join("") : value;
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255);
-  const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-}
-
 /**
- * Écusson abstrait généré à partir des couleurs de l'équipe (aucun logo officiel).
+ * Écusson abstrait : abréviation dans un carré monochrome (aucun logo officiel,
+ * pas de couleurs d'équipe pour rester dans la charte noir / orange / gris).
  */
 export function TeamBadge({
   team,
   size = "md",
   className,
 }: {
-  team: Pick<Team, "abbreviation" | "colors" | "name">;
+  team: Pick<Team, "abbreviation" | "name">;
   size?: Size;
   className?: string;
 }) {
-  const dark = luminance(team.colors.primary) < 0.4;
   return (
     <span
       role="img"
       aria-label={team.name}
       className={cn(
-        "inline-flex shrink-0 select-none items-center justify-center rounded-full font-extrabold tracking-tight",
+        "inline-flex shrink-0 select-none items-center justify-center rounded-[4px] border border-border bg-white/[0.04] font-display font-bold tracking-wide text-fg/90",
         SIZES[size],
         className,
       )}
-      style={{
-        backgroundColor: team.colors.primary,
-        color: dark ? "#f4f1ec" : "#0b0b0d",
-        boxShadow: `inset 0 0 0 2px ${team.colors.secondary}55, 0 0 0 1px rgba(255,255,255,0.06)`,
-      }}
     >
       {team.abbreviation}
     </span>

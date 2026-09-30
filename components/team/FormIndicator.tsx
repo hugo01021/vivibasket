@@ -11,8 +11,8 @@ export function FormIndicator({ form, className }: { form: FormResult[]; classNa
           key={i}
           aria-hidden="true"
           className={cn(
-            "inline-flex h-5 w-5 items-center justify-center rounded text-[10px] font-extrabold",
-            result === "W" ? "bg-win/15 text-win" : "bg-loss/15 text-loss",
+            "inline-flex h-5 w-5 items-center justify-center rounded-[3px] text-[10px] font-bold",
+            result === "W" ? "bg-win/10 text-win/80" : "bg-loss/10 text-loss/80",
           )}
         >
           {result === "W" ? "V" : "D"}

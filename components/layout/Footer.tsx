@@ -1,21 +1,20 @@
-import Link from "next/link";
-import { BallGlyph } from "./Logo";
+import { SITE } from "@/lib/site";
 
+/** Une seule ligne, sobre. */
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-surface/40">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-fg-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2">
-          <BallGlyph className="h-5 w-5" />
-          <span className="font-semibold text-fg">Basket Analytics</span>
-          <span className="text-fg-subtle">· données de démonstration</span>
-        </div>
-        <nav aria-label="Liens secondaires" className="flex flex-wrap gap-x-5 gap-y-2">
-          <Link href="/competitions" className="hover:text-fg">Compétitions</Link>
-          <Link href="/equipes" className="hover:text-fg">Équipes</Link>
-          <Link href="/joueurs" className="hover:text-fg">Joueurs</Link>
-          <Link href="/analyses" className="hover:text-fg">Analyses</Link>
-        </nav>
+    <footer className="border-t border-border">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-1.5 px-4 py-5 text-xs text-fg-muted sm:px-6">
+        <span>
+          © {new Date().getFullYear()} {SITE.name}
+        </span>
+        <a href="#" className="hover:text-fg">
+          Mentions légales
+        </a>
+        <a href={`mailto:${SITE.contactEmail}`} className="hover:text-fg">
+          Contact
+        </a>
+        <span className="w-full sm:ml-auto sm:w-auto">Les analyses sont indicatives, pariez de façon responsable.</span>
       </div>
     </footer>
   );

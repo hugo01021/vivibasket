@@ -26,10 +26,8 @@ export function FavoriteButton({
       aria-pressed={active}
       aria-label={active ? `Retirer ${label} des favoris` : `Ajouter ${label} aux favoris`}
       className={cn(
-        "inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-sm font-semibold transition-colors",
-        active
-          ? "border-accent bg-accent-soft text-accent"
-          : "border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg",
+        "inline-flex h-8 items-center gap-1.5 rounded-[4px] border px-3 text-xs font-semibold transition-colors",
+        active ? "border-accent text-accent" : "border-border text-fg-muted hover:border-border-strong hover:text-fg",
         className,
       )}
     >

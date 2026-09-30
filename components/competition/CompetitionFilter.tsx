@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 export interface FilterOption {
   value: string;
   label: string;
-  color?: string;
 }
 
 /** Filtres rapides par compétition (liens, fonctionnent sans JavaScript). */
@@ -21,7 +20,7 @@ export function CompetitionFilter({
   const featured = competitions.filter((c) => c.category !== "other");
   const options: FilterOption[] = [
     { value: "", label: "Toutes" },
-    ...featured.map((c) => ({ value: c.slug, label: c.name, color: c.accentColor })),
+    ...featured.map((c) => ({ value: c.slug, label: c.name })),
     { value: "autres", label: "Autres" },
   ];
   return (
@@ -35,15 +34,10 @@ export function CompetitionFilter({
                 href={buildHref(option.value || undefined)}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "inline-flex h-8 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold whitespace-nowrap transition-colors",
-                  isActive
-                    ? "border-accent bg-accent text-accent-ink"
-                    : "border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg",
+                  "inline-flex h-8 items-center rounded-[4px] border px-3 text-xs font-semibold whitespace-nowrap transition-colors",
+                  isActive ? "border-accent text-accent" : "border-border text-fg-muted hover:border-border-strong hover:text-fg",
                 )}
               >
-                {option.color && !isActive && (
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: option.color }} aria-hidden="true" />
-                )}
                 {option.label}
               </Link>
             </li>

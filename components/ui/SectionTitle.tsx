@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+/** Titre de section : condensé, capitales, compteur discret, action optionnelle à droite. */
 export function SectionTitle({
   children,
   count,
@@ -15,13 +16,11 @@ export function SectionTitle({
   as?: "h1" | "h2" | "h3";
 }) {
   return (
-    <div className={cn("mb-3 flex items-end justify-between gap-3", className)}>
-      <Tag className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
+    <div className={cn("mb-3 flex items-end justify-between gap-3 border-b border-border pb-2", className)}>
+      <Tag className="flex items-baseline gap-2 font-display text-2xl font-bold uppercase leading-none">
         {children}
         {typeof count === "number" && (
-          <span className="rounded-full bg-surface-3 px-2 py-0.5 text-xs font-semibold text-fg-muted tabular">
-            {count}
-          </span>
+          <span className="font-sans text-xs font-semibold normal-case text-fg-muted tabular">{count}</span>
         )}
       </Tag>
       {action}
