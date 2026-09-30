@@ -20,6 +20,11 @@ const COLUMNS = [
   { key: "pir", label: "EVAL", title: "Évaluation (PIR)" },
 ] as const;
 
+/* Cellules : lignes de 40 px sur mobile (cible tactile), plus denses à partir de 640 px. */
+const CELL = "px-2 py-2.5 text-right tabular sm:py-2";
+const SUB = "block text-[11px] font-normal text-fg-subtle";
+const LABEL = "text-[11px] uppercase tracking-[0.08em] text-fg-muted";
+
 function shooting(line: ShootingLine) {
   return `${line.made}-${line.attempted}`;
 }
@@ -30,9 +35,9 @@ function shootingPct(line: ShootingLine) {
 
 function ShootingCell({ line }: { line: ShootingLine }) {
   return (
-    <td className="px-2 py-2 text-right tabular">
+    <td className={CELL}>
       <span className="text-fg">{shooting(line)}</span>
-      <span className="block text-[10px] text-fg-subtle">{shootingPct(line)}</span>
+      <span className={SUB}>{shootingPct(line)}</span>
     </td>
   );
 }
@@ -43,18 +48,19 @@ function signed(n: number) {
   return "0";
 }
 
+/* Première colonne figée : fond opaque obligatoire, d'où le survol en bg-surface-2 (≈ blanc 2,5 % sur le fond de carte). */
 const stickyCell = "sticky left-0 z-[1] bg-surface";
 
 function PlayerRow({ line, player, live, topScorer }: { line: PlayerBoxScoreLine; player?: Player; live: boolean; topScorer: boolean }) {
   const name = player ? shortPlayerName(player) : line.playerId;
   const didNotPlay = line.minutes <= 0;
   return (
-    <tr className="group hover:bg-surface-2">
-      <th scope="row" className={cn(stickyCell, "max-w-[11rem] py-2 pl-3 pr-2 text-left font-semibold group-hover:bg-surface-2 sm:max-w-none")}>
+    <tr className="group transition-colors hover:bg-surface-2">
+      <th scope="row" className={cn(stickyCell, "max-w-[11rem] py-2.5 pl-3 pr-2 text-left font-semibold group-hover:bg-surface-2 sm:max-w-none sm:py-2")}>
         <span className="flex min-w-0 items-center gap-2">
-          <span className="w-5 shrink-0 text-right text-[11px] text-fg-subtle tabular">{player?.jerseyNumber ?? ""}</span>
+          <span className="w-5 shrink-0 text-right text-[11px] font-normal text-fg-subtle tabular">{player?.jerseyNumber ?? ""}</span>
           {player ? (
-            <Link href={`/joueurs/${player.id}`} className="truncate hover:text-accent">
+            <Link href={`/joueurs/${player.id}`} className="truncate transition-colors hover:text-accent">
               {name}
             </Link>
           ) : (
@@ -62,38 +68,37 @@ function PlayerRow({ line, player, live, topScorer }: { line: PlayerBoxScoreLine
           )}
           {player && <span className="hidden shrink-0 text-[11px] font-normal text-fg-subtle sm:inline">{player.position}</span>}
           {live && line.onCourt && (
-            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" title="Sur le terrain">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-live" title="Sur le terrain">
               <span className="sr-only">Sur le terrain</span>
             </span>
           )}
         </span>
       </th>
       {didNotPlay ? (
-        <td colSpan={COLUMNS.length} className="px-2 py-2 text-left text-xs italic text-fg-subtle">
+        <td colSpan={COLUMNS.length} className="px-2 py-2.5 text-left text-xs text-fg-subtle sm:py-2">
           N’est pas entré en jeu
         </td>
       ) : (
         <>
-          <td className="px-2 py-2 text-right text-fg-muted tabular">{formatMinutes(line.minutes)}</td>
-          <td className={cn("px-2 py-2 text-right font-extrabold tabular", topScorer ? "text-accent" : "text-fg")}>{line.points}</td>
-          <td className="px-2 py-2 text-right tabular">
+          <td className={cn(CELL, "text-fg-muted")}>{formatMinutes(line.minutes)}</td>
+          <td className={cn(CELL, "font-bold", topScorer ? "text-accent" : "text-fg")}>{line.points}</td>
+          <td className={CELL}>
             <span className="text-fg">{line.rebounds}</span>
-            <span className="block text-[10px] text-fg-subtle">
+            <span className={SUB}>
               {line.offensiveRebounds}-{line.defensiveRebounds}
             </span>
           </td>
-          <td className="px-2 py-2 text-right tabular">{line.assists}</td>
-          <td className="px-2 py-2 text-right tabular">{line.steals}</td>
-          <td className="px-2 py-2 text-right tabular">{line.blocks}</td>
-          <td className="px-2 py-2 text-right tabular">{line.turnovers}</td>
-          <td className={cn("px-2 py-2 text-right tabular", line.fouls >= 5 ? "font-bold text-loss" : "")}>{line.fouls}</td>
+          <td className={CELL}>{line.assists}</td>
+          <td className={CELL}>{line.steals}</td>
+          <td className={CELL}>{line.blocks}</td>
+          <td className={CELL}>{line.turnovers}</td>
+          <td className={cn(CELL, line.fouls >= 5 && "font-bold text-fg")}>{line.fouls}</td>
           <ShootingCell line={line.fieldGoals} />
           <ShootingCell line={line.threePointers} />
           <ShootingCell line={line.freeThrows} />
-          <td className={cn("px-2 py-2 text-right tabular", line.plusMinus > 0 ? "text-win" : line.plusMinus < 0 ? "text-loss" : "text-fg-muted")}>
-            {signed(line.plusMinus)}
-          </td>
-          <td className="px-2 py-2 text-right font-semibold tabular">{line.efficiency}</td>
+          {/* +/− : pas de vert / rouge (réservés aux V/D), le signe suffit */}
+          <td className={cn(CELL, line.plusMinus > 0 ? "text-fg" : line.plusMinus < 0 ? "text-fg-muted" : "text-fg-subtle")}>{signed(line.plusMinus)}</td>
+          <td className={cn(CELL, "font-semibold")}>{line.efficiency}</td>
         </>
       )}
     </tr>
@@ -103,14 +108,14 @@ function PlayerRow({ line, player, live, topScorer }: { line: PlayerBoxScoreLine
 function SectionRow({ label }: { label: string }) {
   return (
     <tr className="bg-surface-2">
-      <th scope="rowgroup" colSpan={COLUMNS.length + 1} className="px-3 py-1.5 text-left text-[11px] font-bold uppercase tracking-wide text-fg-subtle">
+      <th scope="rowgroup" colSpan={COLUMNS.length + 1} className={cn(LABEL, "px-3 py-1.5 text-left font-semibold")}>
         {label}
       </th>
     </tr>
   );
 }
 
-/** Box score d'une équipe : titulaires, remplaçants, totaux. Défile horizontalement sur mobile. */
+/** Box score d'une équipe : titulaires, remplaçants, totaux. Défile horizontalement sur mobile, colonne joueur figée. */
 export function BoxScoreTable({
   team,
   lines,
@@ -135,21 +140,25 @@ export function BoxScoreTable({
     ));
 
   return (
-    <section aria-labelledby={headingId} className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
-      <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-        <h3 id={headingId} className="flex min-w-0 items-center gap-2 font-bold">
+    <section aria-labelledby={headingId} className="overflow-hidden rounded-md border border-border bg-surface">
+      <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-2.5">
+        <h3 id={headingId} className="flex min-w-0 items-center gap-2 font-display text-lg font-bold uppercase leading-none">
           <TeamBadge team={team} size="sm" />
-          <Link href={`/equipes/${team.id}`} className="truncate hover:text-accent">
+          <Link href={`/equipes/${team.id}`} className="truncate py-1 transition-colors hover:text-accent">
             {team.name}
           </Link>
         </h3>
-        {totals && <span className="text-sm font-extrabold tabular">{totals.points} pts</span>}
+        {totals && (
+          <span className="shrink-0 font-display text-lg font-bold leading-none tabular">
+            {totals.points} <span className="text-sm text-fg-muted">pts</span>
+          </span>
+        )}
       </header>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[46rem] text-sm">
           <caption className="sr-only">Statistiques individuelles de {team.name}</caption>
           <thead>
-            <tr className="border-b border-border text-[11px] uppercase tracking-wide text-fg-subtle">
+            <tr className={cn(LABEL, "border-b border-border")}>
               <th scope="col" className={cn(stickyCell, "py-2 pl-3 pr-2 text-left font-semibold")}>
                 Joueur
               </th>
@@ -162,7 +171,7 @@ export function BoxScoreTable({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/60">
+          <tbody className="divide-y divide-border">
             {starters.length > 0 && <SectionRow label="Cinq de départ" />}
             {renderRows(starters)}
             {bench.length > 0 && <SectionRow label="Remplaçants" />}
@@ -171,27 +180,27 @@ export function BoxScoreTable({
           {totals && (
             <tfoot className="border-t border-border-strong font-bold">
               <tr>
-                <th scope="row" className={cn(stickyCell, "py-2 pl-3 pr-2 text-left")}>
+                <th scope="row" className={cn(stickyCell, "py-2.5 pl-3 pr-2 text-left sm:py-2")}>
                   Total
                 </th>
-                <td className="px-2 py-2 text-right text-fg-muted">—</td>
-                <td className="px-2 py-2 text-right tabular">{totals.points}</td>
-                <td className="px-2 py-2 text-right tabular">
+                <td className={cn(CELL, "text-fg-muted")}>—</td>
+                <td className={CELL}>{totals.points}</td>
+                <td className={CELL}>
                   {totals.rebounds}
-                  <span className="block text-[10px] font-normal text-fg-subtle">
+                  <span className={SUB}>
                     {totals.offensiveRebounds}-{totals.defensiveRebounds}
                   </span>
                 </td>
-                <td className="px-2 py-2 text-right tabular">{totals.assists}</td>
-                <td className="px-2 py-2 text-right tabular">{totals.steals}</td>
-                <td className="px-2 py-2 text-right tabular">{totals.blocks}</td>
-                <td className="px-2 py-2 text-right tabular">{totals.turnovers}</td>
-                <td className="px-2 py-2 text-right tabular">{totals.fouls}</td>
+                <td className={CELL}>{totals.assists}</td>
+                <td className={CELL}>{totals.steals}</td>
+                <td className={CELL}>{totals.blocks}</td>
+                <td className={CELL}>{totals.turnovers}</td>
+                <td className={CELL}>{totals.fouls}</td>
                 <ShootingCell line={totals.fieldGoals} />
                 <ShootingCell line={totals.threePointers} />
                 <ShootingCell line={totals.freeThrows} />
-                <td className="px-2 py-2 text-right text-fg-muted">—</td>
-                <td className="px-2 py-2 text-right text-fg-muted">—</td>
+                <td className={cn(CELL, "text-fg-muted")}>—</td>
+                <td className={cn(CELL, "text-fg-muted")}>—</td>
               </tr>
             </tfoot>
           )}

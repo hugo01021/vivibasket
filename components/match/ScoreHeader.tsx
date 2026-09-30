@@ -5,24 +5,28 @@ import { cn } from "@/lib/utils";
 import { TeamBadge } from "@/components/team/TeamBadge";
 import { MatchStatus } from "./MatchStatus";
 
+/** Sur-titres et libellés de colonnes (charte). */
+const LABEL = "text-[11px] uppercase tracking-[0.08em] text-fg-muted";
+
 function TeamSide({ team, side, emphasis }: { team: Team; side: "home" | "away"; emphasis: "win" | "loss" | "none" }) {
+  const away = side === "away";
   return (
-    <div className="flex min-w-0 flex-col items-center gap-2 text-center">
-      <Link href={`/equipes/${team.id}`} className="rounded-full transition-transform hover:scale-105" aria-label={`Fiche de ${team.name}`}>
-        <TeamBadge team={team} size="xl" />
-      </Link>
-      <div className="min-w-0 max-w-full">
+    <div className={cn("flex min-w-0 items-center gap-3", away && "flex-row-reverse text-right")}>
+      <span className="hidden shrink-0 sm:block">
+        <TeamBadge team={team} size="lg" />
+      </span>
+      <div className="min-w-0">
+        <p className={LABEL}>{away ? "Extérieur" : "Domicile"}</p>
         <Link
           href={`/equipes/${team.id}`}
           className={cn(
-            "block truncate text-base font-extrabold tracking-tight hover:text-accent sm:text-lg",
+            "mt-0.5 block break-words py-1 font-display text-lg font-bold uppercase leading-none transition-colors hover:text-accent sm:text-2xl",
             emphasis === "loss" ? "text-fg-muted" : "text-fg",
           )}
         >
           <span className="sm:hidden">{team.shortName}</span>
           <span className="hidden sm:inline">{team.name}</span>
         </Link>
-        <p className="text-xs text-fg-subtle">{side === "home" ? "Domicile" : "Extérieur"}</p>
       </div>
     </div>
   );
@@ -35,13 +39,15 @@ function CenterScore({ match }: { match: Match }) {
   if (!live && !finished) {
     const unavailable = match.status === "postponed" || match.status === "cancelled";
     return (
-      <div className="flex flex-col items-center gap-1 text-center">
+      <div className="flex flex-col items-center gap-1.5 text-center">
         {unavailable ? (
-          <span className="text-lg font-extrabold text-fg-muted">{match.status === "postponed" ? "Reporté" : "Annulé"}</span>
+          <span className="font-display text-2xl font-bold uppercase leading-none text-fg-muted sm:text-3xl">
+            {match.status === "postponed" ? "Reporté" : "Annulé"}
+          </span>
         ) : (
           <>
-            <span className="text-3xl font-extrabold tabular sm:text-4xl">{formatTime(match.date)}</span>
-            <span className="text-xs font-semibold text-fg-muted">{formatMatchDayLabel(match.date)}</span>
+            <span className="font-display text-4xl font-bold leading-none tabular sm:text-5xl lg:text-6xl">{formatTime(match.date)}</span>
+            <span className={LABEL}>{formatMatchDayLabel(match.date)}</span>
           </>
         )}
       </div>
@@ -50,15 +56,15 @@ function CenterScore({ match }: { match: Match }) {
 
   const homeWon = finished && match.homeScore > match.awayScore;
   const awayWon = finished && match.awayScore > match.homeScore;
-  const scoreClass = (lost: boolean) =>
-    cn("text-4xl font-extrabold tabular sm:text-6xl", live ? "text-accent" : lost ? "text-fg-muted" : "text-fg");
+  // Très grand sur desktop, plafonné à text-4xl sur mobile pour laisser la place aux noms d'équipes
+  const scoreClass = (lost: boolean) => cn("text-4xl sm:text-6xl lg:text-7xl", live ? "text-accent" : lost ? "text-fg-muted" : "text-fg");
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <p className="flex items-center gap-2 sm:gap-4">
+    <div className="flex flex-col items-center gap-1.5">
+      <p className="flex items-baseline gap-1.5 font-display font-bold leading-none tabular sm:gap-3">
         <span className="sr-only">Score : </span>
         <span className={scoreClass(awayWon)}>{match.homeScore}</span>
-        <span className="text-2xl font-bold text-fg-subtle" aria-hidden="true">
+        <span className="text-2xl text-fg-subtle sm:text-4xl lg:text-5xl" aria-hidden="true">
           –
         </span>
         <span className={scoreClass(homeWon)}>{match.awayScore}</span>
@@ -71,35 +77,32 @@ function CenterScore({ match }: { match: Match }) {
 function PeriodTable({ match, homeTeam, awayTeam }: { match: Match; homeTeam: Team; awayTeam: Team }) {
   const live = match.status === "live" || match.status === "halftime";
   const currentPeriod = match.status === "live" ? match.clock?.period : undefined;
-  const cell = "px-2 py-1.5 text-center tabular";
+  const cell = "px-2 py-1 text-center tabular";
 
   const row = (team: Team, side: "home" | "away") => (
     <tr>
-      <th scope="row" className="py-1.5 pr-3 text-left font-semibold">
-        <span className="flex items-center gap-2">
-          <TeamBadge team={team} size="xs" />
-          <span className="truncate">{team.abbreviation}</span>
-        </span>
+      <th scope="row" className="py-1 pr-3 text-left font-semibold">
+        {team.abbreviation}
       </th>
       {match.periods.map((p) => {
         const own = side === "home" ? p.home : p.away;
         const opp = side === "home" ? p.away : p.home;
         return (
-          <td key={p.period} className={cn(cell, own > opp ? "font-bold text-fg" : "text-fg-muted", p.period === currentPeriod && "bg-accent-soft/60")}>
+          <td key={p.period} className={cn(cell, own > opp ? "font-semibold text-fg" : "text-fg-muted", p.period === currentPeriod && "bg-accent-soft")}>
             {own}
           </td>
         );
       })}
-      <td className={cn(cell, "font-extrabold", live ? "text-accent" : "text-fg")}>{side === "home" ? match.homeScore : match.awayScore}</td>
+      <td className={cn(cell, "font-bold", live ? "text-accent" : "text-fg")}>{side === "home" ? match.homeScore : match.awayScore}</td>
     </tr>
   );
 
   return (
     <div className="overflow-x-auto scrollbar-none">
-      <table className="mx-auto w-full max-w-xl text-sm">
+      <table className="mx-auto w-full max-w-md text-sm">
         <caption className="sr-only">Score par période</caption>
         <thead>
-          <tr className="text-[11px] uppercase tracking-wide text-fg-subtle">
+          <tr className={LABEL}>
             <th scope="col" className="py-1 pr-3 text-left font-semibold">
               Équipe
             </th>
@@ -113,7 +116,7 @@ function PeriodTable({ match, homeTeam, awayTeam }: { match: Match; homeTeam: Te
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border/60">
+        <tbody className="divide-y divide-border">
           {row(homeTeam, "home")}
           {row(awayTeam, "away")}
         </tbody>
@@ -122,7 +125,7 @@ function PeriodTable({ match, homeTeam, awayTeam }: { match: Match; homeTeam: Te
   );
 }
 
-/** En-tête de la page match : compétition, équipes, score, statut, infos pratiques, score par période. */
+/** En-tête de la page match : compétition, équipes, score, statut, score par période, infos pratiques. */
 export function ScoreHeader({ details }: { details: Pick<MatchDetails, "match" | "competition" | "homeTeam" | "awayTeam"> }) {
   const { match, competition, homeTeam, awayTeam } = details;
   const live = match.status === "live" || match.status === "halftime";
@@ -139,42 +142,31 @@ export function ScoreHeader({ details }: { details: Pick<MatchDetails, "match" |
   if (match.broadcast) meta.push({ label: "Diffusion", value: match.broadcast });
 
   return (
-    <section
-      aria-label="Score du match"
-      className={cn("overflow-hidden rounded-card border bg-surface shadow-card", live ? "border-accent/40" : "border-border")}
-    >
-      <div
-        className="h-1"
-        aria-hidden="true"
-        style={{ background: `linear-gradient(90deg, ${homeTeam.colors.primary} 0 50%, ${awayTeam.colors.primary} 50% 100%)` }}
-      />
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2.5 text-xs">
-        <Link href={`/competitions/${competition.slug}`} className="flex min-w-0 items-center gap-2 font-semibold text-fg-muted hover:text-accent">
-          <span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ backgroundColor: competition.accentColor }} aria-hidden="true" />
-          <span className="truncate">
-            <span className="text-fg">{competition.name}</span>
-            {match.stage && match.stage !== match.round ? ` · ${match.stage}` : ""} · {match.round}
-          </span>
+    <section aria-label="Score du match" className={cn("rounded-md border bg-surface", live ? "border-accent/50" : "border-border")}>
+      <div className={cn("border-b border-border px-4", LABEL)}>
+        <Link href={`/competitions/${competition.slug}`} className="block truncate py-3 transition-colors hover:text-fg sm:py-2">
+          <span className="text-fg">{competition.name}</span>
+          {match.stage && match.stage !== match.round ? ` · ${match.stage}` : ""} · {match.round}
         </Link>
       </div>
 
-      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-3 py-6 sm:gap-6 sm:px-6">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 py-4 sm:gap-6 sm:px-5 sm:py-5">
         <TeamSide team={homeTeam} side="home" emphasis={homeEmphasis} />
         <CenterScore match={match} />
         <TeamSide team={awayTeam} side="away" emphasis={awayEmphasis} />
       </div>
 
       {match.periods.length > 0 && (
-        <div className="border-t border-border px-4 py-3">
+        <div className="border-t border-border px-4 py-2">
           <PeriodTable match={match} homeTeam={homeTeam} awayTeam={awayTeam} />
         </div>
       )}
 
-      <dl className="flex flex-wrap gap-x-5 gap-y-1.5 border-t border-border bg-surface-2/50 px-4 py-2.5 text-xs">
+      <dl className="flex flex-wrap gap-x-4 gap-y-1 border-t border-border px-4 py-2 text-xs">
         {meta.map((item) => (
           <div key={item.label} className="flex gap-1.5">
             <dt className="text-fg-subtle">{item.label}</dt>
-            <dd className="font-semibold text-fg-muted first-letter:uppercase">{item.value}</dd>
+            <dd className="text-fg-muted first-letter:uppercase">{item.value}</dd>
           </div>
         ))}
       </dl>

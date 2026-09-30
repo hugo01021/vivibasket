@@ -13,12 +13,12 @@ import {
 } from "recharts";
 import type { ScorePoint, ScoreProgression } from "./score-progression";
 
-/* Valeurs des tokens de globals.css (les attributs SVG de Recharts attendent des couleurs résolues). */
-const HOME_COLOR = "#ff7a1a"; // accent
-const AWAY_COLOR = "#5b8cff"; // info
-const GRID_COLOR = "#26262e"; // border
-const AXIS_COLOR = "#6b6b78"; // fg-subtle
-const SURFACE = "#141418";
+/* Tokens de globals.css uniquement : domicile orange, extérieur bleu, grille et axes aux couleurs des bordures / texte secondaire. */
+const HOME_COLOR = "var(--color-accent)";
+const AWAY_COLOR = "var(--color-info)";
+const GRID_COLOR = "var(--color-border)";
+const AXIS_COLOR = "var(--color-fg-muted)";
+const SURFACE = "var(--color-surface)";
 
 interface TeamLabel {
   name: string;
@@ -36,15 +36,15 @@ function ProgressionTooltip({
   const diff = point.home - point.away;
   const leader = diff > 0 ? home.abbreviation : diff < 0 ? away.abbreviation : null;
   return (
-    <div className="rounded-lg border border-border-strong bg-surface-2 px-3 py-2 text-xs shadow-card">
+    <div className="rounded-[4px] border border-border bg-surface-2 px-3 py-2 text-xs">
       <p className="mb-1 font-semibold text-fg-muted tabular">{point.label}</p>
       <p className="flex items-center gap-2 tabular">
-        <span className="h-0.5 w-3 rounded-full" style={{ backgroundColor: HOME_COLOR }} aria-hidden="true" />
+        <span className="h-0.5 w-3" style={{ backgroundColor: HOME_COLOR }} aria-hidden="true" />
         <span className="text-fg-muted">{home.abbreviation}</span>
         <span className="ml-auto font-bold text-fg">{point.home}</span>
       </p>
       <p className="flex items-center gap-2 tabular">
-        <span className="h-0.5 w-3 rounded-full" style={{ backgroundColor: AWAY_COLOR }} aria-hidden="true" />
+        <span className="h-0.5 w-3" style={{ backgroundColor: AWAY_COLOR }} aria-hidden="true" />
         <span className="text-fg-muted">{away.abbreviation}</span>
         <span className="ml-auto font-bold text-fg">{point.away}</span>
       </p>
@@ -79,14 +79,14 @@ export function ScoreProgressionChart({
     <figure className="space-y-3">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
         <span className="flex items-center gap-1.5 font-semibold text-fg">
-          <span className="h-0.5 w-4 rounded-full" style={{ backgroundColor: HOME_COLOR }} aria-hidden="true" />
+          <span className="h-0.5 w-4" style={{ backgroundColor: HOME_COLOR }} aria-hidden="true" />
           {home.name}
         </span>
         <span className="flex items-center gap-1.5 font-semibold text-fg">
-          <span className="h-0.5 w-4 rounded-full" style={{ backgroundColor: AWAY_COLOR }} aria-hidden="true" />
+          <span className="h-0.5 w-4" style={{ backgroundColor: AWAY_COLOR }} aria-hidden="true" />
           {away.name}
         </span>
-        <span className="ml-auto text-fg-subtle tabular">
+        <span className="ml-auto text-fg-muted tabular">
           Plus gros écart : {home.abbreviation} +{maxLead.home} · {away.abbreviation} +{maxLead.away}
         </span>
       </div>
@@ -141,7 +141,7 @@ export function ScoreProgressionChart({
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <figcaption className="text-xs text-fg-subtle">Score cumulé reconstitué à partir du play-by-play, minute par minute.</figcaption>
+      <figcaption className="text-xs text-fg-muted">Score cumulé reconstitué à partir du play-by-play, minute par minute.</figcaption>
     </figure>
   );
 }

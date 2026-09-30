@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { AdvancedTeamStats, ID, MatchDetails, Player, ShootingLine, TeamBoxScore, TeamSeasonStats } from "@/types";
 import { formatNumber, formatPct, formatSigned } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { AiInsights, WinProbabilityBar, type KeyPlayerCard } from "@/components/analysis/AiInsights";
 import { buildScoreProgression } from "@/components/analysis/score-progression";
 import { ScoreProgressionChart } from "@/components/analysis/ScoreProgressionChart";
@@ -23,6 +24,9 @@ export interface MatchPageData {
 }
 
 const isLive = (d: MatchDetails) => d.match.status === "live" || d.match.status === "halftime";
+
+/** Sur-titres des cartes (charte). */
+const LABEL = "text-[11px] uppercase tracking-[0.08em] text-fg-muted";
 
 function pct(line: ShootingLine): number {
   return line.attempted > 0 ? line.made / line.attempted : 0;
@@ -124,17 +128,23 @@ function SeasonComparison({ data }: { data: MatchPageData }) {
 function AnalysisTeaser({ data, withProbability }: { data: MatchPageData; withProbability: boolean }) {
   const { analysis, homeTeam, awayTeam, match } = data.details;
   return (
-    <section className="rounded-card border border-accent/30 bg-gradient-to-br from-accent-soft/70 to-surface p-4 shadow-card">
+    <section aria-labelledby="titre-analyse-resume" className="rounded-md border border-border bg-surface p-4">
       <header className="mb-2 flex items-center justify-between gap-3">
-        <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-accent-ink">Analyse IA</span>
-        <Link href={matchTabHref(match.id, "analyse")} scroll={false} className="text-xs font-semibold text-accent hover:text-accent-hover">
+        <h3 id="titre-analyse-resume" className={LABEL}>
+          Analyse
+        </h3>
+        <Link
+          href={matchTabHref(match.id, "analyse")}
+          scroll={false}
+          className="-my-2 inline-flex min-h-10 items-center text-xs font-semibold text-fg-muted transition-colors hover:text-fg sm:min-h-0"
+        >
           Analyse complète ›
         </Link>
       </header>
       <p className="text-sm leading-relaxed text-fg">{analysis.summary}</p>
       {withProbability && (
-        <div className="mt-4 border-t border-border/80 pt-4">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-subtle">Probabilité de victoire</p>
+        <div className="mt-4 border-t border-border pt-3">
+          <p className={cn(LABEL, "mb-2")}>Probabilité de victoire</p>
           <WinProbabilityBar probability={analysis.winProbability} homeTeam={homeTeam} awayTeam={awayTeam} />
         </div>
       )}
@@ -150,20 +160,22 @@ function KeyPlayersPreview({ data }: { data: MatchPageData }) {
   ].filter((c): c is { card: KeyPlayerCard; team: typeof homeTeam } => Boolean(c.card));
   if (cards.length === 0) return null;
   return (
-    <section className="rounded-card border border-border bg-surface p-4 shadow-card">
-      <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-fg-subtle">Joueurs à suivre</h3>
-      <ul className="space-y-3">
+    <section aria-labelledby="titre-joueurs-a-suivre" className="rounded-md border border-border bg-surface">
+      <h3 id="titre-joueurs-a-suivre" className={cn(LABEL, "border-b border-border px-4 py-2.5")}>
+        Joueurs à suivre
+      </h3>
+      <ul className="divide-y divide-border">
         {cards.map(({ card, team }) => (
-          <li key={card.player.id} className="flex items-center justify-between gap-3">
+          <li key={card.player.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
             <div className="min-w-0">
-              <Link href={`/joueurs/${card.player.id}`} className="block truncate font-bold hover:text-accent">
+              <Link href={`/joueurs/${card.player.id}`} className="block truncate text-sm font-semibold transition-colors hover:text-accent">
                 {card.player.firstName} {card.player.lastName}
               </Link>
               <p className="text-xs text-fg-subtle">
                 {team.shortName} · {card.context}
               </p>
             </div>
-            <span className="shrink-0 text-sm font-semibold tabular">{card.statLine}</span>
+            <span className="shrink-0 text-sm text-fg tabular">{card.statLine}</span>
           </li>
         ))}
       </ul>
@@ -302,7 +314,7 @@ export function PlayersTab({ data }: { data: MatchPageData }) {
       <ProvisionalNote data={data} />
       <BoxScoreTable team={homeTeam} lines={boxScore.home} totals={teamStats?.home} players={data.players} live={live} />
       <BoxScoreTable team={awayTeam} lines={boxScore.away} totals={teamStats?.away} players={data.players} live={live} />
-      <p className="text-xs leading-relaxed text-fg-subtle">
+      <p className="text-xs leading-relaxed text-fg-muted">
         MIN : minutes · PTS : points · REB : rebonds (offensifs-défensifs) · PD : passes décisives · INT : interceptions · CT : contres · BP : balles
         perdues · F : fautes · TIRS / 3 PTS / LF : réussis-tentés · +/− : écart au score avec le joueur sur le terrain · EVAL : évaluation (PIR).
         {live && " Le point orange signale les joueurs sur le terrain."}
@@ -324,8 +336,10 @@ export function AnalysisTab({ data }: { data: MatchPageData }) {
         keyPlayers={keyPlayers}
         form={{ home: season.home?.form, away: season.away?.form }}
       />
-      <section className="rounded-card border border-border bg-surface p-4 shadow-card">
-        <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-fg-subtle">Évolution du score</h3>
+      <section aria-labelledby="titre-evolution" className="rounded-md border border-border bg-surface p-4">
+        <h3 id="titre-evolution" className={cn(LABEL, "mb-3")}>
+          Évolution du score
+        </h3>
         {playByPlay.length === 0 ? (
           <EmptyState title="Évolution du score disponible au coup d’envoi">La courbe se construit action après action pendant le match.</EmptyState>
         ) : (

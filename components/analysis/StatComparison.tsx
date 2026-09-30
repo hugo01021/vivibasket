@@ -44,27 +44,27 @@ export function StatComparison({
   const winner = winnerOf(home, away, lowerIsBetter, neutral);
   const scale = max ?? Math.max(Math.abs(home), Math.abs(away));
   const width = (value: number) => (scale <= 0 ? 0 : Math.min(100, (Math.abs(value) / scale) * 100));
-  const barClass = (side: "home" | "away") =>
-    winner === side ? "bg-accent" : winner === "none" ? "bg-fg-subtle" : "bg-border-strong";
+  // Barre de la meilleure valeur aux couleurs de son équipe (domicile orange, extérieur bleu), l'autre en gris
+  const barClass = (side: "home" | "away") => (winner === side ? (side === "home" ? "bg-accent" : "bg-info") : "bg-border-strong");
   const valueClass = (side: "home" | "away") =>
-    winner === side ? "font-extrabold text-fg" : winner === "none" || winner === "even" ? "font-semibold text-fg" : "font-semibold text-fg-muted";
+    winner === side ? "font-semibold text-fg" : winner === "none" || winner === "even" ? "text-fg" : "text-fg-muted";
 
   return (
     <div className="py-2">
-      <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
-        <span className={cn("tabular", valueClass("home"))}>{homeDisplay ?? home}</span>
-        <span className="min-w-0 text-center text-xs font-semibold text-fg-muted">
+      <div className="mb-1.5 grid grid-cols-[1fr_auto_1fr] items-baseline gap-3 text-sm tabular">
+        <span className={valueClass("home")}>{homeDisplay ?? home}</span>
+        <span className="min-w-0 text-center text-[11px] uppercase tracking-[0.06em] text-fg-muted">
           {label}
-          {hint && <span className="ml-1 font-normal text-fg-subtle">({hint})</span>}
+          {hint && <span className="ml-1 normal-case tracking-normal text-fg-subtle">({hint})</span>}
         </span>
-        <span className={cn("tabular", valueClass("away"))}>{awayDisplay ?? away}</span>
+        <span className={cn("text-right", valueClass("away"))}>{awayDisplay ?? away}</span>
       </div>
-      <div className="grid grid-cols-2 gap-[2px]" aria-hidden="true">
-        <div className="flex h-1.5 justify-end overflow-hidden rounded-l-full bg-surface-3">
-          <div className={cn("h-full rounded-l-full", barClass("home"))} style={{ width: `${width(home)}%` }} />
+      <div className="grid grid-cols-2 gap-px" aria-hidden="true">
+        <div className="flex h-1.5 justify-end overflow-hidden rounded-l-[2px] bg-surface-3">
+          <div className={cn("h-full", barClass("home"))} style={{ width: `${width(home)}%` }} />
         </div>
-        <div className="flex h-1.5 overflow-hidden rounded-r-full bg-surface-3">
-          <div className={cn("h-full rounded-r-full", barClass("away"))} style={{ width: `${width(away)}%` }} />
+        <div className="flex h-1.5 overflow-hidden rounded-r-[2px] bg-surface-3">
+          <div className={cn("h-full", barClass("away"))} style={{ width: `${width(away)}%` }} />
         </div>
       </div>
     </div>
@@ -88,20 +88,25 @@ export function StatComparisonGroup({
   className?: string;
 }) {
   return (
-    <section className={cn("rounded-card border border-border bg-surface p-4 shadow-card", className)}>
-      <header className="mb-2 flex items-center justify-between gap-3">
-        <span className="flex min-w-0 items-center gap-2 text-sm font-bold">
-          <TeamBadge team={homeTeam} size="sm" />
-          <span className="truncate">{homeTeam.shortName}</span>
+    <section className={cn("rounded-md border border-border bg-surface p-4", className)}>
+      {/* Écussons masqués sur mobile pour laisser toute la place aux noms */}
+      <header className="mb-1 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <span className="flex min-w-0 items-center gap-2">
+          <span className="hidden sm:block">
+            <TeamBadge team={homeTeam} size="sm" />
+          </span>
+          <span className="truncate font-display text-base font-bold uppercase leading-none sm:text-lg">{homeTeam.shortName}</span>
         </span>
-        <h3 className="shrink-0 text-xs font-bold uppercase tracking-wide text-fg-subtle">{title}</h3>
-        <span className="flex min-w-0 items-center justify-end gap-2 text-sm font-bold">
-          <span className="truncate text-right">{awayTeam.shortName}</span>
-          <TeamBadge team={awayTeam} size="sm" />
+        <h3 className="text-center text-[11px] uppercase tracking-[0.08em] text-fg-muted">{title}</h3>
+        <span className="flex min-w-0 items-center justify-end gap-2">
+          <span className="truncate text-right font-display text-base font-bold uppercase leading-none sm:text-lg">{awayTeam.shortName}</span>
+          <span className="hidden sm:block">
+            <TeamBadge team={awayTeam} size="sm" />
+          </span>
         </span>
       </header>
-      <div className="divide-y divide-border/60">{children}</div>
-      {footer && <div className="mt-3 border-t border-border pt-3 text-xs text-fg-subtle">{footer}</div>}
+      <div className="divide-y divide-border">{children}</div>
+      {footer && <div className="mt-3 border-t border-border pt-3 text-xs text-fg-muted">{footer}</div>}
     </section>
   );
 }

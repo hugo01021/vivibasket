@@ -23,7 +23,7 @@ export function matchTabHref(matchId: string, tab: MatchTabKey): string {
   return tab === DEFAULT_MATCH_TAB ? `/match/${matchId}` : `/match/${matchId}?onglet=${tab}`;
 }
 
-/** Onglets de la page match : liens rendus côté serveur (fonctionnent sans JavaScript). */
+/** Onglets de la page match : liens rendus côté serveur (fonctionnent sans JavaScript), soulignement orange sur l'onglet actif. */
 export function MatchTabs({
   matchId,
   active,
@@ -31,31 +31,30 @@ export function MatchTabs({
 }: {
   matchId: string;
   active: MatchTabKey;
-  /** Pastille optionnelle par onglet (nombre d'actions…). */
+  /** Compteur optionnel par onglet (nombre d'actions…). */
   counts?: Partial<Record<MatchTabKey, number>>;
 }) {
   return (
-    <nav aria-label="Sections du match" className="-mx-4 border-b border-border px-4 sm:mx-0 sm:px-0">
-      <ul className="flex gap-1 overflow-x-auto scrollbar-none">
+    <nav aria-label="Sections du match" className="-mx-4 overflow-x-auto border-b border-border px-4 scrollbar-none sm:mx-0 sm:px-0">
+      <ul className="flex w-max gap-1">
         {MATCH_TABS.map((tab) => {
           const current = tab.key === active;
           const count = counts?.[tab.key];
           return (
-            <li key={tab.key} className="shrink-0">
+            <li key={tab.key}>
               <Link
                 href={matchTabHref(matchId, tab.key)}
                 scroll={false}
                 aria-current={current ? "page" : undefined}
                 className={cn(
-                  "relative flex items-center gap-1.5 px-3 py-3 text-sm font-bold transition-colors",
-                  current ? "text-fg" : "text-fg-muted hover:text-fg",
+                  "-mb-px inline-flex h-11 items-center gap-1.5 border-b-2 px-3 text-sm font-semibold whitespace-nowrap transition-colors",
+                  current ? "border-accent text-fg" : "border-transparent text-fg-muted hover:text-fg",
                 )}
               >
                 {tab.label}
                 {typeof count === "number" && count > 0 && (
-                  <span className="rounded-full bg-surface-3 px-1.5 py-0.5 text-[10px] font-semibold text-fg-muted tabular">{count}</span>
+                  <span className={cn("text-[11px] font-semibold tabular", current ? "text-accent" : "text-fg-subtle")}>{count}</span>
                 )}
-                {current && <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-accent" aria-hidden="true" />}
               </Link>
             </li>
           );

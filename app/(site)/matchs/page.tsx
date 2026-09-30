@@ -4,7 +4,7 @@ import type { Competition, Match } from "@/types";
 import { api } from "@/lib/api";
 import { formatDayLabel, formatLongDate } from "@/lib/format";
 import { addDays, currentMatchDay, isValidDay } from "@/lib/time";
-import { groupBy } from "@/lib/utils";
+import { cn, groupBy } from "@/lib/utils";
 import { CompetitionFilter } from "@/components/competition/CompetitionFilter";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchGroup } from "@/components/match/MatchGroup";
@@ -23,6 +23,8 @@ function matchesFilter(match: Match, competitions: Map<string, Competition>, fil
   if (filter === "autres") return competition.category === "other";
   return competition.slug === filter;
 }
+
+const dayLinkClass = "inline-flex h-10 items-center px-2 text-fg-muted transition-colors hover:text-fg sm:h-8";
 
 function buildHref(day: string, today: string, competition?: string): string {
   const params = new URLSearchParams();
@@ -58,10 +60,10 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   return (
     <div className="space-y-8">
       <div className="space-y-3">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">Matchs</h1>
-            <p className="text-sm text-fg-muted">
+            <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">Matchs</h1>
+            <p className="mt-2 text-sm text-fg-muted">
               {live.length > 0 ? (
                 <>
                   <span className="font-semibold text-live">{live.length} match{live.length > 1 ? "s" : ""} en direct</span> ·{" "}
@@ -70,16 +72,17 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
               {formatLongDate(`${day}T12:00:00Z`)}
             </p>
           </div>
-          <nav aria-label="Changer de journée" className="flex items-center gap-1 text-sm">
-            <Link href={buildHref(addDays(day, -1), today, filter)} className="rounded-full border border-border px-3 py-1.5 font-semibold text-fg-muted hover:text-fg" aria-label="Journée précédente">
+          {/* Liens texte (gris → blanc au survol), pas de pilules ; 40 px de haut sur mobile */}
+          <nav aria-label="Changer de journée" className="-mx-2 flex items-center gap-1 text-sm font-semibold">
+            <Link href={buildHref(addDays(day, -1), today, filter)} className={dayLinkClass} aria-label="Journée précédente">
               ‹ {formatDayLabel(addDays(day, -1))}
             </Link>
             {!isToday && (
-              <Link href={buildHref(today, today, filter)} className="rounded-full bg-accent-soft px-3 py-1.5 font-semibold text-accent">
+              <Link href={buildHref(today, today, filter)} className={cn(dayLinkClass, "text-accent hover:text-accent-hover")}>
                 Aujourd’hui
               </Link>
             )}
-            <Link href={buildHref(addDays(day, 1), today, filter)} className="rounded-full border border-border px-3 py-1.5 font-semibold text-fg-muted hover:text-fg" aria-label="Journée suivante">
+            <Link href={buildHref(addDays(day, 1), today, filter)} className={dayLinkClass} aria-label="Journée suivante">
               {formatDayLabel(addDays(day, 1))} ›
             </Link>
           </nav>
