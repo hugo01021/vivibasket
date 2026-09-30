@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
 
 const SIZES: Record<Size, string> = {
-  xs: "h-5 w-5 text-[8px]",
-  sm: "h-6 w-6 text-[9px]",
+  xs: "h-5 w-5 text-[9px]",
+  sm: "h-6 w-6 text-[10px]",
   md: "h-8 w-8 text-[11px]",
   lg: "h-11 w-11 text-sm",
   xl: "h-16 w-16 text-lg",
