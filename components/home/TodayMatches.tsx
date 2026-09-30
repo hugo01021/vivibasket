@@ -68,7 +68,7 @@ export function TodayMatches({ onAnalyze }: TodayMatchesProps) {
                 <button
                   type="button"
                   onClick={() => onAnalyze(m)}
-                  className="h-8 rounded-[4px] border border-line px-3 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
+                  className="h-10 rounded-[4px] border border-line px-3 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent sm:h-8"
                 >
                   Analyser
                 </button>

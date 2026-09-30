@@ -90,7 +90,7 @@ export function Header({ variant = "site" }: { variant?: "home" | "site" }) {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "transition-colors hover:text-fg",
+                    "py-2 transition-colors hover:text-fg",
                     active ? "text-fg" : "text-fg-muted",
                     home ? (item.desktopOnly ? "hidden sm:inline" : "") : "hidden lg:inline",
                   )}
@@ -120,7 +120,7 @@ export function Header({ variant = "site" }: { variant?: "home" | "site" }) {
               </Link>
             )}
 
-            <a href="#" className="rounded-[4px] border border-border px-3 py-1.5 text-fg transition-colors hover:border-border-strong">
+            <a href="#" className="rounded-[4px] border border-border px-3 py-2 text-fg transition-colors hover:border-border-strong sm:py-1.5">
               Connexion
             </a>
 
@@ -131,7 +131,7 @@ export function Header({ variant = "site" }: { variant?: "home" | "site" }) {
                 aria-expanded={open}
                 aria-controls="menu-mobile"
                 aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
-                className="-mr-1 flex h-8 w-8 items-center justify-center text-fg-muted hover:text-fg lg:hidden"
+                className="-mr-2 flex h-10 w-10 items-center justify-center text-fg-muted hover:text-fg lg:hidden"
               >
                 <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
                   {open ? <path d="m5 5 10 10M15 5 5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
