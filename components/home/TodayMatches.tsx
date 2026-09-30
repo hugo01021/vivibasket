@@ -6,31 +6,72 @@ import { cn } from "@/lib/utils";
 
 const teamByName = new Map(HOME_TEAMS.map((t) => [t.name, t]));
 
-/** Pourcentage de victoire, en gros, en orange pour le favori. */
-function Prob({ value, favorite, align }: { value: number; favorite: boolean; align: "left" | "right" }) {
+/** Heure du coup d'envoi, chrono du direct ou « Terminé ». */
+function Status({ match }: { match: TodayMatch }) {
+  if (match.status === "live") {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-live tabular">
+        <span aria-hidden="true" className="relative inline-flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-live" />
+        </span>
+        <span className="sr-only">En direct, </span>
+        {match.clock}
+      </span>
+    );
+  }
+  if (match.status === "finished") {
+    return (
+      <span className="text-xs font-semibold text-fg-muted">
+        Terminé
+        <span className="sr-only">, coup d’envoi {match.time}</span>
+      </span>
+    );
+  }
+  return <time className="text-xs font-semibold text-fg tabular">{match.time}</time>;
+}
+
+/** Une ligne : statut · [score] domicile – extérieur [score]. */
+function MatchLine({ match }: { match: TodayMatch }) {
+  const home = teamByName.get(match.home);
+  const away = teamByName.get(match.away);
+  if (!home || !away) return null;
+  const live = match.status === "live";
+  const finished = match.status === "finished";
+  const showScore = live || finished;
+  const homeWon = finished && (match.homeScore ?? 0) > (match.awayScore ?? 0);
+  const awayWon = finished && (match.awayScore ?? 0) > (match.homeScore ?? 0);
+  const nameClass = (won: boolean, lost: boolean) => (won ? "font-semibold text-fg" : lost ? "text-fg-muted" : "text-fg/85");
+  const scoreClass = (lost: boolean) =>
+    cn("w-9 shrink-0 font-display text-xl font-bold leading-none tabular sm:w-11 sm:text-2xl", live ? "text-accent" : lost ? "text-fg-muted" : "text-fg");
+
   return (
-    <span
-      className={cn(
-        "w-12 shrink-0 font-display text-xl font-bold leading-none tabular sm:w-14 sm:text-2xl",
-        align === "right" ? "text-right" : "text-left",
-        favorite ? "text-accent" : "text-fg-muted",
-      )}
-    >
-      {value}
-      <span className="text-xs sm:text-sm"> %</span>
-    </span>
+    <li className="grid grid-cols-[4.25rem_minmax(0,1fr)] items-center gap-3 px-2 py-3 text-[13px] transition-colors hover:bg-surface sm:px-3 sm:text-[15px]">
+      <Status match={match} />
+      <span className="flex w-full items-center gap-2 sm:mx-auto sm:max-w-3xl sm:gap-3">
+        {showScore && <span className={cn(scoreClass(awayWon), "text-left")}>{match.homeScore}</span>}
+        <span className={cn("min-w-0 flex-1 truncate text-right", nameClass(homeWon, awayWon))}>
+          <span className="sm:hidden">{home.shortName}</span>
+          <span className="hidden sm:inline">{home.name}</span>
+        </span>
+        <span aria-hidden="true" className="shrink-0 text-fg-subtle">
+          –
+        </span>
+        <span className={cn("min-w-0 flex-1 truncate", nameClass(awayWon, homeWon))}>
+          <span className="sm:hidden">{away.shortName}</span>
+          <span className="hidden sm:inline">{away.name}</span>
+        </span>
+        {showScore && <span className={cn(scoreClass(homeWon), "text-right")}>{match.awayScore}</span>}
+      </span>
+    </li>
   );
 }
 
-interface TodayMatchesProps {
-  /** « Mardi 30 septembre », calculé côté serveur en heure de Paris. */
-  dateLabel: string;
-  onAnalyze: (match: TodayMatch) => void;
-}
-
-export function TodayMatches({ dateLabel, onAnalyze }: TodayMatchesProps) {
+/** Tableau des matchs du jour : onglets par compétition, une ligne par match, aucune analyse (offre payante à venir). */
+export function TodayMatches({ dateLabel }: { dateLabel: string }) {
   const [active, setActive] = useState<HomeCompetitionId>(HOME_COMPETITIONS[0].id);
   const matches = TODAY_MATCHES.filter((m) => m.competition === active).sort((a, b) => a.time.localeCompare(b.time));
+  const liveCount = TODAY_MATCHES.filter((m) => m.status === "live").length;
   const countFor = (id: HomeCompetitionId) => TODAY_MATCHES.filter((m) => m.competition === id).length;
 
   return (
@@ -41,6 +82,14 @@ export function TodayMatches({ dateLabel, onAnalyze }: TodayMatchesProps) {
             Matchs du jour
           </h2>
           <p className="mt-1.5 text-sm text-fg-muted">
+            {liveCount > 0 && (
+              <>
+                <span className="font-semibold text-live">
+                  {liveCount} match{liveCount > 1 ? "s" : ""} en direct
+                </span>
+                {" · "}
+              </>
+            )}
             <span className="inline-block first-letter:uppercase">{dateLabel}</span> · heures de Paris
           </p>
         </div>
@@ -68,58 +117,10 @@ export function TodayMatches({ dateLabel, onAnalyze }: TodayMatchesProps) {
         </div>
       </div>
 
-      <p className="mt-3 text-xs text-fg-muted">
-        Équipe à domicile à gauche, équipe à l’extérieur à droite. De chaque côté, sa probabilité de victoire estimée :
-        <span className="text-accent"> le favori en orange</span>, <span className="text-info">l’outsider en bleu</span>.
-      </p>
-
-      <ul id="liste-matchs" role="tabpanel" className="mt-2 divide-y divide-border">
-        {matches.map((m) => {
-          const home = teamByName.get(m.home);
-          const away = teamByName.get(m.away);
-          if (!home || !away) return null;
-          const homeFav = m.homeWinProb >= 50;
-          const awayProb = 100 - m.homeWinProb;
-          return (
-            <li key={m.id}>
-              <div className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 py-3.5 transition-colors hover:bg-surface sm:grid-cols-[3.5rem_1fr_auto] sm:gap-y-0 sm:px-2">
-                <time className="font-display text-xl font-bold leading-none tabular text-fg">{m.time}</time>
-                <button
-                  type="button"
-                  onClick={() => onAnalyze(m)}
-                  aria-label={`Analyser ${m.home} contre ${m.away}`}
-                  className="h-9 rounded-[4px] border border-border px-3.5 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent sm:col-start-3 sm:h-8"
-                >
-                  Analyser
-                </button>
-
-                {/* Duel : probabilité · domicile – extérieur · probabilité, puis la barre de partage */}
-                <div className="col-span-2 sm:col-span-1 sm:col-start-2 sm:row-start-1">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <Prob value={m.homeWinProb} favorite={homeFav} align="left" />
-                    <span className={cn("min-w-0 flex-1 truncate text-right text-[15px]", homeFav ? "font-semibold text-fg" : "text-fg-muted")}>
-                      <span className="sm:hidden">{home.shortName}</span>
-                      <span className="hidden sm:inline">{home.name}</span>
-                    </span>
-                    <span aria-hidden="true" className="shrink-0 text-fg-subtle">
-                      –
-                    </span>
-                    <span className={cn("min-w-0 flex-1 truncate text-[15px]", !homeFav ? "font-semibold text-fg" : "text-fg-muted")}>
-                      <span className="sm:hidden">{away.shortName}</span>
-                      <span className="hidden sm:inline">{away.name}</span>
-                    </span>
-                    <Prob value={awayProb} favorite={!homeFav} align="right" />
-                  </div>
-                  <div className="mt-2 flex h-1 overflow-hidden rounded-[2px] bg-surface-3" aria-hidden="true">
-                    <div className={homeFav ? "bg-accent" : "bg-info/70"} style={{ width: `${m.homeWinProb}%` }} />
-                    <div className="w-px bg-bg" />
-                    <div className={cn("flex-1", !homeFav ? "bg-accent" : "bg-info/70")} />
-                  </div>
-                </div>
-              </div>
-            </li>
-          );
-        })}
+      <ul id="liste-matchs" role="tabpanel" className="divide-y divide-border">
+        {matches.map((m) => (
+          <MatchLine key={m.id} match={m} />
+        ))}
       </ul>
     </section>
   );

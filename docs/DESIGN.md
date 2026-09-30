@@ -34,7 +34,7 @@ Aucune autre couleur : pas de couleurs d'équipes ni de compétitions (`team.col
 
 ## Duel d'équipes
 
-Partout où deux équipes s'affrontent (liste du jour, lignes de matchs, carte d'analyse), l'affiche tient sur **une seule ligne** : `[score] Domicile – Extérieur [score]`. Le domicile est à gauche, l'extérieur à droite, un tiret « – » entre les deux noms, et le score (ou la probabilité de victoire) **de chaque côté des équipes**, à l'extérieur. Favori / vainqueur en clair, l'autre en `text-fg-muted` ; probabilité du favori en orange, de l'outsider en bleu. Sur mobile, on affiche le nom court (`shortName`).
+Partout où deux équipes s'affrontent (liste du jour, lignes de matchs, carte d'analyse), l'affiche tient sur **une seule ligne** : `[score] Domicile – Extérieur [score]`. Le domicile est à gauche, l'extérieur à droite, un tiret « – » entre les deux noms, et le score (ou la probabilité de victoire) **de chaque côté des équipes**, à l'extérieur. Vainqueur (ou favori) en clair, l'autre en `text-fg-muted` ; scores en orange pendant le direct ; dans la carte d'analyse, probabilité du favori en orange, de l'outsider en bleu. Sur mobile, on affiche le nom court (`shortName`). La liste des matchs du jour de l'accueil est un simple tableau de scores : pas d'analyse ni de probabilité (fonctions payantes à venir).
 
 ## Composants communs (`components/ui`, `components/layout`)
 

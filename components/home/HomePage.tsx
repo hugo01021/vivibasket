@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { TodayMatch } from "@/data/matches";
 import { analyzeMatch, findTeam, type MatchAnalysis } from "@/lib/home-analysis";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { AnalyzeMatch } from "./AnalyzeMatch";
 import { TodayMatches } from "./TodayMatches";
 
-/** Accueil : le formulaire d'analyse et la liste du jour partagent l'état des deux équipes. */
+/** Accueil : formulaire d'analyse (état des deux équipes) et tableau des matchs du jour. */
 export function HomePage({ dateLabel }: { dateLabel: string }) {
   const [home, setHome] = useState("");
   const [away, setAway] = useState("");
@@ -36,14 +35,6 @@ export function HomePage({ dateLabel }: { dateLabel: string }) {
     if (run(home, away)) setRevealKey((k) => k + 1);
   };
 
-  const analyzeFromList = (match: TodayMatch) => {
-    setHome(match.home);
-    setAway(match.away);
-    run(match.home, match.away);
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-  };
-
   return (
     <>
       <Header variant="home" />
@@ -58,7 +49,7 @@ export function HomePage({ dateLabel }: { dateLabel: string }) {
           error={error}
           revealKey={revealKey}
         />
-        <TodayMatches dateLabel={dateLabel} onAnalyze={analyzeFromList} />
+        <TodayMatches dateLabel={dateLabel} />
       </main>
       <Footer />
     </>

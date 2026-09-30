@@ -21,6 +21,8 @@ export interface HomeTeam {
   competitions: HomeCompetitionId[];
 }
 
+export type TodayMatchStatus = "scheduled" | "live" | "finished";
+
 export interface TodayMatch {
   id: string;
   competition: HomeCompetitionId;
@@ -28,7 +30,13 @@ export interface TodayMatch {
   time: string;
   home: string;
   away: string;
-  /** Probabilité de victoire de l'équipe à domicile, en %. */
+  status: TodayMatchStatus;
+  /** Scores présents dès que le match a commencé. */
+  homeScore?: number;
+  awayScore?: number;
+  /** Période et chrono d'un match en cours ("Q3 05:42", "Mi-temps"). */
+  clock?: string;
+  /** Probabilité de victoire de l'équipe à domicile, en % (utilisée par l'analyse). */
   homeWinProb: number;
 }
 
@@ -134,26 +142,27 @@ function buildTeams(): HomeTeam[] {
 /** Toutes les équipes proposées dans l'autocomplétion (une équipe peut jouer plusieurs compétitions). */
 export const HOME_TEAMS: HomeTeam[] = buildTeams();
 
+/** Programme fictif d'une journée, vu vers 20 h 15 (heure de Paris) : la NBA de la nuit est terminée, l'Europe joue. */
 export const TODAY_MATCHES: TodayMatch[] = [
-  // NBA — nuit du jour (heure de Paris)
-  { id: "nba-1", competition: "nba", time: "01:00", home: "New York Knicks", away: "Boston Celtics", homeWinProb: 54 },
-  { id: "nba-2", competition: "nba", time: "01:00", home: "Orlando Magic", away: "Miami Heat", homeWinProb: 61 },
-  { id: "nba-3", competition: "nba", time: "01:30", home: "Cleveland Cavaliers", away: "Detroit Pistons", homeWinProb: 67 },
-  { id: "nba-4", competition: "nba", time: "02:00", home: "Oklahoma City Thunder", away: "Denver Nuggets", homeWinProb: 63 },
-  { id: "nba-5", competition: "nba", time: "02:30", home: "San Antonio Spurs", away: "Houston Rockets", homeWinProb: 48 },
-  { id: "nba-6", competition: "nba", time: "04:00", home: "Golden State Warriors", away: "Los Angeles Lakers", homeWinProb: 52 },
-  { id: "nba-7", competition: "nba", time: "04:30", home: "Sacramento Kings", away: "Minnesota Timberwolves", homeWinProb: 38 },
+  // NBA — nuit précédente (heure de Paris)
+  { id: "nba-1", competition: "nba", time: "01:00", home: "New York Knicks", away: "Boston Celtics", status: "finished", homeScore: 112, awayScore: 108, homeWinProb: 54 },
+  { id: "nba-2", competition: "nba", time: "01:00", home: "Orlando Magic", away: "Miami Heat", status: "finished", homeScore: 99, awayScore: 104, homeWinProb: 61 },
+  { id: "nba-3", competition: "nba", time: "01:30", home: "Cleveland Cavaliers", away: "Detroit Pistons", status: "finished", homeScore: 121, awayScore: 109, homeWinProb: 67 },
+  { id: "nba-4", competition: "nba", time: "02:00", home: "Oklahoma City Thunder", away: "Denver Nuggets", status: "finished", homeScore: 118, awayScore: 115, homeWinProb: 63 },
+  { id: "nba-5", competition: "nba", time: "02:30", home: "San Antonio Spurs", away: "Houston Rockets", status: "finished", homeScore: 103, awayScore: 111, homeWinProb: 48 },
+  { id: "nba-6", competition: "nba", time: "04:00", home: "Golden State Warriors", away: "Los Angeles Lakers", status: "finished", homeScore: 124, awayScore: 119, homeWinProb: 52 },
+  { id: "nba-7", competition: "nba", time: "04:30", home: "Sacramento Kings", away: "Minnesota Timberwolves", status: "finished", homeScore: 97, awayScore: 106, homeWinProb: 38 },
 
-  // EuroLeague
-  { id: "el-1", competition: "euroleague", time: "18:30", home: "Anadolu Efes", away: "Olympiacos", homeWinProb: 44 },
-  { id: "el-2", competition: "euroleague", time: "19:00", home: "Žalgiris Kaunas", away: "Bayern Munich", homeWinProb: 58 },
-  { id: "el-3", competition: "euroleague", time: "20:00", home: "Paris Basketball", away: "Real Madrid", homeWinProb: 47 },
-  { id: "el-4", competition: "euroleague", time: "20:30", home: "Olimpia Milano", away: "AS Monaco", homeWinProb: 42 },
-  { id: "el-5", competition: "euroleague", time: "20:45", home: "FC Barcelona", away: "Fenerbahçe Beko", homeWinProb: 51 },
+  // EuroLeague — soirée en cours
+  { id: "el-1", competition: "euroleague", time: "18:30", home: "Anadolu Efes", away: "Olympiacos", status: "finished", homeScore: 79, awayScore: 84, homeWinProb: 44 },
+  { id: "el-2", competition: "euroleague", time: "19:00", home: "Žalgiris Kaunas", away: "Bayern Munich", status: "live", clock: "Q4 02:18", homeScore: 74, awayScore: 70, homeWinProb: 58 },
+  { id: "el-3", competition: "euroleague", time: "20:00", home: "Paris Basketball", away: "Real Madrid", status: "live", clock: "Q1 03:51", homeScore: 14, awayScore: 19, homeWinProb: 47 },
+  { id: "el-4", competition: "euroleague", time: "20:30", home: "Olimpia Milano", away: "AS Monaco", status: "scheduled", homeWinProb: 42 },
+  { id: "el-5", competition: "euroleague", time: "20:45", home: "FC Barcelona", away: "Fenerbahçe Beko", status: "scheduled", homeWinProb: 51 },
 
   // Betclic Élite
-  { id: "be-1", competition: "betclic-elite", time: "19:00", home: "Cholet Basket", away: "Le Mans Sarthe Basket", homeWinProb: 55 },
-  { id: "be-2", competition: "betclic-elite", time: "20:00", home: "JL Bourg", away: "SIG Strasbourg", homeWinProb: 64 },
-  { id: "be-3", competition: "betclic-elite", time: "20:00", home: "Limoges CSP", away: "Nanterre 92", homeWinProb: 57 },
-  { id: "be-4", competition: "betclic-elite", time: "20:30", home: "BCM Gravelines-Dunkerque", away: "LDLC ASVEL", homeWinProb: 36 },
+  { id: "be-1", competition: "betclic-elite", time: "19:00", home: "Cholet Basket", away: "Le Mans Sarthe Basket", status: "live", clock: "Q4 06:40", homeScore: 68, awayScore: 71, homeWinProb: 55 },
+  { id: "be-2", competition: "betclic-elite", time: "20:00", home: "JL Bourg", away: "SIG Strasbourg", status: "live", clock: "Q1 01:12", homeScore: 22, awayScore: 17, homeWinProb: 64 },
+  { id: "be-3", competition: "betclic-elite", time: "20:00", home: "Limoges CSP", away: "Nanterre 92", status: "live", clock: "Mi-temps", homeScore: 41, awayScore: 38, homeWinProb: 57 },
+  { id: "be-4", competition: "betclic-elite", time: "20:30", home: "BCM Gravelines-Dunkerque", away: "LDLC ASVEL", status: "scheduled", homeWinProb: 36 },
 ];
