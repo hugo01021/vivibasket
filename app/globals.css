@@ -1,35 +1,38 @@
 @import "tailwindcss";
 
 /*
-  Charte Vivibasket — noir #0a0a0a, orange #ff6b00, blanc cassé, gris #8a8a8a.
+  Charte Vivibasket — bleu nuit #0b1220, orange #f97316, bleu électrique #2563eb,
+  blanc cassé #f8fafc, gris bleuté #94a3b8.
   Toutes les couleurs sont définies ici et exposées comme utilitaires Tailwind
   (bg-surface, text-fg-muted, border-border, text-accent, ...). Voir docs/DESIGN.md.
 */
 @theme {
-  --color-bg: #0a0a0a;
-  --color-surface: #0f0f0f;
-  --color-surface-2: #141414;
-  --color-surface-3: #1c1c1c;
-  --color-border: rgb(255 255 255 / 0.08);
-  --color-border-strong: rgb(255 255 255 / 0.16);
-  --color-line: rgb(255 255 255 / 0.08);
+  --color-bg: #0b1220;
+  --color-surface: #111c2e;
+  --color-surface-2: #16233a;
+  --color-surface-3: #1c2c47;
+  --color-border: #243247;
+  --color-border-strong: #33455f;
+  --color-line: #243247;
 
-  --color-fg: #f4f1ec;
-  --color-fg-muted: #8a8a8a;
-  --color-fg-subtle: #6a6a6a;
-  --color-dim: #8a8a8a;
+  --color-fg: #f8fafc;
+  --color-fg-muted: #94a3b8;
+  --color-fg-subtle: #64748b;
+  --color-dim: #94a3b8;
 
-  --color-accent: #ff6b00;
-  --color-accent-hover: #ff8124;
-  --color-accent-soft: rgb(255 107 0 / 0.12);
-  --color-accent-ink: #0a0a0a;
+  --color-accent: #f97316;
+  --color-accent-hover: #fb923c;
+  --color-accent-soft: rgb(249 115 22 / 0.14);
+  --color-accent-ink: #0b1220;
 
-  /* Vert / rouge réservés aux V/D et au direct, toujours atténués (opacité) */
-  --color-live: #ff6b00;
-  --color-win: #4ade80;
-  --color-loss: #f87171;
-  /* Seconde série des graphiques : blanc cassé, pas de bleu */
-  --color-info: #d6d2cb;
+  /* Couleur secondaire : bleu électrique (seconde série des graphiques, équipe extérieur) */
+  --color-info: #2563eb;
+  --color-info-soft: rgb(37 99 235 / 0.16);
+
+  /* Vert / rouge réservés aux V/D, souvent atténués (opacité) */
+  --color-live: #f97316;
+  --color-win: #22c55e;
+  --color-loss: #ef4444;
 
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-barlow-condensed), var(--font-manrope), ui-sans-serif, sans-serif;

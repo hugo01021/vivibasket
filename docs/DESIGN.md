@@ -6,24 +6,24 @@ Outil de stats fait par quelqu'un qui aime le basket : dense, sobre, direct. App
 
 | Usage | Token | Valeur |
 | --- | --- | --- |
-| Fond de page | `bg-bg` | `#0a0a0a` |
-| Fond de carte / panneau | `bg-surface` (`bg-surface-2`, `bg-surface-3` pour les niveaux) | `#0f0f0f` / `#141414` / `#1c1c1c` |
-| Bordures | `border-border` (= `border-line`), `border-border-strong` au survol | blanc à 8 % / 16 % |
-| Texte | `text-fg` | `#f4f1ec` (blanc cassé) |
-| Texte secondaire | `text-fg-muted` (= `text-dim`), `text-fg-subtle` pour l'encore plus discret | `#8a8a8a` / `#6a6a6a` |
-| Accent | `text-accent`, `bg-accent`, `bg-accent-hover` au survol, `bg-accent-soft` (fond orange 12 %) | `#ff6b00` |
-| Victoire / défaite | `text-win`, `text-loss` — **toujours atténués** (`bg-win/10 text-win/80`) et réservés aux V/D | vert / rouge discrets |
-| Direct | `text-live` | orange (pas de rouge vif) |
-| Seconde série de graphique | `text-info` / `var(--color-info)` | blanc cassé (pas de bleu) |
+| Fond de page | `bg-bg` | `#0b1220` (bleu nuit) |
+| Cartes / panneaux | `bg-surface` (`bg-surface-2`, `bg-surface-3` pour les niveaux) | `#111c2e` / `#16233a` / `#1c2c47` |
+| Bordures | `border-border` (= `border-line`), `border-border-strong` au survol | `#243247` / `#33455f` |
+| Texte | `text-fg` | `#f8fafc` (blanc cassé) |
+| Texte secondaire | `text-fg-muted` (= `text-dim`), `text-fg-subtle` pour l'encore plus discret | `#94a3b8` / `#64748b` (gris bleuté) |
+| Couleur principale | `text-accent`, `bg-accent`, `bg-accent-hover` au survol, `bg-accent-soft` (fond orange 14 %) | `#f97316` (orange basket) |
+| Couleur secondaire | `text-info`, `bg-info`, `bg-info-soft` — seconde série des graphiques, équipe extérieur, liens discrets | `#2563eb` (bleu électrique) |
+| Victoire / défaite | `text-win`, `text-loss` — atténués dans les pastilles (`bg-win/10 text-win/80`) et réservés aux V/D | `#22c55e` / `#ef4444` |
+| Direct | `text-live` | orange |
 
-Aucune autre couleur : pas de couleurs d'équipes ni de compétitions (`team.colors`, `competition.accentColor` ne s'affichent pas), pas de dégradés, pas de violet/bleu, pas de texte en dégradé, pas de néon, pas de glow.
+Aucune autre couleur : pas de couleurs d'équipes ni de compétitions (`team.colors`, `competition.accentColor` ne s'affichent pas), pas de dégradés, pas de texte en dégradé, pas de néon, pas de glow. Jamais de couleur en dur dans les composants : toujours les tokens (`bg-surface`, `var(--color-accent)`…).
 
 ## Formes
 
 - Coins : `rounded-md` (6 px, = `rounded-card`) pour les cartes et champs, `rounded-[4px]` (= `rounded-chip`) pour les boutons secondaires et petites pastilles. **Jamais `rounded-full`** sauf pour un point (LiveDot).
 - Bordures : 1 px, `border-border`. Pas d'ombre portée (`shadow-card` vaut `none`), pas de glassmorphism (`backdrop-blur`) hors header.
 - Cartes : `rounded-md border border-border bg-surface`. Beaucoup de contenus se passent de carte : une liste avec `divide-y divide-border` suffit.
-- Fonds de survol : `hover:bg-white/[0.025]` pour une ligne, `hover:border-border-strong` pour une carte cliquable.
+- Fonds de survol : `hover:bg-white/[0.03]` pour une ligne, `hover:border-border-strong` pour une carte cliquable.
 
 ## Typographie
 

@@ -94,7 +94,7 @@ export function TeamInput({ label, value, onChange, placeholder, invalid = false
           id={listId}
           role="listbox"
           aria-label={label}
-          className="absolute inset-x-0 top-full z-30 mt-1 overflow-hidden rounded-md border border-line bg-[#111] py-1 shadow-[0_12px_32px_-12px_rgba(0,0,0,0.9)]"
+          className="absolute inset-x-0 top-full z-30 mt-1 overflow-hidden rounded-md border border-line bg-surface-2 py-1 shadow-[0_12px_32px_-12px_rgba(0,0,0,0.9)]"
         >
           {suggestions.map((team, index) => (
             <li

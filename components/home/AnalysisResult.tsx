@@ -80,7 +80,7 @@ export function AnalysisResult({ analysis }: { analysis: MatchAnalysis }) {
   const homeFavorite = home.winProb >= away.winProb;
 
   return (
-    <article aria-label={`Analyse ${home.team.name} contre ${away.team.name}`} className="rounded-lg border border-line bg-[#0c0c0c]">
+    <article aria-label={`Analyse ${home.team.name} contre ${away.team.name}`} className="rounded-lg border border-line bg-surface">
       <div className="flex items-center justify-between border-b border-line px-4 py-2.5 text-[11px] uppercase tracking-[0.08em] text-dim sm:px-5">
         <span>{competition}</span>
         <span>Données fictives</span>
@@ -102,18 +102,18 @@ export function AnalysisResult({ analysis }: { analysis: MatchAnalysis }) {
 
         <div className="mt-4">
           <div className="mb-1.5 flex items-baseline justify-between font-display font-bold tabular-nums">
-            <span className={cn("text-3xl", homeFavorite ? "text-accent" : "text-fg")}>{home.winProb} %</span>
+            <span className={cn("text-3xl", homeFavorite ? "text-accent" : "text-fg-muted")}>{home.winProb} %</span>
             <span className="font-sans text-[11px] font-normal uppercase tracking-[0.08em] text-dim">Probabilité de victoire</span>
-            <span className={cn("text-3xl", !homeFavorite ? "text-accent" : "text-fg")}>{away.winProb} %</span>
+            <span className={cn("text-3xl", !homeFavorite ? "text-info" : "text-fg-muted")}>{away.winProb} %</span>
           </div>
           <div
-            className="flex h-2 overflow-hidden rounded-[2px] bg-white/10"
+            className="flex h-2 overflow-hidden rounded-[2px] bg-surface-3"
             role="img"
             aria-label={`${home.team.name} ${home.winProb} %, ${away.team.name} ${away.winProb} %`}
           >
-            <div className={homeFavorite ? "bg-accent" : "bg-white/35"} style={{ width: `${home.winProb}%` }} />
+            <div className={homeFavorite ? "bg-accent" : "bg-accent/45"} style={{ width: `${home.winProb}%` }} />
             <div className="w-px bg-bg" />
-            <div className={cn("flex-1", !homeFavorite ? "bg-accent" : "bg-white/35")} />
+            <div className={cn("flex-1", !homeFavorite ? "bg-info" : "bg-info/45")} />
           </div>
         </div>
 

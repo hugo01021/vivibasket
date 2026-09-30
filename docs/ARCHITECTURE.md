@@ -1,6 +1,6 @@
 # Vivibasket — architecture
 
-Webapp de résultats et d'analyse 100 % basket. Navigation dense et rapide (matchs, compétitions, équipes, joueurs), différenciation par la couche d'analyse (stats avancées, forme, analyse IA). Identité visuelle : outil de stats sobre et dense, noir `#0a0a0a` + orange `#ff6b00`, décrite dans [DESIGN.md](DESIGN.md).
+Webapp de résultats et d'analyse 100 % basket. Navigation dense et rapide (matchs, compétitions, équipes, joueurs), différenciation par la couche d'analyse (stats avancées, forme, analyse IA). Identité visuelle : outil de stats sobre et dense, bleu nuit `#0b1220` + orange `#f97316` + bleu électrique `#2563eb`, décrite dans [DESIGN.md](DESIGN.md).
 
 ## Stack
 
@@ -128,7 +128,7 @@ Limites assumées : rosters partiellement générés hors équipes vedettes, cal
 
 ## Charte visuelle
 
-Décrite dans [DESIGN.md](DESIGN.md) ; les tokens vivent dans `app/globals.css` (`@theme`) et sont exposés comme utilitaires Tailwind (`bg-surface`, `text-fg-muted`, `border-border`, `text-accent`, `font-display`…). En bref : noir `#0a0a0a`, orange `#ff6b00`, blanc cassé `#f4f1ec`, gris `#8a8a8a`, bordures blanc 8 %, coins 4–6 px, titres Barlow Condensed en capitales, chiffres tabulaires, vert/rouge atténués réservés aux V/D. Aucune couleur d'équipe ni de compétition à l'écran (les champs `colors` / `accentColor` restent dans les données pour plus tard).
+Décrite dans [DESIGN.md](DESIGN.md) ; les tokens vivent dans `app/globals.css` (`@theme`) et sont exposés comme utilitaires Tailwind (`bg-surface`, `text-fg-muted`, `border-border`, `text-accent`, `font-display`…). En bref : bleu nuit `#0b1220`, orange `#f97316`, bleu électrique `#2563eb` en secondaire, blanc cassé `#f8fafc`, gris bleuté `#94a3b8`, cartes `#111c2e`, bordures `#243247`, coins 4–6 px, titres Barlow Condensed en capitales, chiffres tabulaires, vert/rouge atténués réservés aux V/D. Aucune couleur d'équipe ni de compétition à l'écran (les champs `colors` / `accentColor` restent dans les données pour plus tard).
 
 ## Étapes
 
