@@ -1,37 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { HOME_COMPETITIONS, HOME_TEAMS, TODAY_MATCHES, type HomeCompetitionId, type HomeTeam, type TodayMatch } from "@/data/matches";
+import { HOME_COMPETITIONS, HOME_TEAMS, TODAY_MATCHES, type HomeCompetitionId, type TodayMatch } from "@/data/matches";
 import { cn } from "@/lib/utils";
 
 const teamByName = new Map(HOME_TEAMS.map((t) => [t.name, t]));
 
-/** Une équipe du match : écusson, nom, rôle (dom./ext.), barre et pourcentage de victoire. */
-function TeamLine({ team, role, prob, favorite }: { team: HomeTeam; role: "Dom." | "Ext."; prob: number; favorite: boolean }) {
+/** Pourcentage de victoire, en gros, en orange pour le favori. */
+function Prob({ value, favorite, align }: { value: number; favorite: boolean; align: "left" | "right" }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <span
-        aria-hidden="true"
-        className={cn(
-          "flex h-6 w-9 shrink-0 items-center justify-center rounded-[4px] border font-display text-[11px] font-bold tracking-wide",
-          favorite ? "border-accent/40 bg-accent-soft text-accent" : "border-border bg-surface-2 text-fg-muted",
-        )}
-      >
-        {team.short}
-      </span>
-      <span className={cn("min-w-0 flex-1 truncate text-sm", favorite ? "font-semibold text-fg" : "text-fg-muted")}>
-        <span className="sm:hidden">{team.shortName}</span>
-        <span className="hidden sm:inline">{team.name}</span>
-        <span className="ml-1.5 text-[10px] font-normal uppercase tracking-[0.06em] text-fg-subtle">{role}</span>
-      </span>
-      <span className="h-1.5 w-16 shrink-0 overflow-hidden rounded-[2px] bg-surface-3 sm:w-28" aria-hidden="true">
-        <span className={cn("block h-full rounded-[2px]", favorite ? "bg-accent" : "bg-info/70")} style={{ width: `${prob}%` }} />
-      </span>
-      <span className={cn("w-11 shrink-0 text-right font-display text-lg font-bold leading-none tabular", favorite ? "text-accent" : "text-fg-muted")}>
-        {prob}
-        <span className="text-xs"> %</span>
-      </span>
-    </div>
+    <span
+      className={cn(
+        "w-12 shrink-0 font-display text-xl font-bold leading-none tabular sm:w-14 sm:text-2xl",
+        align === "right" ? "text-right" : "text-left",
+        favorite ? "text-accent" : "text-fg-muted",
+      )}
+    >
+      {value}
+      <span className="text-xs sm:text-sm"> %</span>
+    </span>
   );
 }
 
@@ -82,7 +69,7 @@ export function TodayMatches({ dateLabel, onAnalyze }: TodayMatchesProps) {
       </div>
 
       <p className="mt-3 text-xs text-fg-muted">
-        Pour chaque match, la barre et le pourcentage indiquent la probabilité de victoire estimée de chaque équipe :
+        Équipe à domicile à gauche, équipe à l’extérieur à droite. De chaque côté, sa probabilité de victoire estimée :
         <span className="text-accent"> le favori en orange</span>, <span className="text-info">l’outsider en bleu</span>.
       </p>
 
@@ -92,9 +79,10 @@ export function TodayMatches({ dateLabel, onAnalyze }: TodayMatchesProps) {
           const away = teamByName.get(m.away);
           if (!home || !away) return null;
           const homeFav = m.homeWinProb >= 50;
+          const awayProb = 100 - m.homeWinProb;
           return (
             <li key={m.id}>
-              <div className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2.5 py-3.5 transition-colors hover:bg-surface sm:grid-cols-[3.5rem_1fr_auto] sm:gap-y-0 sm:px-2">
+              <div className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 py-3.5 transition-colors hover:bg-surface sm:grid-cols-[3.5rem_1fr_auto] sm:gap-y-0 sm:px-2">
                 <time className="font-display text-xl font-bold leading-none tabular text-fg">{m.time}</time>
                 <button
                   type="button"
@@ -104,9 +92,29 @@ export function TodayMatches({ dateLabel, onAnalyze }: TodayMatchesProps) {
                 >
                   Analyser
                 </button>
-                <div className="col-span-2 space-y-1.5 sm:col-span-1 sm:col-start-2 sm:row-start-1">
-                  <TeamLine team={home} role="Dom." prob={m.homeWinProb} favorite={homeFav} />
-                  <TeamLine team={away} role="Ext." prob={100 - m.homeWinProb} favorite={!homeFav} />
+
+                {/* Duel : probabilité · domicile – extérieur · probabilité, puis la barre de partage */}
+                <div className="col-span-2 sm:col-span-1 sm:col-start-2 sm:row-start-1">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Prob value={m.homeWinProb} favorite={homeFav} align="left" />
+                    <span className={cn("min-w-0 flex-1 truncate text-right text-[15px]", homeFav ? "font-semibold text-fg" : "text-fg-muted")}>
+                      <span className="sm:hidden">{home.shortName}</span>
+                      <span className="hidden sm:inline">{home.name}</span>
+                    </span>
+                    <span aria-hidden="true" className="shrink-0 text-fg-subtle">
+                      –
+                    </span>
+                    <span className={cn("min-w-0 flex-1 truncate text-[15px]", !homeFav ? "font-semibold text-fg" : "text-fg-muted")}>
+                      <span className="sm:hidden">{away.shortName}</span>
+                      <span className="hidden sm:inline">{away.name}</span>
+                    </span>
+                    <Prob value={awayProb} favorite={!homeFav} align="right" />
+                  </div>
+                  <div className="mt-2 flex h-1 overflow-hidden rounded-[2px] bg-surface-3" aria-hidden="true">
+                    <div className={homeFav ? "bg-accent" : "bg-info/70"} style={{ width: `${m.homeWinProb}%` }} />
+                    <div className="w-px bg-bg" />
+                    <div className={cn("flex-1", !homeFav ? "bg-accent" : "bg-info/70")} />
+                  </div>
                 </div>
               </div>
             </li>

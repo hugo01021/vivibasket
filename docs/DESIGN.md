@@ -32,6 +32,10 @@ Aucune autre couleur : pas de couleurs d'équipes ni de compétitions (`team.col
 - Libellés de colonnes / sur-titres : `text-[11px] uppercase tracking-[0.08em] text-fg-muted`.
 - Chiffres : toujours `tabular-nums` (classe `tabular` ou `tabular-nums`).
 
+## Duel d'équipes
+
+Partout où deux équipes s'affrontent (liste du jour, lignes de matchs, carte d'analyse), l'affiche tient sur **une seule ligne** : `[score] Domicile – Extérieur [score]`. Le domicile est à gauche, l'extérieur à droite, un tiret « – » entre les deux noms, et le score (ou la probabilité de victoire) **de chaque côté des équipes**, à l'extérieur. Favori / vainqueur en clair, l'autre en `text-fg-muted` ; probabilité du favori en orange, de l'outsider en bleu. Sur mobile, on affiche le nom court (`shortName`).
+
 ## Composants communs (`components/ui`, `components/layout`)
 
 - `Header` (fixe, transparent puis noir au scroll), `Footer` (une ligne), `SectionTitle`, `StatCard`, `EmptyState`, `FavoriteButton`, `TeamBadge` (monochrome), `FormIndicator`, `LiveDot`.

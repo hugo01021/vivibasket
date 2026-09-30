@@ -87,25 +87,33 @@ export function AnalysisResult({ analysis }: { analysis: MatchAnalysis }) {
       </div>
 
       <div className="px-4 pb-2 pt-4 sm:px-5">
-        {/* Affiche + probabilités */}
-        <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3">
-          <div className="min-w-0">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-dim">Domicile</p>
-            <h3 className="text-balance font-display text-xl font-bold uppercase leading-tight sm:text-2xl">{home.team.name}</h3>
-          </div>
-          <span className="pb-1 text-xs text-dim">vs</span>
-          <div className="min-w-0 text-right">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-dim">Extérieur</p>
-            <h3 className="text-balance font-display text-xl font-bold uppercase leading-tight sm:text-2xl">{away.team.name}</h3>
-          </div>
+        {/* Duel : probabilité · domicile – extérieur · probabilité */}
+        <div className="flex items-baseline justify-between text-[11px] uppercase tracking-[0.08em] text-dim">
+          <span>Domicile</span>
+          <span>Probabilité de victoire</span>
+          <span>Extérieur</span>
         </div>
+        <h3 className="mt-2 grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-x-2 sm:gap-x-3">
+          <span className={cn("font-display text-3xl font-bold leading-none tabular sm:text-4xl", homeFavorite ? "text-accent" : "text-fg-muted")}>
+            {home.winProb}
+            <span className="text-sm"> %</span>
+          </span>
+          <span className={cn("min-w-0 text-right font-display text-lg font-bold uppercase leading-tight sm:text-2xl", !homeFavorite && "text-fg-muted")}>
+            {home.team.name}
+          </span>
+          <span aria-hidden="true" className="text-lg text-fg-subtle sm:text-2xl">
+            –
+          </span>
+          <span className={cn("min-w-0 font-display text-lg font-bold uppercase leading-tight sm:text-2xl", homeFavorite && "text-fg-muted")}>
+            {away.team.name}
+          </span>
+          <span className={cn("text-right font-display text-3xl font-bold leading-none tabular sm:text-4xl", !homeFavorite ? "text-accent" : "text-fg-muted")}>
+            {away.winProb}
+            <span className="text-sm"> %</span>
+          </span>
+        </h3>
 
-        <div className="mt-4">
-          <div className="mb-1.5 flex items-baseline justify-between font-display font-bold tabular-nums">
-            <span className={cn("text-3xl", homeFavorite ? "text-accent" : "text-fg-muted")}>{home.winProb} %</span>
-            <span className="font-sans text-[11px] font-normal uppercase tracking-[0.08em] text-dim">Probabilité de victoire</span>
-            <span className={cn("text-3xl", !homeFavorite ? "text-accent" : "text-fg-muted")}>{away.winProb} %</span>
-          </div>
+        <div className="mt-3">
           <div
             className="flex h-2 overflow-hidden rounded-[2px] bg-surface-3"
             role="img"
