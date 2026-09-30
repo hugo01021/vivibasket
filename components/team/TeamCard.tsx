@@ -7,7 +7,7 @@ import { countryName } from "./country";
 export function TeamCard({ team, competitions }: { team: Team; competitions: Competition[] }) {
   const location = team.kind === "national" ? "Sélection nationale" : `${team.city} · ${countryName(team.country)}`;
   return (
-    <Link href={`/equipes/${team.id}`} className="group flex items-center gap-3 px-2 py-2.5 transition-colors hover:bg-white/[0.03] sm:px-3">
+    <Link href={`/equipes/${team.id}`} className="group flex items-center gap-3 px-2 py-2.5 transition-colors hover:bg-surface-2 sm:px-3">
       <TeamBadge team={team} size="md" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-fg transition-colors group-hover:text-accent">{team.name}</p>

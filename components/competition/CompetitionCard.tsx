@@ -18,7 +18,7 @@ export function CompetitionCard({
   return (
     <Link
       href={`/competitions/${competition.slug}`}
-      className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-2 py-3 transition-colors hover:bg-white/[0.03] sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)_auto] sm:px-3"
+      className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-2 py-3 transition-colors hover:bg-surface-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)_auto] sm:px-3"
     >
       <div className="min-w-0">
         <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">

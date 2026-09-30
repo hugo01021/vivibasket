@@ -34,7 +34,7 @@ export function RosterTable({ players }: { players: Player[] }) {
         </thead>
         <tbody className="divide-y divide-border">
           {sorted.map((player) => (
-            <tr key={player.id} className="transition-colors hover:bg-white/[0.03]">
+            <tr key={player.id} className="transition-colors hover:bg-surface-2">
               <td className="px-3 py-2.5 text-center font-semibold text-fg-muted tabular sm:px-4">{player.jerseyNumber}</td>
               <td className="px-3 py-2.5">
                 <Link href={`/joueurs/${player.id}`} className="font-semibold text-fg hover:text-accent">

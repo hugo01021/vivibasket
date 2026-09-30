@@ -5,12 +5,11 @@ export interface ChipOption {
   /** Valeur du paramètre `?competition=` (chaîne vide = pas de filtre). */
   value: string;
   label: string;
-  color?: string;
 }
 
 /**
- * Sélecteur de compétition sous forme de liens (fonctionne sans JavaScript).
- * Même rendu que `CompetitionFilter`, mais avec une liste d'options libre
+ * Sélecteur de compétition sous forme d'onglets soulignés (liens, fonctionne sans JavaScript).
+ * Même rendu que `CompetitionTabs`, mais avec une liste d'options libre
  * (pas d'entrée « Autres » : chaque option correspond à une seule compétition).
  */
 export function CompetitionChips({
@@ -25,8 +24,8 @@ export function CompetitionChips({
   label?: string;
 }) {
   return (
-    <nav aria-label={label} className="-mx-4 overflow-x-auto px-4 scrollbar-none sm:mx-0 sm:px-0">
-      <ul className="flex w-max gap-1.5 sm:w-auto sm:flex-wrap">
+    <nav aria-label={label} className="-mx-4 overflow-x-auto border-b border-border px-4 scrollbar-none sm:mx-0 sm:px-0">
+      <ul className="flex w-max gap-1">
         {options.map((option) => {
           const isActive = active === option.value;
           return (
@@ -35,15 +34,10 @@ export function CompetitionChips({
                 href={buildHref(option.value)}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-chip border px-3 text-xs font-semibold transition-colors",
-                  isActive
-                    ? "border-accent bg-accent text-accent-ink"
-                    : "border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg",
+                  "-mb-px inline-flex h-10 items-center border-b-2 px-3 text-sm font-semibold whitespace-nowrap transition-colors",
+                  isActive ? "border-accent text-fg" : "border-transparent text-fg-muted hover:text-fg",
                 )}
               >
-                {option.color && !isActive && (
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: option.color }} aria-hidden="true" />
-                )}
                 {option.label}
               </Link>
             </li>

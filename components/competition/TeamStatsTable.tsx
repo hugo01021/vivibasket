@@ -47,7 +47,7 @@ export function TeamStatsTable({ stats, teams }: { stats: TeamSeasonStats[]; tea
           {rows.map((row) => {
             const team = teams.get(row.teamId);
             return (
-              <tr key={row.teamId} className="group transition-colors hover:bg-white/[0.03]">
+              <tr key={row.teamId} className="group transition-colors hover:bg-surface-2">
                 <th scope="row" className="sticky left-0 z-10 bg-surface px-3 py-2 text-left font-normal transition-colors group-hover:bg-surface-2 sm:px-4">
                   {team ? (
                     <Link href={`/equipes/${team.id}`} className="flex min-w-0 items-center gap-2 hover:text-accent">

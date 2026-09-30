@@ -30,7 +30,7 @@ export function LeadersCard({
       ) : (
         <ol className="divide-y divide-border">
           {leaders.map((leader, index) => (
-            <li key={leader.player.id} className="flex items-center gap-3 px-3 py-2 text-sm transition-colors hover:bg-white/[0.03] sm:px-4">
+            <li key={leader.player.id} className="flex items-center gap-3 px-3 py-2 text-sm transition-colors hover:bg-surface-2 sm:px-4">
               <span className={cn("w-4 shrink-0 text-right text-xs tabular", index === 0 ? "font-bold text-accent" : "text-fg-subtle")}>
                 {index + 1}
               </span>

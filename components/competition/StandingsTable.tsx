@@ -70,7 +70,7 @@ function Table({
           {rows.map((row) => {
             const team = teams.get(row.teamId);
             return (
-              <tr key={row.teamId} className="group transition-colors hover:bg-white/[0.03]">
+              <tr key={row.teamId} className="group transition-colors hover:bg-surface-2">
                 <th scope="row" className="sticky left-0 z-10 bg-surface px-3 py-2 text-left font-normal transition-colors group-hover:bg-surface-2 sm:px-4">
                   <span className="flex items-center gap-2.5">
                     {/* Leader signalé en orange discret, les autres rangs en gris */}
