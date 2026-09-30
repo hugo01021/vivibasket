@@ -140,7 +140,7 @@ export default async function TeamPage({ params }: { params: Params }) {
         <SectionTitle
           count={roster.length}
           action={
-            <Link href="/joueurs" className="text-sm font-semibold text-fg-muted hover:text-accent">
+            <Link href="/joueurs" className="-my-2 inline-flex h-10 items-center text-sm font-semibold text-fg-muted transition-colors hover:text-fg">
               Tous les joueurs ›
             </Link>
           }

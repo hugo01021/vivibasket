@@ -77,43 +77,33 @@ export default async function CompetitionPage({ params, searchParams }: { params
 
   return (
     <div className="space-y-6">
-      <header className="relative overflow-hidden rounded-card border border-border bg-surface p-4 pt-5 shadow-card sm:p-5 sm:pt-6">
-        <span className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: competition.accentColor }} aria-hidden="true" />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{ backgroundImage: `radial-gradient(ellipse at top left, ${competition.accentColor}22, transparent 60%)` }}
-          aria-hidden="true"
-        />
-        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-fg-subtle">
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: competition.accentColor }} aria-hidden="true" />
-              {competition.region} · {competition.season}
-            </p>
-            <h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">{competition.name}</h1>
-            <p className="text-sm text-fg-muted">{competition.fullName}</p>
-            <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-fg-muted">
-              <li>
-                <span className="font-semibold text-fg">{competition.stage}</span>
-              </li>
-              <li>
-                <span className="font-semibold text-fg tabular">{competition.teamCount}</span> équipes
-              </li>
-              <li>
-                <span className="font-semibold text-fg tabular">{results.length}</span> matchs joués
-              </li>
-              <li>
-                <span className="font-semibold text-fg tabular">{upcoming.length}</span> à venir
-              </li>
-              {live.length > 0 && (
-                <li className="flex items-center gap-1.5 font-semibold text-live">
-                  <LiveDot /> {live.length} en direct
-                </li>
-              )}
-            </ul>
-          </div>
-          <FavoriteButton kind="competition" id={competition.id} label={competition.name} className="self-start" />
+      {/* En-tête plat : sur-titre et bouton favori sur la première ligne, titre pleine largeur en dessous */}
+      <header>
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-[11px] uppercase tracking-[0.08em] text-fg-muted">
+            {competition.region} · {competition.season}
+          </p>
+          <FavoriteButton kind="competition" id={competition.id} label={competition.name} className="shrink-0" />
         </div>
+        <h1 className="mt-2 font-display text-4xl font-bold uppercase leading-none sm:text-5xl">{competition.name}</h1>
+        <p className="mt-2 text-sm text-fg-muted">{competition.fullName}</p>
+        <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] uppercase tracking-[0.08em] text-fg-muted">
+          <li className="text-fg">{competition.stage}</li>
+          <li>
+            <span className="text-fg tabular">{competition.teamCount}</span> équipes
+          </li>
+          <li>
+            <span className="text-fg tabular">{results.length}</span> matchs joués
+          </li>
+          <li>
+            <span className="text-fg tabular">{upcoming.length}</span> à venir
+          </li>
+          {live.length > 0 && (
+            <li className="flex items-center gap-1.5 font-semibold text-live">
+              <LiveDot /> {live.length} en direct
+            </li>
+          )}
+        </ul>
       </header>
 
       {live.length > 0 && (
@@ -180,7 +170,6 @@ async function StatsTab({ competition, teams }: { competition: Competition; team
     api.getLeaders({ competitionId: competition.id, stat: "assistsPerGame", limit: 5 }),
   ]);
   const played = teamStats.filter((s) => s.gamesPlayed > 0);
-
 
   return (
     <div className="space-y-8">

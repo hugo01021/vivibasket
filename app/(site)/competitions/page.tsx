@@ -35,8 +35,8 @@ export default async function CompetitionsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight">Compétitions</h1>
-        <p className="text-sm text-fg-muted">
+        <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">Compétitions</h1>
+        <p className="mt-2 text-sm text-fg-muted">
           {competitions.length} compétitions suivies
           {live.length > 0 && (
             <>
@@ -55,20 +55,21 @@ export default async function CompetitionsPage() {
             <SectionTitle count={items.length}>
               <span id={`categorie-${value}`}>{label}</span>
             </SectionTitle>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <ul className="divide-y divide-border">
               {items.map((competition) => {
                 const leader = leaders.get(competition.id);
                 return (
-                  <CompetitionCard
-                    key={competition.id}
-                    competition={competition}
-                    liveCount={liveCount.get(competition.id) ?? 0}
-                    leader={leader}
-                    leaderTeam={leader ? teamMap.get(leader.teamId) : undefined}
-                  />
+                  <li key={competition.id}>
+                    <CompetitionCard
+                      competition={competition}
+                      liveCount={liveCount.get(competition.id) ?? 0}
+                      leader={leader}
+                      leaderTeam={leader ? teamMap.get(leader.teamId) : undefined}
+                    />
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </section>
         );
       })}

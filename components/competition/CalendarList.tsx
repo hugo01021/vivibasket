@@ -42,10 +42,10 @@ export function CalendarList({
         const rounds = [...new Set(dayMatches.map((m) => m.round))];
         const details = [relative ? longDate : null, rounds.length <= 2 ? rounds.join(" · ") : null].filter(Boolean).join(" · ");
         return (
-          <section key={day} aria-labelledby={`jour-${day}`} className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
+          <section key={day} aria-labelledby={`jour-${day}`} className="overflow-hidden rounded-md border border-border bg-surface">
             <header className="flex items-center justify-between gap-3 border-b border-border px-3 py-2 sm:px-4">
               <h3 id={`jour-${day}`} className="flex min-w-0 items-baseline gap-2">
-                <span className="shrink-0 text-sm font-bold first-letter:uppercase">{relative ? label : longDate}</span>
+                <span className="shrink-0 font-display text-lg font-bold uppercase leading-none">{relative ? label : longDate}</span>
                 {details && <span className="truncate text-xs text-fg-subtle">{details}</span>}
               </h3>
               <span className="shrink-0 text-xs text-fg-subtle tabular">
@@ -65,10 +65,7 @@ export function CalendarList({
       })}
       {hidden > 0 && moreHref && (
         <div className="text-center">
-          <Link
-            href={moreHref}
-            className="inline-flex h-9 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-fg-muted transition-colors hover:border-border-strong hover:text-fg"
-          >
+          <Link href={moreHref} className="inline-flex h-10 items-center text-sm font-semibold text-fg-muted transition-colors hover:text-fg">
             Afficher {hidden} journée{hidden > 1 ? "s" : ""} de plus
           </Link>
         </div>

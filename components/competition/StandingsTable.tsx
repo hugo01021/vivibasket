@@ -27,11 +27,11 @@ function Table({
 }) {
   const th = "px-2 py-2.5 text-right font-semibold";
   return (
-    <div className="overflow-x-auto rounded-card border border-border bg-surface shadow-card">
+    <div className="overflow-x-auto rounded-md border border-border bg-surface">
       <table className="w-full min-w-[720px] text-sm tabular">
         <caption className="sr-only">{caption}</caption>
         <thead>
-          <tr className="border-b border-border text-xs uppercase tracking-wide text-fg-subtle">
+          <tr className="border-b border-border text-[11px] uppercase tracking-[0.08em] text-fg-muted">
             <th scope="col" className="sticky left-0 z-10 bg-surface px-3 py-2.5 text-left font-semibold sm:px-4">
               Équipe
             </th>
@@ -70,10 +70,18 @@ function Table({
           {rows.map((row) => {
             const team = teams.get(row.teamId);
             return (
-              <tr key={row.teamId} className="group transition-colors hover:bg-surface-2">
+              <tr key={row.teamId} className="group transition-colors hover:bg-white/[0.03]">
                 <th scope="row" className="sticky left-0 z-10 bg-surface px-3 py-2 text-left font-normal transition-colors group-hover:bg-surface-2 sm:px-4">
                   <span className="flex items-center gap-2.5">
-                    <span className={cn("w-5 shrink-0 text-right text-xs font-bold", row.rank === 1 ? "text-accent" : "text-fg-muted")}>{row.rank}</span>
+                    {/* Leader signalé en orange discret, les autres rangs en gris */}
+                    <span
+                      className={cn(
+                        "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[3px] text-xs font-bold",
+                        row.rank === 1 ? "bg-accent-soft text-accent" : "text-fg-muted",
+                      )}
+                    >
+                      {row.rank}
+                    </span>
                     {team ? (
                       <Link href={`/equipes/${team.id}`} className="flex min-w-0 items-center gap-2 hover:text-accent">
                         <TeamBadge team={team} size="sm" />
@@ -92,7 +100,7 @@ function Table({
                 {showGamesBehind && <td className="px-2 py-2 text-right text-fg-muted">{formatGamesBehind(row.gamesBehind)}</td>}
                 <td className="px-2 py-2 text-right text-fg-muted">{row.pointsFor}</td>
                 <td className="px-2 py-2 text-right text-fg-muted">{row.pointsAgainst}</td>
-                <td className={cn("px-2 py-2 text-right font-semibold", row.pointDiff > 0 && "text-win", row.pointDiff < 0 && "text-loss")}>
+                <td className={cn("px-2 py-2 text-right font-semibold", row.pointDiff < 0 ? "text-fg-muted" : "text-fg")}>
                   {formatSigned(row.pointDiff, 0)}
                 </td>
                 <td className="px-3 py-2 sm:pr-4">
@@ -133,7 +141,7 @@ export function StandingsTable({
         .filter((section) => section.rows.length > 0)
         .map((section) => (
           <section key={section.key} aria-label={section.label || `Classement ${competition.name}`}>
-            {section.label && <h3 className="mb-2 text-sm font-bold text-fg-muted">{section.label}</h3>}
+            {section.label && <h3 className="mb-2 font-display text-lg font-bold uppercase leading-none">{section.label}</h3>}
             <Table
               rows={[...section.rows].sort((a, b) => a.rank - b.rank)}
               teams={teams}

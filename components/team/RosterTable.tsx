@@ -15,15 +15,15 @@ const POSITION_LABELS: Record<Position, string> = {
   "F-C": "Ailier fort-pivot",
 };
 
-/** Effectif d'une équipe : numéro, nom, poste, taille, âge, nationalité. */
+/** Effectif d'une équipe : numéro, nom, poste, taille, âge, nationalité. Défile horizontalement sur mobile. */
 export function RosterTable({ players }: { players: Player[] }) {
   const sorted = [...players].sort((a, b) => a.jerseyNumber - b.jerseyNumber || a.lastName.localeCompare(b.lastName, "fr"));
   return (
-    <div className="overflow-x-auto rounded-card border border-border bg-surface shadow-card">
+    <div className="overflow-x-auto rounded-md border border-border bg-surface">
       <table className="w-full min-w-[560px] text-sm">
         <caption className="sr-only">Effectif</caption>
         <thead>
-          <tr className="border-b border-border text-left text-xs font-semibold uppercase tracking-wide text-fg-subtle">
+          <tr className="border-b border-border text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
             <th scope="col" className="w-12 px-3 py-2.5 text-center sm:px-4">N°</th>
             <th scope="col" className="px-3 py-2.5">Joueur</th>
             <th scope="col" className="px-3 py-2.5">Poste</th>
@@ -34,8 +34,8 @@ export function RosterTable({ players }: { players: Player[] }) {
         </thead>
         <tbody className="divide-y divide-border">
           {sorted.map((player) => (
-            <tr key={player.id} className="transition-colors hover:bg-surface-2">
-              <td className="px-3 py-2.5 text-center font-bold text-fg-muted tabular sm:px-4">{player.jerseyNumber}</td>
+            <tr key={player.id} className="transition-colors hover:bg-white/[0.03]">
+              <td className="px-3 py-2.5 text-center font-semibold text-fg-muted tabular sm:px-4">{player.jerseyNumber}</td>
               <td className="px-3 py-2.5">
                 <Link href={`/joueurs/${player.id}`} className="font-semibold text-fg hover:text-accent">
                   {fullPlayerName(player)}

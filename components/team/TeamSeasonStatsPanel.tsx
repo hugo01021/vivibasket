@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Competition, StandingRow, TeamSeasonStats } from "@/types";
 import { formatNumber, formatPct, formatSigned } from "@/lib/format";
-import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatCard } from "@/components/ui/StatCard";
 import { FormIndicator } from "./FormIndicator";
@@ -22,10 +21,9 @@ export function TeamSeasonStatsPanel({
 }) {
   return (
     <section aria-labelledby={`saison-${competition.id}`} className="space-y-3">
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <Link href={`/competitions/${competition.slug}`} className="flex items-center gap-2 hover:text-accent">
-          <span className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: competition.accentColor }} aria-hidden="true" />
-          <h3 id={`saison-${competition.id}`} className="font-bold">
+      <header className="flex flex-wrap items-baseline justify-between gap-2">
+        <Link href={`/competitions/${competition.slug}`} className="flex min-w-0 items-baseline gap-2 hover:text-accent">
+          <h3 id={`saison-${competition.id}`} className="font-display text-lg font-bold uppercase leading-none">
             {competition.name}
           </h3>
           <span className="text-xs text-fg-subtle">
@@ -36,7 +34,7 @@ export function TeamSeasonStatsPanel({
       {!stats || stats.gamesPlayed === 0 ? (
         <EmptyState title="Aucun match joué">Les statistiques apparaîtront après le premier match de la saison.</EmptyState>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           <StatCard
             label="Bilan"
             value={record(stats.wins, stats.losses)}
@@ -62,11 +60,7 @@ export function TeamSeasonStatsPanel({
           />
           <StatCard label="ORTG" value={formatNumber(stats.offensiveRating)} hint="Pts marqués / 100 poss." />
           <StatCard label="DRTG" value={formatNumber(stats.defensiveRating)} hint="Pts encaissés / 100 poss." />
-          <StatCard
-            label="Net rating"
-            value={<span className={cn(stats.netRating > 0 && "text-win", stats.netRating < 0 && "text-loss")}>{formatSigned(stats.netRating)}</span>}
-            hint="ORTG − DRTG"
-          />
+          <StatCard label="Net rating" value={formatSigned(stats.netRating)} hint="ORTG − DRTG" />
           <StatCard label="Pace" value={formatNumber(stats.pace)} hint="Possessions par match" />
           <StatCard
             label="Forme"
@@ -83,7 +77,8 @@ export function TeamSeasonStatsPanel({
           <StatCard
             label="Série"
             value={
-              <span className={stats.streak.type === "W" ? "text-win" : "text-loss"}>
+              // Vert / rouge réservés aux V/D, toujours atténués
+              <span className={stats.streak.type === "W" ? "text-win/80" : "text-loss/80"}>
                 {stats.streak.count} {stats.streak.type === "W" ? "V" : "D"}
               </span>
             }

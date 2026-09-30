@@ -56,10 +56,10 @@ export default async function TeamsPage({ searchParams }: { searchParams: Search
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">Équipes</h1>
-            <p className="text-sm text-fg-muted">
+            <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">Équipes</h1>
+            <p className="mt-2 text-sm text-fg-muted">
               {total} équipe{total > 1 ? "s" : ""}
               {q && (
                 <>
@@ -81,19 +81,20 @@ export default async function TeamsPage({ searchParams }: { searchParams: Search
               defaultValue={q}
               placeholder="Nom, ville, trigramme…"
               autoComplete="off"
-              className="h-9 min-w-0 flex-1 rounded-full border border-border bg-surface px-4 text-sm text-fg placeholder:text-fg-subtle focus:border-accent focus:outline-none sm:w-64"
+              className="h-10 min-w-0 flex-1 rounded-md border border-border bg-surface px-3 text-sm text-fg placeholder:text-fg-subtle focus:border-accent focus:outline-none sm:h-9 sm:w-64"
             />
             <button
               type="submit"
-              className="inline-flex h-9 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-accent-ink hover:bg-accent-hover"
+              className="inline-flex h-10 shrink-0 items-center rounded-md bg-accent px-4 text-sm font-bold text-bg transition-colors hover:bg-accent-hover sm:h-9"
             >
               Rechercher
             </button>
           </form>
         </div>
 
-        <nav aria-label="Filtrer par type d’équipe" className="-mx-4 overflow-x-auto px-4 scrollbar-none sm:mx-0 sm:px-0">
-          <ul className="flex w-max gap-1.5 sm:flex-wrap">
+        {/* Filtres par type : onglets soulignés, défilables sur mobile */}
+        <nav aria-label="Filtrer par type d’équipe" className="-mx-4 overflow-x-auto border-b border-border px-4 scrollbar-none sm:mx-0 sm:px-0">
+          <ul className="flex w-max items-center gap-1">
             {filters.map((option) => {
               const isActive = (type ?? "") === option.value;
               return (
@@ -102,10 +103,8 @@ export default async function TeamsPage({ searchParams }: { searchParams: Search
                     href={buildHref(option.value || undefined, q || undefined)}
                     aria-current={isActive ? "true" : undefined}
                     className={cn(
-                      "inline-flex h-8 items-center rounded-chip border px-3 text-xs font-semibold whitespace-nowrap transition-colors",
-                      isActive
-                        ? "border-accent bg-accent text-accent-ink"
-                        : "border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg",
+                      "-mb-px inline-flex h-11 items-center border-b-2 px-3 text-sm font-semibold whitespace-nowrap transition-colors",
+                      isActive ? "border-accent text-fg" : "border-transparent text-fg-muted hover:text-fg",
                     )}
                   >
                     {option.label}
@@ -114,10 +113,10 @@ export default async function TeamsPage({ searchParams }: { searchParams: Search
               );
             })}
             {q && (
-              <li>
+              <li className="pl-2">
                 <Link
                   href={buildHref(type)}
-                  className="inline-flex h-8 items-center gap-1 rounded-chip border border-dashed border-border px-3 text-xs font-semibold whitespace-nowrap text-fg-muted hover:text-fg"
+                  className="inline-flex h-11 items-center gap-1 text-xs font-semibold whitespace-nowrap text-fg-muted transition-colors hover:text-fg"
                 >
                   <span aria-hidden="true">×</span> Effacer la recherche
                 </Link>
@@ -137,18 +136,20 @@ export default async function TeamsPage({ searchParams }: { searchParams: Search
             <SectionTitle count={section.teams.length}>
               <span id={`type-${section.value}`}>{section.label}</span>
             </SectionTitle>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {/* Lignes denses réparties sur 2–3 colonnes selon la largeur, une seule sur mobile */}
+            <ul className="grid grid-cols-1 md:grid-cols-2 md:gap-x-6 xl:grid-cols-3">
               {section.teams.map((team) => (
-                <TeamCard
-                  key={team.id}
-                  team={team}
-                  competitions={team.competitionIds.flatMap((id) => {
-                    const competition = competitionMap.get(id);
-                    return competition ? [competition] : [];
-                  })}
-                />
+                <li key={team.id} className="min-w-0 border-b border-border">
+                  <TeamCard
+                    team={team}
+                    competitions={team.competitionIds.flatMap((id) => {
+                      const competition = competitionMap.get(id);
+                      return competition ? [competition] : [];
+                    })}
+                  />
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         ))
       )}

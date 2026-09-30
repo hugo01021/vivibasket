@@ -4,58 +4,50 @@ import { FavoriteButton } from "@/components/ui/FavoriteButton";
 import { TeamBadge } from "./TeamBadge";
 import { countryName } from "./country";
 
-/** En-tête d'une page équipe : écusson, identité, salle, entraîneur, compétitions. */
+/**
+ * En-tête d'une page équipe : écusson, identité, salle, entraîneur, compétitions.
+ * En-tête plat, sans couleurs d'équipe. Sur mobile, l'écusson et le bouton favori
+ * occupent la première ligne et le titre prend toute la largeur en dessous.
+ */
 export function TeamHeader({ team, competitions }: { team: Team; competitions: Competition[] }) {
   const location = team.kind === "national" ? "Sélection nationale" : `${team.city} · ${countryName(team.country)}`;
+  const details = [
+    team.arena ? { label: "Salle", value: team.arena } : null,
+    team.coach ? { label: team.kind === "national" ? "Sélectionneur" : "Entraîneur", value: team.coach } : null,
+    team.founded ? { label: "Fondation", value: String(team.founded), tabular: true } : null,
+  ].filter((detail) => detail !== null);
+
   return (
-    <header
-      className="relative overflow-hidden rounded-card border border-border bg-surface p-4 shadow-card sm:p-5"
-      style={{ backgroundImage: `linear-gradient(120deg, ${team.colors.primary}26 0%, transparent 55%)` }}
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <TeamBadge team={team} size="xl" />
-        <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{team.name}</h1>
-          <p className="mt-0.5 text-sm text-fg-muted">{location}</p>
-          <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-            {team.arena && (
-              <div>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-fg-subtle">Salle</dt>
-                <dd className="font-semibold">{team.arena}</dd>
+    <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-x-4 gap-y-3 sm:items-start">
+      <TeamBadge team={team} size="xl" className="col-start-1 row-start-1" />
+      <FavoriteButton kind="team" id={team.id} label={team.name} className="col-start-3 row-start-1 justify-self-end" />
+      <div className="col-span-3 row-start-2 min-w-0 sm:col-span-1 sm:col-start-2 sm:row-start-1">
+        <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">{team.name}</h1>
+        <p className="mt-2 text-sm text-fg-muted">{location}</p>
+        {details.length > 0 && (
+          <dl className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+            {details.map((detail) => (
+              <div key={detail.label} className="flex items-baseline gap-1.5">
+                <dt className="text-[11px] uppercase tracking-[0.08em] text-fg-muted">{detail.label}</dt>
+                <dd className={detail.tabular ? "text-sm text-fg tabular" : "text-sm text-fg"}>{detail.value}</dd>
               </div>
-            )}
-            {team.coach && (
-              <div>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-fg-subtle">
-                  {team.kind === "national" ? "Sélectionneur" : "Entraîneur"}
-                </dt>
-                <dd className="font-semibold">{team.coach}</dd>
-              </div>
-            )}
-            {team.founded && (
-              <div>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-fg-subtle">Fondation</dt>
-                <dd className="font-semibold tabular">{team.founded}</dd>
-              </div>
-            )}
+            ))}
           </dl>
-          {competitions.length > 0 && (
-            <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Compétitions disputées">
-              {competitions.map((competition) => (
-                <li key={competition.id}>
-                  <Link
-                    href={`/competitions/${competition.slug}`}
-                    className="inline-flex h-7 items-center gap-1.5 rounded-chip border border-border bg-surface-2 px-2.5 text-xs font-semibold text-fg-muted transition-colors hover:border-border-strong hover:text-fg"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: competition.accentColor }} aria-hidden="true" />
-                    {competition.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        <FavoriteButton kind="team" id={team.id} label={team.name} className="self-start" />
+        )}
+        {competitions.length > 0 && (
+          <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Compétitions disputées">
+            {competitions.map((competition) => (
+              <li key={competition.id}>
+                <Link
+                  href={`/competitions/${competition.slug}`}
+                  className="inline-flex h-10 items-center rounded-[4px] border border-border px-3 text-xs font-semibold text-fg-muted transition-colors hover:border-accent hover:text-accent sm:h-7 sm:px-2.5"
+                >
+                  {competition.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </header>
   );
