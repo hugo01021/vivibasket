@@ -1,7 +1,7 @@
 /** Identité et constantes globales du produit. */
 export const SITE = {
   name: "Rebond",
-  tagline: "Lisez le match avant l'entre-deux.",
+  tagline: "Moins de hasard. Plus de victoires.",
   description:
     "Rebond analyse un match de basket en quelques secondes : probabilités de victoire, score projeté, forme, confrontations directes et résumé rédigé par l'IA. NBA, EuroLeague, Betclic Élite.",
   locale: "fr_FR",
