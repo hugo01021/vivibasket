@@ -24,6 +24,22 @@ const LEGACY_REDIRECTS = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  /**
+   * Allège les fonctions serverless (démarrage à froid plus rapide sur Vercel) :
+   * sharp n'est pas utilisé (aucune image optimisée), et seule la variante
+   * glibc x64 de libSQL est nécessaire côté serveur.
+   */
+  outputFileTracingExcludes: {
+    "/*": [
+      "./node_modules/sharp/**/*",
+      "./node_modules/@img/**/*",
+      "./node_modules/@libsql/linux-x64-musl/**/*",
+      "./node_modules/@libsql/linux-arm64-*/**/*",
+      "./node_modules/@libsql/darwin-*/**/*",
+      "./node_modules/@libsql/win32-*/**/*",
+      "./.data/**/*",
+    ],
+  },
   async redirects() {
     return LEGACY_REDIRECTS.map((r) => ({ ...r, permanent: true }));
   },
