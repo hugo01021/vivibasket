@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { LoginForm } from "~/components/auth/LoginForm";
 import { PageShell, PageTitle } from "~/components/layout/PageShell";
+import { Prewarm } from "~/components/pwa/Prewarm";
 
 export const metadata: Metadata = {
   title: "Connexion ou inscription",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <PageShell narrow>
+      <Prewarm />
       <PageTitle
         eyebrow="Étape 2"
         title="Connexion ou inscription"

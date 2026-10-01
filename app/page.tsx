@@ -3,6 +3,7 @@ import { HeroArt } from "~/components/brand/HeroArt";
 import { FeatureTriad } from "~/components/home/FeatureTriad";
 import { AppHeader } from "~/components/layout/AppHeader";
 import { SiteFooter } from "~/components/layout/SiteFooter";
+import { Prewarm } from "~/components/pwa/Prewarm";
 import { Button } from "~/components/ui/Button";
 import { IconArrowRight } from "~/components/ui/icons";
 import { PLANS } from "~/lib/plans";
@@ -48,6 +49,7 @@ export default function HomePage() {
 
   return (
     <>
+      <Prewarm />
       <div className="flex min-h-dvh flex-col">
         <AppHeader />
         <main id="contenu" className="flex-1">
