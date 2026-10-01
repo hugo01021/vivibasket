@@ -15,8 +15,8 @@ export function HeroArt({ className }: { className?: string }) {
           <rect x="20" y="40" width="320" height="230" rx="18" />
         </clipPath>
         <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#ff7a1a" stopOpacity="0.55" />
-          <stop offset="1" stopColor="#ff7a1a" stopOpacity="0" />
+          <stop offset="0" stopColor="#ff6a00" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#ff6a00" stopOpacity="0" />
         </radialGradient>
       </defs>
 
@@ -33,14 +33,14 @@ export function HeroArt({ className }: { className?: string }) {
         <circle cx="180" cy="180" r="30" />
         <path d="M150 270 a30 30 0 0 1 60 0" />
       </g>
-      <circle cx="180" cy="252" r="7" stroke="#ff7a1a" strokeWidth="2.5" fill="none" />
-      <line x1="160" y1="266" x2="200" y2="266" stroke="#ff7a1a" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="180" cy="252" r="7" stroke="#ff6a00" strokeWidth="2.5" fill="none" />
+      <line x1="160" y1="266" x2="200" y2="266" stroke="#ff6a00" strokeWidth="3" strokeLinecap="round" />
 
       {/* trajectoire du tir */}
-      <path d="M82 118 C 120 20, 200 20, 180 246" stroke="#ff7a1a" strokeWidth="2.2" strokeDasharray="4 6" fill="none" strokeLinecap="round" />
+      <path d="M82 118 C 120 20, 200 20, 180 246" stroke="#ff6a00" strokeWidth="2.2" strokeDasharray="4 6" fill="none" strokeLinecap="round" />
       <circle cx="82" cy="118" r="22" fill="url(#halo)" />
-      <circle cx="82" cy="118" r="11" fill="#ff7a1a" />
-      <path d="M71 118h22M82 107v22M74.5 110.5c4.2 4.2 4.2 10.8 0 15M89.5 110.5c-4.2 4.2-4.2 10.8 0 15" stroke="#1a0d04" strokeWidth="1.2" fill="none" />
+      <circle cx="82" cy="118" r="11" fill="#ff6a00" />
+      <path d="M71 118h22M82 107v22M74.5 110.5c4.2 4.2 4.2 10.8 0 15M89.5 110.5c-4.2 4.2-4.2 10.8 0 15" stroke="#1a0b00" strokeWidth="1.2" fill="none" />
 
       {/* jauge de probabilité */}
       <g transform="translate(206 56)">
@@ -49,7 +49,7 @@ export function HeroArt({ className }: { className?: string }) {
           PROBABILITÉ
         </text>
         <rect x="12" y="30" width="100" height="10" rx="5" fill="#23232b" />
-        <rect x="12" y="30" width="63" height="10" rx="5" fill="#ff7a1a" />
+        <rect x="12" y="30" width="63" height="10" rx="5" fill="#ff6a00" />
         <text x="12" y="56" fill="#f4f1ec" fontSize="12" fontWeight="700" fontFamily="ui-sans-serif, system-ui">
           63 %
         </text>

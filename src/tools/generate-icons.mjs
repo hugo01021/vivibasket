@@ -9,8 +9,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const BG = [11, 11, 13];
-const ACCENT = [255, 122, 26];
-const INK = [26, 13, 4];
+const ACCENT = [255, 106, 0];
+const INK = [26, 11, 0];
 const FG = [244, 241, 236];
 
 const crcTable = new Uint32Array(256).map((_, n) => {
