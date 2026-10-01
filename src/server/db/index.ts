@@ -59,14 +59,22 @@ CREATE TABLE IF NOT EXISTS stripe_events (
 );
 `;
 
-/** Vrai sur Vercel sans DATABASE_URL : la base vit dans /tmp et change d'une fonction à l'autre. */
+/** URL de base configurée : DATABASE_URL, ou les variables injectées par l'intégration Turso de Vercel. */
+function configuredUrl(): { url: string; authToken?: string } | null {
+  const url = process.env.DATABASE_URL?.trim() || process.env.TURSO_DATABASE_URL?.trim();
+  if (!url) return null;
+  const authToken = process.env.DATABASE_AUTH_TOKEN?.trim() || process.env.TURSO_AUTH_TOKEN?.trim() || undefined;
+  return { url, authToken };
+}
+
+/** Vrai sur Vercel sans base configurée : la base vit dans /tmp et change d'une fonction à l'autre. */
 export function isEphemeralDatabase(): boolean {
-  return Boolean(process.env.VERCEL) && !process.env.DATABASE_URL?.trim();
+  return Boolean(process.env.VERCEL) && configuredUrl() === null;
 }
 
 function resolveUrl(): { url: string; authToken?: string } {
-  const configured = process.env.DATABASE_URL?.trim();
-  if (configured) return { url: configured, authToken: process.env.DATABASE_AUTH_TOKEN?.trim() || undefined };
+  const configured = configuredUrl();
+  if (configured) return configured;
   if (process.env.VERCEL) {
     // Système de fichiers en lecture seule sur Vercel : seul /tmp est inscriptible.
     // Les données ne survivent pas aux redéploiements : configurez DATABASE_URL (Turso) en production.

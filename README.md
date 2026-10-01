@@ -98,7 +98,7 @@ Quota : nombre d'analyses `unlocked` sur la période de facturation courante (Ba
 
 ## Déploiement
 
-Vercel détecte Next.js automatiquement (`vercel.json`). **`DATABASE_URL` est indispensable sur Vercel** : sans elle, la base tombe dans `/tmp`, différent d'une fonction serverless à l'autre, et la session créée à la connexion n'est plus trouvée à la requête suivante (symptôme : « analyser » renvoie vers la page de connexion). Un bandeau d'alerte s'affiche dans ce cas. Base gratuite en deux minutes avec [Turso](https://turso.tech) : `turso db create rebond`, puis `turso db show rebond --url` et `turso db tokens create rebond` donnent `DATABASE_URL` et `DATABASE_AUTH_TOKEN`. Définissez aussi `SESSION_SECRET` et `NEXT_PUBLIC_SITE_URL`.
+Vercel détecte Next.js automatiquement (`vercel.json`). **`DATABASE_URL` est indispensable sur Vercel** : sans elle, la base tombe dans `/tmp`, différent d'une fonction serverless à l'autre, et la session créée à la connexion n'est plus trouvée à la requête suivante (symptôme : « analyser » renvoie vers la page de connexion). Un bandeau d'alerte s'affiche dans ce cas. Base gratuite en deux minutes avec [Turso](https://turso.tech) : `turso db create rebond`, puis `turso db show rebond --url` et `turso db tokens create rebond` donnent `DATABASE_URL` et `DATABASE_AUTH_TOKEN`. Plus simple encore : installez l'intégration **Turso** depuis le marketplace Vercel sur le projet, elle injecte `TURSO_DATABASE_URL` et `TURSO_AUTH_TOKEN`, reconnues telles quelles. Définissez aussi `SESSION_SECRET` et `NEXT_PUBLIC_SITE_URL`.
 
 ## Données
 
