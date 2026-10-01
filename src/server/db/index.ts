@@ -59,6 +59,11 @@ CREATE TABLE IF NOT EXISTS stripe_events (
 );
 `;
 
+/** Vrai sur Vercel sans DATABASE_URL : la base vit dans /tmp et change d'une fonction à l'autre. */
+export function isEphemeralDatabase(): boolean {
+  return Boolean(process.env.VERCEL) && !process.env.DATABASE_URL?.trim();
+}
+
 function resolveUrl(): { url: string; authToken?: string } {
   const configured = process.env.DATABASE_URL?.trim();
   if (configured) return { url: configured, authToken: process.env.DATABASE_AUTH_TOKEN?.trim() || undefined };

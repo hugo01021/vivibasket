@@ -1,6 +1,6 @@
 import "server-only";
 import { and, eq, gt } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getDb, newId, schema } from "~/server/db";
 import { SESSION_COOKIE, SESSION_TTL_MS, sha256Hex, signSessionToken, verifySessionToken } from "./token";
 
@@ -19,10 +19,19 @@ export async function createSession(userId: string): Promise<void> {
   store.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    // « Secure » seulement si la requête arrive en HTTPS : un `npm start` en HTTP
+    // (ou certains navigateurs sur http://localhost) refuseraient sinon le cookie.
+    secure: await isHttpsRequest(),
     path: "/",
     expires: new Date(exp),
   });
+}
+
+async function isHttpsRequest(): Promise<boolean> {
+  const h = await headers();
+  const proto = h.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  if (proto) return proto === "https";
+  return (h.get("host") ?? "").includes("vercel.app");
 }
 
 export async function destroySession(): Promise<void> {

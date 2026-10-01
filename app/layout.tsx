@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import type { ReactNode } from "react";
+import { ConfigWarning } from "~/components/layout/ConfigWarning";
 import { ServiceWorkerRegister } from "~/components/pwa/ServiceWorkerRegister";
 import { SITE, siteUrl } from "~/lib/site";
 import "./globals.css";
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           Aller au contenu
         </a>
+        <ConfigWarning />
         {children}
         <ServiceWorkerRegister />
       </body>
