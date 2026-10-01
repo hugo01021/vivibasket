@@ -78,7 +78,7 @@ function TeamLine({ name, short, score, tag }: { name: string; short: string; sc
         {short}
       </span>
       <span className="min-w-0 flex-1 truncate font-semibold text-fg">{name}</span>
-      <span className="hidden text-[10px] uppercase tracking-wide text-fg-subtle sm:inline">{tag}</span>
+      <span className="hidden text-[11px] uppercase tracking-wide text-fg-subtle lg:inline">{tag}</span>
       {score !== undefined ? <span className="tabular w-8 shrink-0 text-right font-display text-lg font-extrabold text-fg">{score}</span> : null}
     </div>
   );

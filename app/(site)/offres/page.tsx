@@ -102,7 +102,7 @@ export default async function OffersPage({ searchParams }: { searchParams: Promi
         </div>
       ) : null}
 
-      <div className="grid gap-5 pt-3 lg:grid-cols-3">
+      <div className="grid gap-5 pt-3 md:grid-cols-3">
         {PLAN_ORDER.map((id) => (
           <PlanCard
             key={id}

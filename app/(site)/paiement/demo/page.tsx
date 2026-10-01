@@ -68,8 +68,9 @@ export default async function DemoPaymentPage({ searchParams }: { searchParams: 
             Payer {formatPrice(def.priceCents)} / mois (simulation)
           </SubmitButton>
         </form>
-        <p className="mt-3 flex items-center gap-2 text-xs text-fg-subtle">
-          <IconShield size={14} /> En validant, vous acceptez les{" "}
+        <p className="mt-3 text-xs leading-relaxed text-fg-subtle">
+          <IconShield size={14} className="mr-1.5 inline-block align-[-2px]" />
+          En validant, vous acceptez les{" "}
           <Link href="/cgv" className="underline-offset-2 hover:underline">
             CGV
           </Link>{" "}
