@@ -10,7 +10,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/matchs" },
 };
 
-export const dynamic = "force-dynamic";
+/** Page mise en cache 60 s : les scores simulés évoluent à la minute. */
+export const revalidate = 60;
 
 export default async function MatchesPage() {
   const now = new Date();

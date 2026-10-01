@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { Logo } from "~/components/brand/Logo";
 import { IconUser } from "~/components/ui/icons";
-import { getCurrentUser } from "~/server/auth/dal";
 
-/** En-tête : logo + icône compte (navigation secondaire sur grand écran). */
-export async function AppHeader() {
-  const user = await getCurrentUser();
+/**
+ * En-tête : logo + icône compte. Il ne lit pas la session afin que les pages
+ * publiques restent statiques (servies par le CDN, sans démarrage à froid) :
+ * l'icône mène toujours à /compte, le proxy renvoie vers la connexion si besoin.
+ */
+export function AppHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-bg/85 backdrop-blur supports-[backdrop-filter]:bg-bg/70">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
@@ -18,12 +20,11 @@ export async function AppHeader() {
             Offres
           </Link>
           <Link
-            href={user ? "/compte" : "/connexion"}
-            aria-label={user ? "Mon compte" : "Se connecter"}
+            href="/compte"
+            aria-label="Mon compte"
             className="ml-1 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-fg-muted hover:border-accent hover:text-accent"
           >
             <IconUser size={20} />
-            {user ? <span className="sr-only">{user.email}</span> : null}
           </Link>
         </nav>
       </div>

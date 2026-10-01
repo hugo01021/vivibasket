@@ -101,7 +101,7 @@ export function StarField() {
     const vy = Math.sin(DRIFT_ANGLE) * DRIFT_SPEED;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 3);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = Math.round(width * dpr);
