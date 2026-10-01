@@ -7,8 +7,26 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
+/** Anciennes adresses du site précédent : redirigées vers le nouveau parcours. */
+const LEGACY_REDIRECTS = [
+  { source: "/analyses/:path*", destination: "/analyser" },
+  { source: "/competitions/:path*", destination: "/matchs" },
+  { source: "/equipes/:path*", destination: "/matchs" },
+  { source: "/joueurs/:path*", destination: "/matchs" },
+  { source: "/match/:path*", destination: "/matchs" },
+  { source: "/favoris", destination: "/compte" },
+  { source: "/recherche", destination: "/analyser" },
+  { source: "/api/analysis", destination: "/api/analyses" },
+  { source: "/api/matches", destination: "/api/matchs" },
+  { source: "/api/search", destination: "/api/matchs" },
+  { source: "/api/favorites", destination: "/api/analyses" },
+];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async redirects() {
+    return LEGACY_REDIRECTS.map((r) => ({ ...r, permanent: true }));
+  },
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },
