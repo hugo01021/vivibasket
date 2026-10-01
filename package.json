@@ -1,5 +1,5 @@
 {
-  "name": "vivibasket",
+  "name": "rebond",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,14 +7,18 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "data:check": "tsx scripts/check-data.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "icons:generate": "node src/tools/generate-icons.mjs",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/stripe/webhook"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
+    "drizzle-orm": "^0.45.3",
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "recharts": "^3.10.1"
+    "recharts": "^3.10.1",
+    "stripe": "^23.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -29,5 +33,6 @@
   },
   "engines": {
     "node": ">=20.9.0"
-  }
+  },
+  "description": "Rebond — analyse de matchs de basket par IA (web app mobile-first, Next.js)."
 }
