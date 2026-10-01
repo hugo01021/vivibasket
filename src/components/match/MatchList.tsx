@@ -21,7 +21,7 @@ export function MatchList({ fixtures, highlightId = null }: { fixtures: Fixture[
 
   return (
     <div className="space-y-4">
-      <div role="tablist" aria-label="Filtrer par ligue" className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+      <div role="tablist" aria-label="Filtrer par ligue" className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
         {filters.map((f) => {
           const active = filter === f.id;
           return (
@@ -32,7 +32,7 @@ export function MatchList({ fixtures, highlightId = null }: { fixtures: Fixture[
               aria-selected={active}
               onClick={() => setFilter(f.id)}
               className={cn(
-                "inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors",
+                "inline-flex items-center justify-center gap-2 rounded-full border px-3 py-2.5 text-sm font-semibold transition-colors sm:px-4 sm:py-2",
                 active ? "border-accent bg-accent-soft text-accent" : "border-border bg-surface text-fg-muted hover:text-fg",
               )}
             >
@@ -50,7 +50,7 @@ export function MatchList({ fixtures, highlightId = null }: { fixtures: Fixture[
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2">
           {visible.map((fixture) => (
-            <li key={fixture.id} className="animate-rise">
+            <li key={fixture.id} className="min-w-0 animate-rise">
               <MatchCard fixture={fixture} highlighted={fixture.id === highlightId} />
             </li>
           ))}
