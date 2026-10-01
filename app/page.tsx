@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { HeroArt } from "~/components/brand/HeroArt";
 import { FeatureTriad } from "~/components/home/FeatureTriad";
-import { StarField } from "~/components/home/StarField";
 import { AppHeader } from "~/components/layout/AppHeader";
 import { SiteFooter } from "~/components/layout/SiteFooter";
 import { Button } from "~/components/ui/Button";
@@ -49,13 +48,12 @@ export default function HomePage() {
 
   return (
     <>
-      <StarField />
-      <div className="relative z-10 flex min-h-dvh flex-col">
+      <div className="flex min-h-dvh flex-col">
         <AppHeader />
         <main id="contenu" className="flex-1">
           <section className="mx-auto grid max-w-5xl items-center gap-6 px-4 pb-10 pt-4 sm:gap-8 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16">
-            <div className="animate-float order-first mx-auto w-full max-w-md lg:order-none lg:col-start-2 lg:max-w-none">
-              <HeroArt className="h-auto w-full drop-shadow-[0_24px_40px_rgba(0,0,0,0.55)]" />
+            <div className="order-first mx-auto w-full max-w-md lg:order-none lg:col-start-2 lg:max-w-none">
+              <HeroArt className="h-auto w-full" />
             </div>
             <div className="animate-rise lg:col-start-1 lg:row-start-1">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Analyse de basket par IA</p>
@@ -84,7 +82,7 @@ export default function HomePage() {
             <FeatureTriad />
           </section>
         </main>
-        <SiteFooter transparent />
+        <SiteFooter />
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </>
