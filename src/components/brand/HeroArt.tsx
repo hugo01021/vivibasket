@@ -11,6 +11,9 @@ export function HeroArt({ className }: { className?: string }) {
           <stop offset="0" stopColor="#1b1b21" />
           <stop offset="1" stopColor="#111115" />
         </linearGradient>
+        <clipPath id="court-clip">
+          <rect x="20" y="40" width="320" height="230" rx="18" />
+        </clipPath>
         <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stopColor="#ff7a1a" stopOpacity="0.55" />
           <stop offset="1" stopColor="#ff7a1a" stopOpacity="0" />
@@ -24,7 +27,7 @@ export function HeroArt({ className }: { className?: string }) {
       ))}
 
       {/* tracés du terrain */}
-      <g stroke="#9a9aa6" strokeOpacity="0.55" strokeWidth="2" fill="none">
+      <g stroke="#9a9aa6" strokeOpacity="0.55" strokeWidth="2" fill="none" clipPath="url(#court-clip)">
         <path d="M60 270 V 140 a120 120 0 0 1 240 0 V 270" />
         <rect x="130" y="180" width="100" height="90" />
         <circle cx="180" cy="180" r="30" />

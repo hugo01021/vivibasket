@@ -53,8 +53,11 @@ export default function HomePage() {
       <div className="relative z-10 flex min-h-dvh flex-col">
         <AppHeader />
         <main id="contenu" className="flex-1">
-          <section className="mx-auto grid max-w-5xl items-center gap-8 px-4 pb-10 pt-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16">
-            <div className="animate-rise">
+          <section className="mx-auto grid max-w-5xl items-center gap-6 px-4 pb-10 pt-4 sm:gap-8 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16">
+            <div className="animate-float order-first mx-auto w-full max-w-md lg:order-none lg:col-start-2 lg:max-w-none">
+              <HeroArt className="h-auto w-full drop-shadow-[0_24px_40px_rgba(0,0,0,0.55)]" />
+            </div>
+            <div className="animate-rise lg:col-start-1 lg:row-start-1">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Analyse de basket par IA</p>
               <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] text-fg sm:text-5xl lg:text-6xl">{SITE.tagline}</h1>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-fg-muted sm:text-lg">
@@ -71,9 +74,6 @@ export default function HomePage() {
                 </Button>
               </div>
               <p className="mt-4 text-xs text-fg-subtle">Abonnement mensuel sans engagement · résiliable en ligne · réservé aux adultes (18+)</p>
-            </div>
-            <div className="animate-float mx-auto w-full max-w-md lg:max-w-none">
-              <HeroArt className="h-auto w-full drop-shadow-[0_24px_40px_rgba(0,0,0,0.55)]" />
             </div>
           </section>
 
