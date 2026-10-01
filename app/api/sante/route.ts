@@ -10,5 +10,5 @@ export async function GET() {
   } catch (error) {
     database = error instanceof Error ? error.message : "erreur";
   }
-  return NextResponse.json({ ok: database === "ok" && !isEphemeralDatabase(), database: isEphemeralDatabase() ? "éphémère (/tmp) : configurez DATABASE_URL" : database, stripe: isStripeConfigured() ? "configuré" : "mode démonstration", time: new Date().toISOString() });
+  return NextResponse.json({ ok: database === "ok" && !isEphemeralDatabase(), database: isEphemeralDatabase() ? "éphémère (/tmp) + cookie signé : configurez DATABASE_URL pour la production" : database, stripe: isStripeConfigured() ? "configuré" : "mode démonstration", time: new Date().toISOString() });
 }

@@ -78,8 +78,10 @@ function resolveUrl(): { url: string; authToken?: string } {
   if (process.env.VERCEL) {
     // Système de fichiers en lecture seule sur Vercel : seul /tmp est inscriptible.
     // Les données ne survivent pas aux redéploiements : configurez DATABASE_URL (Turso) en production.
-    console.warn("[db] DATABASE_URL absent : base éphémère dans /tmp. Configurez une base libSQL distante pour la production.");
-    return { url: "file:/tmp/rebond.db" };
+    console.warn("[db] DATABASE_URL absent : base éphémère dans /tmp, état utilisateur conservé dans un cookie signé. Configurez une base libSQL distante pour la production.");
+    const tmp = process.env.TMPDIR?.trim() || "/tmp";
+    mkdirSync(tmp, { recursive: true });
+    return { url: `file:${path.join(tmp, "rebond.db")}` };
   }
   const dir = path.join(process.cwd(), ".data");
   mkdirSync(dir, { recursive: true });

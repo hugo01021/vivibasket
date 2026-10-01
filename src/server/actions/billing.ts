@@ -18,6 +18,7 @@ import {
   setStripeCancelAtPeriodEnd,
 } from "~/server/billing/stripe";
 import { getDb, schema } from "~/server/db";
+import { persistToCookie } from "~/server/db/cookie-store";
 
 async function requestOrigin(): Promise<string> {
   const h = await headers();
@@ -66,11 +67,9 @@ export async function confirmDemoPayment(formData: FormData): Promise<void> {
   if (!isPlanId(plan)) redirect("/offres");
   const user = await requireUser(`/paiement/demo?plan=${plan}`);
   await activateDemoSubscription(user.id, plan);
-  if (analysisId) {
-    await unlockAnalysis(user.id, analysisId);
-    redirect(`/analyse/${analysisId}?paiement=ok`);
-  }
-  redirect("/compte?paiement=ok");
+  if (analysisId) await unlockAnalysis(user.id, analysisId);
+  await persistToCookie(user.id);
+  redirect(analysisId ? `/analyse/${analysisId}?paiement=ok` : "/compte?paiement=ok");
 }
 
 export async function cancelSubscription(): Promise<void> {
@@ -80,6 +79,7 @@ export async function cancelSubscription(): Promise<void> {
     if (sub.provider === "stripe" && isStripeConfigured()) await setStripeCancelAtPeriodEnd(sub, true);
     else await setLocalCancelAtPeriodEnd(sub, true);
   }
+  await persistToCookie(user.id);
   redirect("/compte?resiliation=ok");
 }
 
@@ -90,6 +90,7 @@ export async function resumeSubscription(): Promise<void> {
     if (sub.provider === "stripe" && isStripeConfigured()) await setStripeCancelAtPeriodEnd(sub, false);
     else await setLocalCancelAtPeriodEnd(sub, false);
   }
+  await persistToCookie(user.id);
   redirect("/compte?reprise=ok");
 }
 
@@ -105,5 +106,6 @@ export async function setPriorityAlerts(formData: FormData): Promise<void> {
   const enabled = formData.get("enabled") === "on";
   const db = await getDb();
   await db.update(schema.users).set({ priorityAlerts: enabled }).where(eq(schema.users.id, user.id));
+  await persistToCookie(user.id);
   redirect("/compte?alertes=ok");
 }

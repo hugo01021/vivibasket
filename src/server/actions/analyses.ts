@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { basketApi } from "~/lib/basket/api";
 import { getCurrentUser } from "~/server/auth/dal";
 import { createAnalysis } from "~/server/analyses/service";
+import { persistToCookie } from "~/server/db/cookie-store";
 
 export type SearchState = { error?: string; suggestions?: string[]; query?: string };
 
@@ -15,6 +16,7 @@ export async function analyzeFromSearch(_prev: SearchState, formData: FormData):
   const resolution = await basketApi.resolveMatchup(query);
   if (!resolution.ok) return { error: resolution.error, suggestions: resolution.suggestions, query };
   const { id } = await createAnalysis(user, resolution.fixture, query);
+  await persistToCookie(user.id);
   redirect(`/analyse/${id}?lancement=1`);
 }
 
@@ -26,5 +28,6 @@ export async function analyzeFixtureAction(formData: FormData): Promise<void> {
   const fixture = await basketApi.getFixture(matchId);
   if (!fixture) redirect("/analyser?erreur=match-introuvable");
   const { id } = await createAnalysis(user, fixture, null);
+  await persistToCookie(user.id);
   redirect(`/analyse/${id}?lancement=1`);
 }

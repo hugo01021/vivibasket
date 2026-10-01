@@ -39,14 +39,15 @@ async function key(): Promise<CryptoKey> {
   return crypto.subtle.importKey("raw", encoder.encode(secret()), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
 }
 
-export async function signSessionToken(payload: Payload): Promise<string> {
-  const body = toBase64Url(encoder.encode(JSON.stringify(payload)));
+/** Signe un objet JSON : `<payload base64url>.<signature base64url>`. */
+export async function signJson(value: unknown): Promise<string> {
+  const body = toBase64Url(encoder.encode(JSON.stringify(value)));
   const sig = await crypto.subtle.sign("HMAC", await key(), encoder.encode(body));
   return `${body}.${toBase64Url(sig)}`;
 }
 
-/** Renvoie le payload si la signature est valide et le jeton non expiré. */
-export async function verifySessionToken(token: string | undefined | null): Promise<Payload | null> {
+/** Renvoie l'objet si la signature est valide, sinon null. */
+export async function verifyJson<T>(token: string | undefined | null): Promise<T | null> {
   if (!token) return null;
   const dot = token.indexOf(".");
   if (dot <= 0) return null;
@@ -55,13 +56,22 @@ export async function verifySessionToken(token: string | undefined | null): Prom
   try {
     const ok = await crypto.subtle.verify("HMAC", await key(), fromBase64Url(sig), encoder.encode(body));
     if (!ok) return null;
-    const payload = JSON.parse(new TextDecoder().decode(fromBase64Url(body))) as Payload;
-    if (typeof payload.sid !== "string" || typeof payload.exp !== "number") return null;
-    if (payload.exp <= Date.now()) return null;
-    return payload;
+    return JSON.parse(new TextDecoder().decode(fromBase64Url(body))) as T;
   } catch {
     return null;
   }
+}
+
+export async function signSessionToken(payload: Payload): Promise<string> {
+  return signJson(payload);
+}
+
+/** Renvoie le payload si la signature est valide et le jeton non expiré. */
+export async function verifySessionToken(token: string | undefined | null): Promise<Payload | null> {
+  const payload = await verifyJson<Payload>(token);
+  if (!payload || typeof payload.sid !== "string" || typeof payload.exp !== "number") return null;
+  if (payload.exp <= Date.now()) return null;
+  return payload;
 }
 
 export async function sha256Hex(value: string): Promise<string> {

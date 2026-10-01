@@ -2,6 +2,7 @@ import "server-only";
 import { and, eq, gt } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
 import { getDb, newId, schema } from "~/server/db";
+import { clearCookieState, hydrateFromCookie, persistToCookie } from "~/server/db/cookie-store";
 import { SESSION_COOKIE, SESSION_TTL_MS, sha256Hex, signSessionToken, verifySessionToken } from "./token";
 
 export { SESSION_COOKIE };
@@ -25,6 +26,7 @@ export async function createSession(userId: string): Promise<void> {
     path: "/",
     expires: new Date(exp),
   });
+  await persistToCookie(userId);
 }
 
 async function isHttpsRequest(): Promise<boolean> {
@@ -43,6 +45,7 @@ export async function destroySession(): Promise<void> {
     await db.delete(schema.sessions).where(eq(schema.sessions.id, payload.sid));
   }
   store.delete(SESSION_COOKIE);
+  await clearCookieState();
 }
 
 /** Utilisateur rattaché au cookie courant, ou null. */
@@ -50,6 +53,7 @@ export async function readSessionUser() {
   const store = await cookies();
   const payload = await verifySessionToken(store.get(SESSION_COOKIE)?.value);
   if (!payload) return null;
+  await hydrateFromCookie(payload.sid, payload.exp);
   const db = await getDb();
   const rows = await db
     .select({ user: schema.users })
