@@ -1,5 +1,5 @@
 import "server-only";
-import Stripe from "stripe";
+import type Stripe from "stripe";
 import { eq } from "drizzle-orm";
 import { PLANS, isPlanId, type PlanId } from "~/lib/plans";
 import { SITE } from "~/lib/site";
@@ -11,10 +11,14 @@ export function isStripeConfigured(): boolean {
 }
 
 let client: Stripe | null = null;
-export function getStripe(): Stripe {
+/** SDK Stripe chargé seulement au premier paiement : les pages démarrent sans l'évaluer. */
+export async function getStripe(): Promise<Stripe> {
   const key = process.env.STRIPE_SECRET_KEY?.trim();
   if (!key) throw new Error("STRIPE_SECRET_KEY manquant");
-  client ??= new Stripe(key, { appInfo: { name: SITE.name, url: process.env.NEXT_PUBLIC_SITE_URL } });
+  if (!client) {
+    const { default: StripeSdk } = await import("stripe");
+    client = new StripeSdk(key, { appInfo: { name: SITE.name, url: process.env.NEXT_PUBLIC_SITE_URL } });
+  }
   return client;
 }
 
@@ -49,7 +53,7 @@ export function lineItemFor(plan: PlanId): Stripe.Checkout.SessionCreateParams.L
 
 export async function ensureCustomer(user: User): Promise<string> {
   if (user.stripeCustomerId) return user.stripeCustomerId;
-  const stripe = getStripe();
+  const stripe = await getStripe();
   const customer = await stripe.customers.create({ email: user.email, metadata: { userId: user.id } });
   const db = await getDb();
   await db.update(schema.users).set({ stripeCustomerId: customer.id }).where(eq(schema.users.id, user.id));
@@ -57,7 +61,7 @@ export async function ensureCustomer(user: User): Promise<string> {
 }
 
 export async function createCheckoutSession(input: { user: User; plan: PlanId; analysisId: string | null; origin: string }): Promise<string> {
-  const stripe = getStripe();
+  const stripe = await getStripe();
   const customer = await ensureCustomer(input.user);
   const analyse = input.analysisId ? `&analyse=${encodeURIComponent(input.analysisId)}` : "";
   const session = await stripe.checkout.sessions.create({
@@ -83,7 +87,7 @@ export async function createCheckoutSession(input: { user: User; plan: PlanId; a
 }
 
 export async function createPortalSession(user: User, returnUrl: string): Promise<string> {
-  const stripe = getStripe();
+  const stripe = await getStripe();
   const customer = await ensureCustomer(user);
   const session = await stripe.billingPortal.sessions.create({ customer, return_url: returnUrl });
   return session.url;
@@ -168,7 +172,7 @@ export async function syncSubscriptionFromStripe(sub: Stripe.Subscription, userI
 /** Changement d'offre sur un abonnement Stripe existant (prorata immédiat). */
 export async function changeStripePlan(subscription: Subscription, plan: PlanId): Promise<Subscription | null> {
   if (!subscription.stripeSubscriptionId) return null;
-  const stripe = getStripe();
+  const stripe = await getStripe();
   const current = await stripe.subscriptions.retrieve(subscription.stripeSubscriptionId);
   const item = current.items.data[0];
   const line = lineItemFor(plan);
@@ -197,7 +201,7 @@ export async function changeStripePlan(subscription: Subscription, plan: PlanId)
 
 export async function setStripeCancelAtPeriodEnd(subscription: Subscription, cancel: boolean): Promise<Subscription | null> {
   if (!subscription.stripeSubscriptionId) return null;
-  const stripe = getStripe();
+  const stripe = await getStripe();
   const updated = await stripe.subscriptions.update(subscription.stripeSubscriptionId, { cancel_at_period_end: cancel });
   return syncSubscriptionFromStripe(updated, subscription.userId);
 }

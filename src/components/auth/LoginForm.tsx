@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useActionState, useState } from "react";
+import { safeInternalPath } from "~/lib/utils";
 import { Field } from "~/components/ui/Field";
 import { SubmitButton } from "~/components/ui/SubmitButton";
 import { continueWithEmail, type AuthState } from "~/server/actions/auth";
 
-export function LoginForm({ next }: { next: string }) {
+export function LoginForm() {
+  const next = safeInternalPath(useSearchParams().get("next"), "/analyser");
   const [state, action] = useActionState<AuthState, FormData>(continueWithEmail, {});
   const [showPassword, setShowPassword] = useState(false);
   return (

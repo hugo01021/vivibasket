@@ -7,13 +7,13 @@ import { SITE, siteUrl } from "~/lib/site";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
 });
 
 const body = Figtree({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
 });

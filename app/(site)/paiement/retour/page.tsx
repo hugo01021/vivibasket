@@ -19,7 +19,7 @@ export default async function PaymentReturnPage({ searchParams }: { searchParams
   let outcome: "ok" | "pending" | "error" = "error";
   let detail = "";
   try {
-    const stripe = getStripe();
+    const stripe = await getStripe();
     const session = await stripe.checkout.sessions.retrieve(sessionId, { expand: ["subscription"] });
     const owner = session.client_reference_id ?? session.metadata?.userId;
     if (owner && owner !== user.id) {

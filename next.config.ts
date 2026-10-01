@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },
+      { source: "/icons/(.*)", headers: [{ key: "Cache-Control", value: "public, max-age=604800, immutable" }] },
       {
         // Le service worker ne doit jamais être mis en cache par le navigateur.
         source: "/sw.js",

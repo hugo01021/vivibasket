@@ -7,9 +7,9 @@ import { cn } from "~/lib/utils";
 
 import { ANALYSIS_STEPS } from "~/lib/basket/factors";
 
-const STEP_MS = 620;
-const INTRO_MS = 500;
-const OUTRO_MS = 700;
+const STEP_MS = 400;
+const INTRO_MS = 350;
+const OUTRO_MS = 500;
 
 /** Écran plein : animation + barre de progression listant les facteurs, puis `onDone`. */
 export function ProgressScreen({ home, away, onDone }: { home: string; away: string; onDone: () => void }) {

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = await getStripe().webhooks.constructEventAsync(payload, signature, secret);
+    event = await (await getStripe()).webhooks.constructEventAsync(payload, signature, secret);
   } catch (error) {
     console.warn("[stripe] signature invalide", error);
     return NextResponse.json({ error: "Signature invalide" }, { status: 400 });
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleEvent(event: Stripe.Event): Promise<void> {
-  const stripe = getStripe();
+  const stripe = await getStripe();
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object;
