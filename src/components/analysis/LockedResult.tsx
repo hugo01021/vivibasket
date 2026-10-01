@@ -38,56 +38,52 @@ export function LockedResult({ analysisId, home, away, leagueName, phase }: Prop
           {home} <span className="text-fg-subtle">vs</span> {away}
         </h1>
 
-        <div className="relative mt-6">
-          {/* Gabarit flouté et inerte */}
-          <div className="locked-blur space-y-4" aria-hidden="true">
-            <div className="rounded-card border border-border bg-surface p-5">
-              <div className="flex justify-between font-display text-4xl font-extrabold">
-                <span>5█ %</span>
-                <span>4█ %</span>
-              </div>
-              <div className="mt-3 h-3 rounded-full bg-surface-3">
-                <div className="h-3 w-[58%] rounded-full bg-accent" />
-              </div>
-              <p className="mt-3 text-sm text-fg-muted">Indice de confiance ██ · score projeté ███ – ███</p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {["Forme récente", "Domicile / extérieur", "Confrontations", "Attaque", "Défense", "Rythme", "Fatigue", "Blessures"].map((label) => (
-                <div key={label} className="rounded-card border border-border bg-surface p-4">
-                  <div className="flex justify-between text-sm font-semibold">
-                    <span>{label}</span>
-                    <span>█████</span>
-                  </div>
-                  <div className="mt-2 flex h-2 overflow-hidden rounded-full bg-surface-3">
-                    <div className="h-full w-[55%] bg-accent" />
-                  </div>
-                  <p className="mt-2 text-xs text-fg-muted">████████████ ████ ███ ████████</p>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-card border border-border bg-surface p-5">
-              <p className="text-sm font-semibold">Résumé rédigé par l&apos;IA</p>
-              <p className="mt-2 text-sm leading-relaxed text-fg-muted">
-                ████ ██████ ████████ ██ ███████ ███ ████ ████████ ████████ ███ ██ ████████ ████████. ██████ ███ ██████ ████ ███ ███████ ██████
-                ████████ ██ ████ ███████ ████ ██████. ████████ ████████ ██ ██████ ███ ██████ ██████ ██████████ ██████ ████.
-              </p>
-            </div>
-          </div>
+        {/* Cadenas + action unique, visibles sans défiler */}
+        <div className="mt-5 rounded-card border border-border-strong bg-surface p-6 text-center shadow-card">
+          <span className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-accent text-accent-ink shadow-glow">
+            <IconLock size={30} />
+          </span>
+          <h2 className="mt-4 font-display text-2xl font-extrabold text-fg">Analyse prête</h2>
+          <p className="mt-2 text-sm text-fg-muted">
+            Les probabilités, le score projeté, les huit facteurs et le résumé sont masqués. Choisissez une offre pour les afficher.
+          </p>
+          <Link href={`/offres?analyse=${encodeURIComponent(analysisId)}`} className={buttonClasses({ size: "lg", full: true, className: "mt-5" })}>
+            Débloquer l&apos;analyse
+          </Link>
+        </div>
 
-          {/* Cadenas + action unique */}
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="w-full max-w-sm rounded-card border border-border-strong bg-bg/95 p-6 text-center shadow-card backdrop-blur">
-              <span className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-accent text-accent-ink shadow-glow">
-                <IconLock size={30} />
-              </span>
-              <h2 className="mt-4 font-display text-2xl font-extrabold text-fg">Analyse prête</h2>
-              <p className="mt-2 text-sm text-fg-muted">
-                Les probabilités, le score projeté, les huit facteurs et le résumé sont masqués. Choisissez une offre pour les afficher.
-              </p>
-              <Link href={`/offres?analyse=${encodeURIComponent(analysisId)}`} className={buttonClasses({ size: "lg", full: true, className: "mt-5" })}>
-                Débloquer l&apos;analyse
-              </Link>
+        {/* Gabarit flouté et inerte (aucune donnée réelle) */}
+        <div className="locked-blur mt-6 space-y-4" aria-hidden="true">
+          <div className="rounded-card border border-border bg-surface p-5">
+            <div className="flex justify-between font-display text-4xl font-extrabold">
+              <span>5█ %</span>
+              <span>4█ %</span>
             </div>
+            <div className="mt-3 h-3 rounded-full bg-surface-3">
+              <div className="h-3 w-[58%] rounded-full bg-accent" />
+            </div>
+            <p className="mt-3 text-sm text-fg-muted">Indice de confiance ██ · score projeté ███ – ███</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {["Forme récente", "Domicile / extérieur", "Confrontations", "Attaque", "Défense", "Rythme", "Fatigue", "Blessures"].map((label) => (
+              <div key={label} className="rounded-card border border-border bg-surface p-4">
+                <div className="flex justify-between text-sm font-semibold">
+                  <span>{label}</span>
+                  <span>█████</span>
+                </div>
+                <div className="mt-2 flex h-2 overflow-hidden rounded-full bg-surface-3">
+                  <div className="h-full w-[55%] bg-accent" />
+                </div>
+                <p className="mt-2 text-xs text-fg-muted">████████████ ████ ███ ████████</p>
+              </div>
+            ))}
+          </div>
+          <div className="rounded-card border border-border bg-surface p-5">
+            <p className="text-sm font-semibold">Résumé rédigé par l&apos;IA</p>
+            <p className="mt-2 text-sm leading-relaxed text-fg-muted">
+              ████ ██████ ████████ ██ ███████ ███ ████ ████████ ████████ ███ ██ ████████ ████████. ██████ ███ ██████ ████ ███ ███████ ██████
+              ████████ ██ ████ ███████ ████ ██████.
+            </p>
           </div>
         </div>
       </main>
