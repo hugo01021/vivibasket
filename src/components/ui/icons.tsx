@@ -124,6 +124,14 @@ export const IconLogout = (p: IconProps) => (
   </svg>
 );
 
+export const IconTrophy = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M7 4h10v5a5 5 0 0 1-10 0z" />
+    <path d="M7 6H4.5a.5.5 0 0 0-.5.5C4 9.5 5.5 11 7.5 11.5M17 6h2.5a.5.5 0 0 1 .5.5c0 3-1.5 4.5-3.5 5" />
+    <path d="M12 14v3M9 20h6M10 17h4" />
+  </svg>
+);
+
 export function Spinner({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className ?? "h-5 w-5 animate-spin"} aria-hidden="true" fill="none">

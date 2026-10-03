@@ -5,7 +5,7 @@ import { cn, formatDateShort, formatDateTime } from "~/lib/utils";
 import { Badge, LiveBadge } from "~/components/ui/Badge";
 import { Button } from "~/components/ui/Button";
 import { Card, CardHeader } from "~/components/ui/Card";
-import { IconLock, IconSpark } from "~/components/ui/icons";
+import { IconLock, IconSpark, IconTrophy } from "~/components/ui/icons";
 import type { RedactedResult } from "~/server/analyses/service";
 import { ANALYSIS_STEPS } from "~/lib/basket/factors";
 import { AssistantPanel } from "./AssistantPanel";
@@ -33,6 +33,17 @@ export function FullResult({ result, usage }: Props) {
   const plan = PLANS[result.plan];
   const { match, probabilities } = result;
   const live = match.status === "live";
+  const gap = Math.abs(probabilities.home - probabilities.away);
+  const favSide: "home" | "away" | null = gap < 2 ? null : probabilities.home > probabilities.away ? "home" : "away";
+  const fav = favSide === "home" ? match.home : favSide === "away" ? match.away : null;
+  const favPct = favSide === "home" ? probabilities.home : probabilities.away;
+  const verdict = !fav
+    ? "Match indécis : les deux équipes ont autant de chances de gagner."
+    : gap < 16
+      ? `${fav.name} a un léger avantage, mais le match s'annonce serré.`
+      : gap < 40
+        ? `${fav.name} est favori pour remporter ce match.`
+        : `${fav.name} est largement favori pour remporter ce match.`;
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-4 px-4 pb-16 pt-6 sm:px-6">
@@ -59,14 +70,38 @@ export function FullResult({ result, usage }: Props) {
 
       {/* Probabilités */}
       <Card className="p-5">
+        <div className="mb-5 flex items-start gap-3 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-3">
+          <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-accent-ink">
+            <IconTrophy size={22} />
+          </span>
+          <div className="min-w-0">
+            <p className="text-xs font-bold uppercase tracking-wide text-accent">{fav ? "Équipe favorite" : "Verdict"}</p>
+            <p className="font-display text-xl font-extrabold leading-tight text-fg">{fav ? fav.name : "Égalité parfaite"}</p>
+            <p className="mt-1 text-sm text-fg-muted">
+              {fav ? (
+                <>
+                  <strong className="text-fg">{favPct.toFixed(0)} % de chances de gagner.</strong> {verdict}
+                </>
+              ) : (
+                verdict
+              )}
+            </p>
+          </div>
+        </div>
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-fg-muted">{match.home.short} · domicile</p>
-            <p className="tabular font-display text-5xl font-extrabold text-fg">{probabilities.home.toFixed(0)} %</p>
+            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-fg-muted">
+              {match.home.short} · domicile
+              {favSide === "home" ? <Badge tone="accent">Favori</Badge> : null}
+            </p>
+            <p className={cn("tabular font-display text-5xl font-extrabold", favSide === "home" ? "text-accent" : "text-fg")}>{probabilities.home.toFixed(0)} %</p>
           </div>
           <div className="text-right">
-            <p className="text-xs font-bold uppercase tracking-wide text-fg-muted">{match.away.short} · extérieur</p>
-            <p className="tabular font-display text-5xl font-extrabold text-fg">{probabilities.away.toFixed(0)} %</p>
+            <p className="flex items-center justify-end gap-2 text-xs font-bold uppercase tracking-wide text-fg-muted">
+              {favSide === "away" ? <Badge tone="accent">Favori</Badge> : null}
+              {match.away.short} · extérieur
+            </p>
+            <p className={cn("tabular font-display text-5xl font-extrabold", favSide === "away" ? "text-accent" : "text-fg")}>{probabilities.away.toFixed(0)} %</p>
           </div>
         </div>
         <div className="mt-4 flex h-3 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
