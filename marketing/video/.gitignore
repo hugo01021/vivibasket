@@ -1,0 +1,8 @@
+shots/
+frames/
+preview/
+*.woff2
+*.png
+*.jpg
+*.mp4
+positions.json

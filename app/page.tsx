@@ -1,129 +1,92 @@
-import Link from "next/link";
-import type { Competition, Match } from "@/types";
-import { api } from "@/lib/api";
-import { formatDayLabel, formatLongDate } from "@/lib/format";
-import { addDays, currentMatchDay, isValidDay } from "@/lib/time";
-import { groupBy } from "@/lib/utils";
-import { CompetitionFilter } from "@/components/competition/CompetitionFilter";
-import { MatchCard } from "@/components/match/MatchCard";
-import { MatchGroup } from "@/components/match/MatchGroup";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { LiveDot } from "@/components/ui/LiveDot";
-import { SectionTitle } from "@/components/ui/SectionTitle";
+import type { Metadata } from "next";
+import { HeroArt } from "~/components/brand/HeroArt";
+import { FeatureTriad } from "~/components/home/FeatureTriad";
+import { AppHeader } from "~/components/layout/AppHeader";
+import { SiteFooter } from "~/components/layout/SiteFooter";
+import { Prewarm } from "~/components/pwa/Prewarm";
+import { Button } from "~/components/ui/Button";
+import { IconArrowRight } from "~/components/ui/icons";
+import { PLANS } from "~/lib/plans";
+import { SITE, siteUrl } from "~/lib/site";
 
-type SearchParams = Promise<{ competition?: string; jour?: string }>;
+export const metadata: Metadata = {
+  title: { absolute: `${SITE.name} — ${SITE.tagline}` },
+  alternates: { canonical: "/" },
+};
 
-function matchesFilter(match: Match, competitions: Map<string, Competition>, filter?: string): boolean {
-  if (!filter) return true;
-  const competition = competitions.get(match.competitionId);
-  if (!competition) return false;
-  if (filter === "autres") return competition.category === "other";
-  return competition.slug === filter;
-}
-
-function buildHref(day: string, today: string, competition?: string): string {
-  const params = new URLSearchParams();
-  if (competition) params.set("competition", competition);
-  if (day !== today) params.set("jour", day);
-  const query = params.toString();
-  return query ? `/?${query}` : "/";
-}
-
-export default async function HomePage({ searchParams }: { searchParams: SearchParams }) {
-  const { competition: filter, jour } = await searchParams;
-  const today = currentMatchDay();
-  const day = jour && isValidDay(jour) ? jour : today;
-  const isToday = day === today;
-
-  const [competitions, teams, live, dayMatches] = await Promise.all([
-    api.getCompetitions(),
-    api.getTeams(),
-    api.getLiveMatches(),
-    api.getMatchesForDay(day),
-  ]);
-  const competitionMap = new Map(competitions.map((c) => [c.id, c]));
-  const teamMap = new Map(teams.map((t) => [t.id, t]));
-
-  const navOrder = (competitionId: string) => competitionMap.get(competitionId)?.navOrder ?? 99;
-  // Cartes en direct : une seule grille, regroupée par compétition via l'ordre d'affichage
-  const liveVisible = live
-    .filter((m) => matchesFilter(m, competitionMap, filter))
-    .sort((a, b) => navOrder(a.competitionId) - navOrder(b.competitionId) || a.date.localeCompare(b.date));
-  const dayVisible = dayMatches.filter((m) => matchesFilter(m, competitionMap, filter));
-  const dayGroups = [...groupBy(dayVisible, (m) => m.competitionId)].sort(([a], [b]) => navOrder(a) - navOrder(b));
+export default function HomePage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        name: SITE.name,
+        url: siteUrl(),
+        logo: `${siteUrl()}/icons/icon-512.png`,
+      },
+      {
+        "@type": "WebSite",
+        name: SITE.name,
+        url: siteUrl(),
+        inLanguage: "fr-FR",
+      },
+      {
+        "@type": "SoftwareApplication",
+        name: SITE.name,
+        applicationCategory: "SportsApplication",
+        operatingSystem: "Web",
+        description: SITE.description,
+        offers: Object.values(PLANS).map((p) => ({
+          "@type": "Offer",
+          name: `${SITE.name} ${p.name}`,
+          price: (p.priceCents / 100).toFixed(2),
+          priceCurrency: "EUR",
+          url: `${siteUrl()}/offres`,
+        })),
+      },
+    ],
+  };
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">Matchs</h1>
-            <p className="text-sm text-fg-muted">
-              {live.length > 0 ? (
-                <>
-                  <span className="font-semibold text-live">{live.length} match{live.length > 1 ? "s" : ""} en direct</span> ·{" "}
-                </>
-              ) : null}
-              {formatLongDate(`${day}T12:00:00Z`)}
-            </p>
-          </div>
-          <nav aria-label="Changer de journée" className="flex items-center gap-1 text-sm">
-            <Link href={buildHref(addDays(day, -1), today, filter)} className="rounded-full border border-border px-3 py-1.5 font-semibold text-fg-muted hover:text-fg" aria-label="Journée précédente">
-              ‹ {formatDayLabel(addDays(day, -1))}
-            </Link>
-            {!isToday && (
-              <Link href={buildHref(today, today, filter)} className="rounded-full bg-accent-soft px-3 py-1.5 font-semibold text-accent">
-                Aujourd’hui
-              </Link>
-            )}
-            <Link href={buildHref(addDays(day, 1), today, filter)} className="rounded-full border border-border px-3 py-1.5 font-semibold text-fg-muted hover:text-fg" aria-label="Journée suivante">
-              {formatDayLabel(addDays(day, 1))} ›
-            </Link>
-          </nav>
-        </div>
-        <CompetitionFilter competitions={competitions} active={filter} buildHref={(value) => buildHref(day, today, value)} />
-      </div>
-
-      {isToday && (
-        <section aria-labelledby="titre-direct">
-          <SectionTitle count={liveVisible.length}>
-            <span id="titre-direct" className="flex items-center gap-2">
-              <LiveDot /> En direct
-            </span>
-          </SectionTitle>
-          {liveVisible.length === 0 ? (
-            <EmptyState title="Aucun match en direct pour le moment">
-              Les matchs du jour apparaissent ci-dessous avec leur heure de coup d’envoi.
-            </EmptyState>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {liveVisible.map((match) => {
-                const competition = competitionMap.get(match.competitionId);
-                const home = teamMap.get(match.homeTeamId);
-                const away = teamMap.get(match.awayTeamId);
-                if (!competition || !home || !away) return null;
-                return <MatchCard key={match.id} match={match} competition={competition} homeTeam={home} awayTeam={away} />;
-              })}
+    <>
+      <Prewarm />
+      <div className="flex min-h-dvh flex-col">
+        <AppHeader />
+        <main id="contenu" className="flex-1">
+          <section className="mx-auto grid max-w-5xl items-center gap-6 px-4 pb-10 pt-4 sm:gap-8 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16">
+            <div className="order-first mx-auto w-full max-w-md lg:order-none lg:col-start-2 lg:max-w-none">
+              <HeroArt className="h-auto w-full" />
             </div>
-          )}
-        </section>
-      )}
+            <div className="animate-rise lg:col-start-1 lg:row-start-1">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Analyse de basket par IA</p>
+              <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] text-fg sm:text-5xl lg:text-6xl">{SITE.tagline}</h1>
+              <p className="mt-4 max-w-xl text-lg leading-relaxed text-fg-muted sm:text-xl">
+                DunkOne analyse n&apos;importe quel match de basket en quelques secondes et livre un verdict clair : qui va gagner, avec quelle
+                probabilité, sur quel score, et pourquoi.
+              </p>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <Button href="/analyser" size="lg">
+                  Analyser un match
+                  <IconArrowRight size={18} />
+                </Button>
+                <Button href="/matchs" variant="secondary" size="lg">
+                  Matchs du jour
+                </Button>
+              </div>
+              <p className="mt-4 text-xs text-fg-subtle">Abonnement mensuel sans engagement · résiliable en ligne · réservé aux adultes (18+)</p>
+            </div>
+          </section>
 
-      <section aria-labelledby="titre-jour">
-        <SectionTitle count={dayVisible.length}>
-          <span id="titre-jour">{isToday ? "Matchs du jour" : `Matchs · ${formatDayLabel(day)}`}</span>
-        </SectionTitle>
-        {dayGroups.length === 0 ? (
-          <EmptyState title="Aucun match ce jour">Essayez une autre journée ou retirez le filtre de compétition.</EmptyState>
-        ) : (
-          <div className="grid gap-4 lg:grid-cols-2">
-            {dayGroups.map(([competitionId, matches]) => {
-              const competition = competitionMap.get(competitionId)!;
-              return <MatchGroup key={competitionId} competition={competition} matches={matches} teams={teamMap} subtitle={matches[0]?.round} />;
-            })}
-          </div>
-        )}
-      </section>
-    </div>
+          <section className="mx-auto max-w-5xl px-4 pb-16 sm:px-6" aria-labelledby="atouts">
+            <h2 id="atouts" className="sr-only">
+              Pourquoi DunkOne
+            </h2>
+            <FeatureTriad />
+          </section>
+        </main>
+        <SiteFooter />
+      </div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    </>
   );
 }
