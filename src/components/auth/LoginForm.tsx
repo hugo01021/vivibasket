@@ -41,7 +41,7 @@ export function LoginForm() {
           minLength={8}
           placeholder="8 caractères minimum"
           error={state.fieldErrors?.password}
-          hint="Nouveau sur Rebond ? Ce mot de passe créera votre compte."
+          hint="Nouveau sur DunkOne ? Ce mot de passe créera votre compte."
         />
         <button type="button" onClick={() => setShowPassword((v) => !v)} className="mt-1.5 text-xs font-semibold text-fg-muted hover:text-fg">
           {showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}

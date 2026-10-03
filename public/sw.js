@@ -1,5 +1,5 @@
-/* Service worker Rebond — installation PWA et page hors ligne. */
-const VERSION = "rebond-v1";
+/* Service worker DunkOne — installation PWA et page hors ligne. */
+const VERSION = "dunkone-v1";
 const SHELL = ["/hors-ligne", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 const PRIVATE_PATHS = ["/analyse", "/analyser", "/compte", "/paiement", "/connexion", "/api"];
 

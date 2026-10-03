@@ -24,7 +24,7 @@ export default function OpenGraphImage() {
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <div style={{ width: 64, height: 64, borderRadius: 999, background: "#ff6a00", display: "flex" }} />
           <div style={{ fontSize: 52, fontWeight: 800, letterSpacing: -2, display: "flex" }}>
-            Rebond<span style={{ color: "#ff6a00" }}>.</span>
+            Dunk<span style={{ color: "#ff6a00" }}>One</span>
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>

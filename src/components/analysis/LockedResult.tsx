@@ -21,10 +21,10 @@ export function LockedResult({ analysisId, home, away, leagueName, phase }: Prop
   return (
     <div className="relative min-h-dvh bg-bg">
       <header className="flex h-14 items-center justify-center border-b border-border">
-        <span className="inline-flex items-center gap-2.5" aria-label="Rebond">
+        <span className="inline-flex items-center gap-2.5" aria-label="DunkOne">
           <BrandMark size={28} className="text-fg" />
           <span className="font-display text-lg font-extrabold">
-            Rebond<span className="text-accent">.</span>
+            Dunk<span className="text-accent">One</span>
           </span>
         </span>
       </header>

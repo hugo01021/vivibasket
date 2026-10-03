@@ -1,7 +1,7 @@
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 /*
-  Schéma de données Rebond (libSQL / SQLite). Les dates sont stockées en
+  Schéma de données DunkOne (libSQL / SQLite). Les dates sont stockées en
   millisecondes Unix (integer) pour rester triviales à comparer.
 */
 

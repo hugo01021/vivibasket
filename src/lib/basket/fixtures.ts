@@ -238,7 +238,7 @@ export function resolveMatchup(query: string, now: Date = new Date(), todayFixtu
     const missing = homeCandidates.length === 0 ? homeQuery : awayQuery;
     return {
       ok: false,
-      error: `Équipe inconnue : « ${missing} ». Rebond couvre la NBA, l'EuroLeague et la Betclic Élite.`,
+      error: `Équipe inconnue : « ${missing} ». DunkOne couvre la NBA, l'EuroLeague et la Betclic Élite.`,
       suggestions: searchTeams(missing, 4).map((t) => t.name),
     };
   }

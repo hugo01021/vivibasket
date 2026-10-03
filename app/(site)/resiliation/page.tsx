@@ -6,7 +6,7 @@ import { SITE } from "~/lib/site";
 
 export const metadata: Metadata = {
   title: "Résiliation en ligne",
-  description: "Résiliez votre abonnement Rebond en ligne, en trois clics, sans frais ni justification.",
+  description: "Résiliez votre abonnement DunkOne en ligne, en trois clics, sans frais ni justification.",
   alternates: { canonical: "/resiliation" },
 };
 

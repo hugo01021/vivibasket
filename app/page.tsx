@@ -79,7 +79,7 @@ export default function HomePage() {
 
           <section className="mx-auto max-w-5xl px-4 pb-16 sm:px-6" aria-labelledby="atouts">
             <h2 id="atouts" className="sr-only">
-              Pourquoi Rebond
+              Pourquoi DunkOne
             </h2>
             <FeatureTriad />
           </section>

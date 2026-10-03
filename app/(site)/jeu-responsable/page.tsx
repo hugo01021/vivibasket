@@ -5,7 +5,7 @@ import { SITE } from "~/lib/site";
 
 export const metadata: Metadata = {
   title: "Jeu responsable et interdiction aux mineurs",
-  description: "Rebond est réservé aux adultes et n'organise aucun pari. Ressources d'aide et bonnes pratiques.",
+  description: "DunkOne est réservé aux adultes et n'organise aucun pari. Ressources d'aide et bonnes pratiques.",
   alternates: { canonical: "/jeu-responsable" },
 };
 

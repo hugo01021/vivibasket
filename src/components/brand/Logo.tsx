@@ -3,7 +3,7 @@ import { SITE } from "~/lib/site";
 import { cn } from "~/lib/utils";
 
 /**
- * Marque Rebond : un ballon qui rebondit, sa trajectoire en pointillés et le
+ * Marque DunkOne : un ballon qui rebondit, sa trajectoire en pointillés et le
  * point d'impact. Dessin original, une seule couleur d'accent.
  */
 export function BrandMark({ className, size = 32 }: { className?: string; size?: number }) {
@@ -39,7 +39,7 @@ export function BrandMark({ className, size = 32 }: { className?: string; size?:
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={cn("font-display text-[21px] font-extrabold tracking-tight text-fg", className)}>
-      Rebond<span className="text-accent">.</span>
+      Dunk<span className="text-accent">One</span>
     </span>
   );
 }

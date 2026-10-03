@@ -1,5 +1,5 @@
 {
-  "name": "rebond",
+  "name": "dunkone",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -31,7 +31,7 @@
     "tsx": "^4.23.15",
     "typescript": "5.9.3"
   },
-  "description": "Rebond — analyse de matchs de basket par IA (web app mobile-first, Next.js).",
+  "description": "DunkOne — analyse de matchs de basket par IA (web app mobile-first, Next.js).",
   "allowScripts": {
     "esbuild": true,
     "unrs-resolver": true

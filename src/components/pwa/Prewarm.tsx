@@ -6,8 +6,8 @@ import { useEffect } from "react";
 export function Prewarm() {
   useEffect(() => {
     try {
-      if (sessionStorage.getItem("rebond-reveil")) return;
-      sessionStorage.setItem("rebond-reveil", "1");
+      if (sessionStorage.getItem("dunkone-reveil")) return;
+      sessionStorage.setItem("dunkone-reveil", "1");
     } catch {
       /* stockage indisponible : on réveille quand même */
     }

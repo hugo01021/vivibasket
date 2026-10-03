@@ -4,7 +4,7 @@
  * signature HMAC-SHA256 permet au proxy de rejeter un cookie forgé sans
  * interroger la base. Compatible Node et Edge (Web Crypto uniquement).
  */
-export const SESSION_COOKIE = "rebond_session";
+export const SESSION_COOKIE = "dunkone_session";
 export const SESSION_TTL_MS = 30 * 24 * 3_600_000;
 
 type Payload = { sid: string; exp: number };
@@ -17,7 +17,7 @@ function secret(): string {
   if (process.env.NODE_ENV === "production") {
     console.warn("[auth] SESSION_SECRET manquant ou trop court : définissez une valeur aléatoire de 32 caractères minimum.");
   }
-  return "rebond-dev-secret-ne-pas-utiliser-en-production";
+  return "dunkone-dev-secret-ne-pas-utiliser-en-production";
 }
 
 function toBase64Url(bytes: ArrayBuffer | Uint8Array): string {

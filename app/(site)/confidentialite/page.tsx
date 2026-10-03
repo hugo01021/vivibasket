@@ -35,7 +35,7 @@ export default function PrivacyPage() {
       </ul>
       <h2>4. Cookies</h2>
       <p>
-        {SITE.name} utilise uniquement un cookie de session strictement nécessaire (<code>rebond_session</code>, 30 jours) et aucun traceur publicitaire. Le
+        {SITE.name} utilise uniquement un cookie de session strictement nécessaire (<code>dunkone_session</code>, 30 jours) et aucun traceur publicitaire. Le
         service worker de l&apos;application peut conserver localement des pages pour un usage hors ligne.
       </p>
       <h2>5. Destinataires</h2>

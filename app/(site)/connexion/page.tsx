@@ -6,7 +6,7 @@ import { Prewarm } from "~/components/pwa/Prewarm";
 
 export const metadata: Metadata = {
   title: "Connexion ou inscription",
-  description: "Accédez à Rebond avec votre e-mail et un mot de passe. Le compte est créé automatiquement à la première connexion.",
+  description: "Accédez à DunkOne avec votre e-mail et un mot de passe. Le compte est créé automatiquement à la première connexion.",
   robots: { index: false, follow: false },
 };
 

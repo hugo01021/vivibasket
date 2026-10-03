@@ -38,7 +38,7 @@ export default async function DemoPaymentPage({ searchParams }: { searchParams: 
 
       <div className="rounded-card border border-border bg-surface p-5 shadow-card">
         <div className="flex items-baseline justify-between">
-          <p className="font-display text-xl font-extrabold">Rebond {def.name}</p>
+          <p className="font-display text-xl font-extrabold">DunkOne {def.name}</p>
           <p className="tabular font-display text-xl font-extrabold">
             {formatPrice(def.priceCents)} <span className="text-sm font-semibold text-fg-muted">/ mois</span>
           </p>

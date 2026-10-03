@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Conditions générales d'utilisation
 
 export default function TermsPage() {
   return (
-    <LegalArticle title="Conditions générales d'utilisation" updated="1er octobre 2026" lead="Ce que vous pouvez attendre de Rebond, et ce que nous attendons de vous.">
+    <LegalArticle title="Conditions générales d'utilisation" updated="1er octobre 2026" lead="Ce que vous pouvez attendre de DunkOne, et ce que nous attendons de vous.">
       <h2>1. Objet</h2>
       <p>
         Les présentes conditions encadrent l&apos;accès et l&apos;utilisation de l&apos;application {SITE.name} (le « Service »), éditée par{" "}

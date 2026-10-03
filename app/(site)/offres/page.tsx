@@ -118,7 +118,7 @@ export default async function OffersPage({ searchParams }: { searchParams: Promi
       <div className="mt-8 grid gap-4 text-sm text-fg-muted sm:grid-cols-3">
         <p className="flex items-start gap-2">
           <IconShield size={18} className="mt-0.5 shrink-0 text-accent" />
-          Paiement sécurisé par Stripe. Rebond ne stocke aucune donnée bancaire.
+          Paiement sécurisé par Stripe. DunkOne ne stocke aucune donnée bancaire.
         </p>
         <p>
           Résiliation en ligne depuis votre compte, effective à la fin de la période en cours.{" "}

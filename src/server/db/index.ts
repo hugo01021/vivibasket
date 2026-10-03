@@ -86,19 +86,19 @@ function resolveUrl(): { url: string; authToken?: string } {
     console.warn("[db] DATABASE_URL absent : base éphémère dans /tmp, état utilisateur conservé dans un cookie signé. Configurez une base libSQL distante pour la production.");
     const tmp = process.env.TMPDIR?.trim() || "/tmp";
     mkdirSync(tmp, { recursive: true });
-    return { url: `file:${path.join(tmp, "rebond.db")}` };
+    return { url: `file:${path.join(tmp, "dunkone.db")}` };
   }
   const dir = path.join(process.cwd(), ".data");
   mkdirSync(dir, { recursive: true });
-  return { url: `file:${path.join(dir, "rebond.db")}` };
+  return { url: `file:${path.join(dir, "dunkone.db")}` };
 }
 
 type Db = ReturnType<typeof drizzle<typeof schema>>;
 
-const globalStore = globalThis as unknown as { __rebondDb?: { client: Client; db: Db; ready: Promise<void> } };
+const globalStore = globalThis as unknown as { __dunkoneDb?: { client: Client; db: Db; ready: Promise<void> } };
 
 function init() {
-  if (globalStore.__rebondDb) return globalStore.__rebondDb;
+  if (globalStore.__dunkoneDb) return globalStore.__dunkoneDb;
   const { url, authToken } = resolveUrl();
   const client = createClient({ url, authToken });
   const db = drizzle(client, { schema });
@@ -106,8 +106,8 @@ function init() {
     await client.execute("PRAGMA foreign_keys = ON");
     await client.executeMultiple(DDL);
   })();
-  globalStore.__rebondDb = { client, db, ready };
-  return globalStore.__rebondDb;
+  globalStore.__dunkoneDb = { client, db, ready };
+  return globalStore.__dunkoneDb;
 }
 
 /** Base prête à l'emploi (schéma créé au premier appel). */

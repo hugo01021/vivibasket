@@ -1,5 +1,5 @@
 /**
- * Génère les icônes PWA (PNG) et le favicon à partir de la marque Rebond,
+ * Génère les icônes PWA (PNG) et le favicon à partir de la marque DunkOne,
  * sans dépendance : rastérisation maison + encodeur PNG (zlib de Node).
  *
  *   node src/tools/generate-icons.mjs

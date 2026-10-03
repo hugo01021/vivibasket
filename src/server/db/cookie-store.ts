@@ -19,7 +19,7 @@ import { signJson, verifyJson } from "~/server/auth/token";
  * requête. Le résultat d'une analyse n'est pas stocké : il est recalculé de
  * façon déterministe à partir de l'identifiant du match.
  */
-export const STATE_COOKIE = "rebond_state";
+export const STATE_COOKIE = "dunkone_state";
 const MAX_ANALYSES = 12;
 
 type Snapshot = {

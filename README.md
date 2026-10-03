@@ -1,4 +1,4 @@
-# Rebond — analyse de matchs de basket par IA
+# DunkOne — analyse de matchs de basket par IA
 
 Web app mobile-first, en français : l'utilisateur choisit un match (NBA, EuroLeague, Betclic Élite), le modèle croise huit facteurs et livre des probabilités, un score projeté et un résumé rédigé. Les analyses complètes sont réservées aux abonnés (Basic 7,99 €, Pro 14,99 €, Elite 24,99 € par mois, via Stripe).
 
@@ -24,7 +24,7 @@ cp .env.example .env.local   # puis renseignez SESSION_SECRET
 npm run dev                  # http://localhost:3000
 ```
 
-Sans `STRIPE_SECRET_KEY`, l'app fonctionne en **mode démonstration** : le paiement est simulé sur `/paiement/demo`, l'abonnement est activé en base, aucun débit n'a lieu. La base SQLite est créée automatiquement dans `.data/rebond.db`.
+Sans `STRIPE_SECRET_KEY`, l'app fonctionne en **mode démonstration** : le paiement est simulé sur `/paiement/demo`, l'abonnement est activé en base, aucun débit n'a lieu. La base SQLite est créée automatiquement dans `.data/dunkone.db`.
 
 | Commande | Rôle |
 | --- | --- |

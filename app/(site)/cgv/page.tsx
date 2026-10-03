@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Conditions générales de vente", al
 
 export default function SalesTermsPage() {
   return (
-    <LegalArticle title="Conditions générales de vente" updated="1er octobre 2026" lead="Prix, paiement, durée et résiliation des abonnements Rebond.">
+    <LegalArticle title="Conditions générales de vente" updated="1er octobre 2026" lead="Prix, paiement, durée et résiliation des abonnements DunkOne.">
       <h2>1. Offres et prix</h2>
       <p>Trois abonnements mensuels sont proposés, toutes taxes comprises :</p>
       <ul>

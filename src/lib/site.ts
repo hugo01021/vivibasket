@@ -1,12 +1,12 @@
 /** Identité et constantes globales du produit. */
 export const SITE = {
-  name: "Rebond",
+  name: "DunkOne",
   tagline: "Voyez le match avant qu'il commence.",
   description:
-    "Rebond analyse un match de basket en quelques secondes : probabilités de victoire, score projeté, forme, confrontations directes et résumé rédigé par l'IA. NBA, EuroLeague, Betclic Élite.",
+    "DunkOne analyse un match de basket en quelques secondes : probabilités de victoire, score projeté, forme, confrontations directes et résumé rédigé par l'IA. NBA, EuroLeague, Betclic Élite.",
   locale: "fr_FR",
   themeColor: "#0b0b0d",
-  supportEmail: "bonjour@rebond.app",
+  supportEmail: "bonjour@dunkone.app",
   /** Numéro national d'aide aux joueurs (appel non surtaxé). */
   helplinePhone: "09 74 75 13 13",
 } as const;
