@@ -75,11 +75,13 @@
   <span class="line big display accent"><span class="word">le </span><span class="word">match</span></span>
   <span class="line display"><span class="word">avant </span><span class="word">qu'il </span><span class="word">commence ?</span></span>
   <svg id="mark" viewBox="0 0 32 32">
-    <path id="ground" d="M3 27.5h26" stroke="#f4f1ec" stroke-opacity="0.35" stroke-width="1.6" stroke-linecap="round"/>
-    <path id="arc" d="M6 27c3-9 7-13 10-13.2 3.3-.2 6.6 3.4 9.5 10.6" stroke="#ff6a00" stroke-width="1.7" stroke-linecap="round" stroke-dasharray="2.2 3.2" fill="none"/>
-    <g id="ball"><circle cx="21.5" cy="10" r="7" fill="#ff6a00"/>
-      <path d="M14.6 9.2c4.2.6 7.5 2.1 10.3 4.9M18.6 3.9c-1.2 3.9-.7 8.1 1.9 12.6M21.5 3v14" stroke="#1a0b00" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.75"/></g>
-    <circle id="impact" cx="6" cy="27.5" r="1.6" fill="#ff6a00"/>
+    <defs><clipPath id="mclip"><circle cx="21" cy="11" r="8.6"/></clipPath></defs>
+    <g id="tail"><path d="M13.6 15.2 C 9.6 17.4, 6.2 21.8, 3.6 27.6 C 7.4 23.4, 12 20.6, 18.4 19 Z" fill="#ff6a00" opacity="0.92"/>
+      <path d="M12.2 18.8 C 9.6 20.4, 7.4 22.9, 5.8 25.7 C 8.4 23.6, 11 22.2, 14.2 21.3 Z" fill="#ff6a00" opacity="0.45"/></g>
+    <path id="ground" d="M2.6 28.6h5.6" stroke="#f4f1ec" stroke-opacity="0.55" stroke-width="2" stroke-linecap="round"/>
+    <g id="ball"><circle cx="21" cy="11" r="8.6" fill="#ff6a00"/>
+      <g clip-path="url(#mclip)" fill="none" stroke="#1a0b00" stroke-width="1.55" stroke-linecap="round"><path d="M21 1.5v19"/><path d="M11.5 11h19"/><path d="M14.6 3.8 Q 20.1 11 14.6 18.2"/><path d="M27.4 3.8 Q 21.9 11 27.4 18.2"/></g>
+      <path d="M15.9 6.9 Q 17.8 4.8 20.2 4.2" stroke="#ffc08a" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.85" clip-path="url(#mclip)"/></g>
   </svg>
 </div>
 
@@ -182,15 +184,12 @@ window.render = function render(t) {
       w.style.transform = `translateY(${(1 - p) * 60}px)`;
     });
   });
-  // la marque : sol, arc en pointillés qui se dessine, ballon qui tombe
-  const arc = $("arc"); const L = 40;
-  const drawn = easeInOut(seg(t, 0.9, 1.0));
-  arc.style.strokeDasharray = "2.2 3.2"; arc.style.strokeDashoffset = "0";
-  arc.style.opacity = drawn > 0 ? 1 : 0;
-  arc.style.clipPath = `inset(0 ${((1 - drawn) * 100).toFixed(1)}% 0 0)`;
-  const drop = easeOutBack(seg(t, 1.5, 0.6));
-  $("ball").style.transform = `translateY(${(1 - drop) * -14}px)`; $("ball").style.opacity = seg(t, 1.5, 0.2);
-  $("impact").style.opacity = seg(t, 0.9, 0.2); $("ground").style.opacity = seg(t, 0.6, 0.4) * 0.35;
+  // la marque : sol, ballon qui tombe en rebond, traînée qui s'étire derrière lui
+  const drop = easeOutBack(seg(t, 0.9, 0.7));
+  $("ball").style.transform = `translateY(${(1 - drop) * -16}px)`; $("ball").style.opacity = seg(t, 0.9, 0.2);
+  const tailP = easeOut(seg(t, 1.3, 0.6));
+  $("tail").style.opacity = tailP; $("tail").style.transformOrigin = "18px 18px"; $("tail").style.transform = `scale(${0.3 + 0.7 * tailP})`;
+  $("ground").style.opacity = seg(t, 0.6, 0.4) * 0.55;
   $("mark").style.opacity = t < 3.1 ? 1 : 0;
   $("mark").style.transform = `translateY(${(1 - easeOut(seg(t, 0.6, 0.6))) * 30}px)`;
   hook.style.display = t < 3.1 ? "flex" : "none";

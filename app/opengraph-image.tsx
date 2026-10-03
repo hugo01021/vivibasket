@@ -22,7 +22,11 @@ export default function OpenGraphImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div style={{ width: 64, height: 64, borderRadius: 999, background: "#ff6a00", display: "flex" }} />
+          <svg viewBox="0 0 32 32" width="72" height="72">
+            <path d="M13.6 15.2 C 9.6 17.4, 6.2 21.8, 3.6 27.6 C 7.4 23.4, 12 20.6, 18.4 19 Z" fill="#ff6a00" />
+            <circle cx="21" cy="11" r="8.6" fill="#ff6a00" />
+            <path d="M21 2.4v17.2M12.4 11h17.2" stroke="#1a0b00" strokeWidth="1.55" strokeLinecap="round" />
+          </svg>
           <div style={{ fontSize: 52, fontWeight: 800, letterSpacing: -2, display: "flex" }}>
             Dunk<span style={{ color: "#ff6a00" }}>One</span>
           </div>
