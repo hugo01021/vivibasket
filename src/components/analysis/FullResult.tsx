@@ -240,9 +240,17 @@ export function FullResult({ result, usage }: Props) {
         </ul>
         <p className="mt-4 text-[15px] leading-relaxed text-fg">{result.summary}</p>
         <p className="mt-4 text-xs text-fg-subtle">
-          Texte généré automatiquement à partir des données disponibles le {formatDateTime(result.generatedAt)}. Une analyse n&apos;est jamais une
-          garantie de résultat.
+          Texte généré automatiquement à partir des données disponibles le {formatDateTime(result.generatedAt)}
+          {result.source === "api-sports" ? " (source : api-basketball)" : " (données de démonstration)"}. Une analyse n&apos;est jamais une garantie de
+          résultat.
         </p>
+        {result.notes && result.notes.length > 0 ? (
+          <ul className="mt-2 space-y-0.5 text-xs text-fg-subtle">
+            {result.notes.map((n) => (
+              <li key={n}>· {n}</li>
+            ))}
+          </ul>
+        ) : null}
       </Card>
 
       {/* Assistant */}

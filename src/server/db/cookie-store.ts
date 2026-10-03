@@ -2,7 +2,7 @@ import "server-only";
 import { desc, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { basketApi } from "~/lib/basket/api";
+import { getBasketApi } from "~/lib/basket/api";
 import { analyzeFixture } from "~/lib/basket/engine";
 import { isPlanId } from "~/lib/plans";
 import { getDb, isEphemeralDatabase, schema } from "~/server/db";
@@ -75,10 +75,11 @@ export const hydrateFromCookie = cache(async (sessionId: string, sessionExpiresA
       .onConflictDoNothing();
   }
 
+  const basketApi = await getBasketApi();
   for (const a of snapshot.a) {
     const fixture = await basketApi.getFixture(a.m);
     if (!fixture) continue;
-    const result = analyzeFixture(fixture);
+    const result = analyzeFixture(fixture, await basketApi.getAnalysisData(fixture));
     await db
       .insert(schema.analyses)
       .values({

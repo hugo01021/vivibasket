@@ -1,7 +1,6 @@
 import { createRng } from "./rng";
-import { getTeamSheet } from "./sheets";
 import { LEAGUES } from "./teams";
-import type { AnalysisResult, Factor, Fixture, H2HGame, StatLine, TeamSheet } from "./types";
+import type { AnalysisData, AnalysisResult, Factor, Fixture, H2HGame, StatLine, TeamSheet } from "./types";
 
 /** Φ(x) approchée par une logistique. */
 function normalCdf(x: number): number {
@@ -39,7 +38,8 @@ function injuryPenalty(sheet: TeamSheet): number {
   }, 0);
 }
 
-function generateH2H(fixture: Fixture): H2HGame[] {
+/** Confrontations directes fictives (fournisseur mock). */
+export function generateH2H(fixture: Fixture): H2HGame[] {
   const ids = [fixture.home.id, fixture.away.id].sort();
   const rng = createRng(`${ids.join("|")}:h2h`);
   const league = LEAGUES[fixture.league];
@@ -74,17 +74,15 @@ function recordPct(r: { wins: number; losses: number }): number {
 }
 
 /** Analyse complète d'un match à partir des fiches des deux équipes. */
-export function analyzeFixture(fixture: Fixture, now: Date = new Date()): AnalysisResult {
+export function analyzeFixture(fixture: Fixture, data: AnalysisData, now: Date = new Date()): AnalysisResult {
   const league = LEAGUES[fixture.league];
-  const home = getTeamSheet(fixture.home, fixture.dateKey);
-  const away = getTeamSheet(fixture.away, fixture.dateKey);
+  const { home, away, h2h } = data;
   const rng = createRng(`${fixture.id}:analysis`);
 
   const homeForm = wins(home.form);
   const awayForm = wins(away.form);
-  const h2h = generateH2H(fixture);
   const homeH2H = h2hWins(h2h, fixture.home.id);
-  const awayH2H = 5 - homeH2H;
+  const awayH2H = h2h.length - homeH2H;
 
   // Marge attendue (domicile − extérieur), en points.
   const netDiff = (home.off - home.def - (away.off - away.def)) * (((home.pace + away.pace) / 2) / 100);
@@ -136,7 +134,7 @@ export function analyzeFixture(fixture: Fixture, now: Date = new Date()): Analys
         label: "Confrontations directes",
         ...s,
         edge: edgeOf(s.home, s.away),
-        note: `${homeH2H} succès ${fixture.home.short} · ${awayH2H} succès ${fixture.away.short} sur les 5 derniers duels`,
+        note: h2h.length === 0 ? "Aucune confrontation récente connue" : `${homeH2H} succès ${fixture.home.short} · ${awayH2H} succès ${fixture.away.short} sur les ${h2h.length} derniers duels`,
       } satisfies Factor;
     })(),
     (() => {
@@ -212,11 +210,18 @@ export function analyzeFixture(fixture: Fixture, now: Date = new Date()): Analys
     { key: "clutch", label: "Net rating « clutch »", home: home.clutchNet, away: away.clutchNet, unit: "num", betterIs: "high" },
   ];
 
-  // Détecteur de value : cotes de marché fictives = probas biaisées + marge du bookmaker.
-  const bias = rng.range(-0.045, 0.045);
-  const margin_bk = 1.06;
-  const impliedHome = clamp((pHome + bias) * margin_bk, 0.08, 0.98);
-  const impliedAway = clamp((pAway - bias) * margin_bk, 0.08, 0.98);
+  // Détecteur de value : cotes réelles si connues, sinon marché fictif (probas biaisées + marge).
+  let impliedHome: number;
+  let impliedAway: number;
+  if (data.marketOdds && data.marketOdds.home > 1 && data.marketOdds.away > 1) {
+    impliedHome = 1 / data.marketOdds.home;
+    impliedAway = 1 / data.marketOdds.away;
+  } else {
+    const bias = rng.range(-0.045, 0.045);
+    const margin_bk = 1.06;
+    impliedHome = clamp((pHome + bias) * margin_bk, 0.08, 0.98);
+    impliedAway = clamp((pAway - bias) * margin_bk, 0.08, 0.98);
+  }
   const market = { home: Math.round((1 / impliedHome) * 100) / 100, away: Math.round((1 / impliedAway) * 100) / 100 };
   const fair = { home: Math.round((1 / pHome) * 100) / 100, away: Math.round((1 / pAway) * 100) / 100 };
   const edge = { home: pct(pHome - impliedHome), away: pct(pAway - impliedAway) };
@@ -265,6 +270,8 @@ export function analyzeFixture(fixture: Fixture, now: Date = new Date()): Analys
     live,
     summary,
     bullets,
+    source: data.source,
+    notes: data.notes,
   };
 }
 
@@ -319,7 +326,7 @@ function writeSummary(input: SummaryInput): { summary: string; bullets: string[]
           ? `À domicile, ${team.name} affiche un bilan de ${sheet.homeRecord.wins}-${sheet.homeRecord.losses}, un vrai point d'appui.`
           : `${team.name} voyage bien cette saison (${sheet.awayRecord.wins}-${sheet.awayRecord.losses} à l'extérieur), ce qui gomme une partie de l'avantage du terrain.`;
       case "h2h":
-        return `Dans l'historique récent, ${team.name} a remporté la majorité des cinq dernières confrontations.`;
+        return `Dans l'historique récent, ${team.name} a remporté la majorité des dernières confrontations directes.`;
       case "attaque":
         return `Avec ${sheet.off.toFixed(1)} points pour 100 possessions, l'attaque de ${team.name} est nettement plus efficace que celle de son adversaire (${other.off.toFixed(1)}).`;
       case "defense":

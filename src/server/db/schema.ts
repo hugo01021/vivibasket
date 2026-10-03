@@ -78,6 +78,13 @@ export const stripeEvents = sqliteTable("stripe_events", {
   processedAt: integer("processed_at").notNull(),
 });
 
+/** Cache des réponses du fournisseur de données externe. */
+export const apiCache = sqliteTable("api_cache", {
+  key: text("key").primaryKey(),
+  body: text("body").notNull(),
+  expiresAt: integer("expires_at").notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type Subscription = typeof subscriptions.$inferSelect;

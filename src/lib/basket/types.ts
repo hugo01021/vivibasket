@@ -27,6 +27,8 @@ export type Team = {
   pace: number;
   /** Mots-clés de recherche supplémentaires (surnoms, variantes). */
   aliases?: string[];
+  /** Identifiant chez le fournisseur de données externe (API-Sports). */
+  externalId?: number;
 };
 
 export type MatchStatus = "upcoming" | "live" | "finished";
@@ -109,6 +111,18 @@ export type H2HGame = {
   awayScore: number;
 };
 
+/** Données nécessaires au moteur pour analyser un match (mock ou fournisseur réel). */
+export type AnalysisData = {
+  home: TeamSheet;
+  away: TeamSheet;
+  h2h: H2HGame[];
+  /** Cotes décimales du marché si connues ; sinon le moteur simule un marché. */
+  marketOdds: { home: number; away: number } | null;
+  /** Provenance des données, affichée dans le résultat. */
+  source: "mock" | "api-sports";
+  notes: string[];
+};
+
 export type StatLine = { key: string; label: string; home: number; away: number; unit?: "pct" | "pts" | "num"; betterIs: "high" | "low" };
 
 export type AnalysisResult = {
@@ -142,4 +156,6 @@ export type AnalysisResult = {
   live: (LiveState & { winProbHome: number }) | null;
   summary: string;
   bullets: string[];
+  source: "mock" | "api-sports";
+  notes: string[];
 };

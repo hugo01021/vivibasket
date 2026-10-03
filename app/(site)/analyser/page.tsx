@@ -6,7 +6,7 @@ import { SearchForm } from "~/components/match/SearchForm";
 import { Badge } from "~/components/ui/Badge";
 import { IconArrowRight } from "~/components/ui/icons";
 import { SubmitButton } from "~/components/ui/SubmitButton";
-import { basketApi } from "~/lib/basket/api";
+import { getBasketApi } from "~/lib/basket/api";
 import { LEAGUES } from "~/lib/basket/teams";
 import { analyzeFixtureAction } from "~/server/actions/analyses";
 import { requireUser } from "~/server/auth/dal";
@@ -25,6 +25,7 @@ export default async function ChooseMatchPage({ searchParams }: { searchParams: 
   const { q, match, erreur } = await searchParams;
   const user = await requireUser("/analyser");
   const now = new Date();
+  const basketApi = await getBasketApi();
   const [fixtures, entitlement] = await Promise.all([basketApi.getTodayFixtures(now), getEntitlement(user.id)]);
   const selected = match ? await basketApi.getFixture(match, now) : undefined;
 

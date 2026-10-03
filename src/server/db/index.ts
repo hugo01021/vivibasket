@@ -57,6 +57,11 @@ CREATE TABLE IF NOT EXISTS stripe_events (
   type TEXT NOT NULL,
   processed_at INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS api_cache (
+  key TEXT PRIMARY KEY,
+  body TEXT NOT NULL,
+  expires_at INTEGER NOT NULL
+);
 `;
 
 /** URL de base configurée : DATABASE_URL, ou les variables injectées par l'intégration Turso de Vercel. */

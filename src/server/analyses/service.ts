@@ -1,5 +1,6 @@
 import "server-only";
 import { and, desc, eq } from "drizzle-orm";
+import { getBasketApi } from "~/lib/basket/api";
 import { analyzeFixture } from "~/lib/basket/engine";
 import type { AnalysisResult, Factor, FactorKey, Fixture } from "~/lib/basket/types";
 import { PLANS, type Plan, type PlanId } from "~/lib/plans";
@@ -9,7 +10,8 @@ import type { Analysis, User } from "~/server/db/schema";
 
 export async function createAnalysis(user: User, fixture: Fixture, query?: string | null): Promise<{ id: string; unlocked: boolean }> {
   const db = await getDb();
-  const result = analyzeFixture(fixture);
+  const basketApi = await getBasketApi();
+  const result = analyzeFixture(fixture, await basketApi.getAnalysisData(fixture));
   const entitlement = await getEntitlement(user.id);
   const check = checkUnlock(entitlement, fixture.league);
   const now = Date.now();

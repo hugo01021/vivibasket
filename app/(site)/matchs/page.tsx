@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageShell, PageTitle } from "~/components/layout/PageShell";
 import { MatchList } from "~/components/match/MatchList";
-import { basketApi } from "~/lib/basket/api";
+import { getBasketApi } from "~/lib/basket/api";
 import { formatDateLong } from "~/lib/utils";
 
 export const metadata: Metadata = {
@@ -15,6 +15,7 @@ export const revalidate = 60;
 
 export default async function MatchesPage() {
   const now = new Date();
+  const basketApi = await getBasketApi();
   const fixtures = await basketApi.getTodayFixtures(now);
   const liveCount = fixtures.filter((f) => f.status === "live").length;
   return (
@@ -29,7 +30,11 @@ export default async function MatchesPage() {
         }
       />
       <MatchList fixtures={fixtures} />
-      <p className="mt-6 text-xs text-fg-subtle">Données de démonstration : programme, scores et statistiques sont simulés en attendant le branchement d&apos;un fournisseur de données.</p>
+      <p className="mt-6 text-xs text-fg-subtle">
+        {basketApi.name === "api-sports"
+          ? "Programme et scores fournis par api-basketball, rafraîchis toutes les dix minutes."
+          : "Données de démonstration : programme, scores et statistiques sont simulés en attendant le branchement d'un fournisseur de données."}
+      </p>
     </PageShell>
   );
 }

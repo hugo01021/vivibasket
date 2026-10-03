@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { basketApi } from "~/lib/basket/api";
+import { getBasketApi } from "~/lib/basket/api";
 import { createAnalysis, listAnalysesForUser } from "~/server/analyses/service";
 import { getCurrentUser } from "~/server/auth/dal";
 
@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Corps JSON attendu" }, { status: 400 });
   }
+  const basketApi = await getBasketApi();
   let fixture = body.matchId ? await basketApi.getFixture(body.matchId) : undefined;
   if (!fixture && body.query) {
     const resolution = await basketApi.resolveMatchup(body.query);

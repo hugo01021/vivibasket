@@ -218,7 +218,7 @@ export type MatchupResolution =
   | { ok: false; error: string; suggestions: string[] };
 
 /** Interprète « Lakers vs Celtics », « Monaco - Paris », « Real Madrid contre Barcelone »… */
-export function resolveMatchup(query: string, now: Date = new Date()): MatchupResolution {
+export function resolveMatchup(query: string, now: Date = new Date(), todayFixtures?: Fixture[]): MatchupResolution {
   const cleaned = query.replace(/\s+/g, " ").trim();
   if (cleaned.length < 3) {
     return { ok: false, error: "Indiquez deux équipes, par exemple : Lakers vs Celtics.", suggestions: [] };
@@ -243,7 +243,7 @@ export function resolveMatchup(query: string, now: Date = new Date()): MatchupRe
     };
   }
 
-  const today = getDayFixtures(now);
+  const today = todayFixtures ?? getDayFixtures(now);
   // 1. Un match du jour oppose-t-il ces deux équipes ?
   for (const home of homeCandidates) {
     for (const away of awayCandidates) {

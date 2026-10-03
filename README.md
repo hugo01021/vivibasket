@@ -102,4 +102,7 @@ Vercel détecte Next.js automatiquement (`vercel.json`). **`DATABASE_URL` est in
 
 ## Données
 
-Programme, scores en direct, fiches et statistiques sont **fictifs mais déterministes** (même journée → mêmes matchs) : voir `src/lib/basket`. Pour brancher un fournisseur réel, implémentez `BasketStatsProvider` dans `src/lib/basket/api.ts`.
+Deux fournisseurs implémentent `BasketStatsProvider` (`src/lib/basket/api.ts`) :
+
+- **Mock** (par défaut) : programme, scores en direct, fiches et statistiques **fictifs mais déterministes** (même journée → mêmes matchs).
+- **api-basketball (API-Sports)**, activé dès que `BASKET_API_KEY` est défini : programme réel du jour (NBA, EuroLeague, Betclic Élite), scores en direct, statistiques de saison, forme, confrontations directes, cotes du marché. Les blessures ne sont pas fournies par cette source (facteur neutre). Les réponses sont mises en cache en base (table `api_cache`) pour tenir le plan gratuit (100 requêtes / jour) : programme toutes les 10 min, statistiques 12 h, calendrier 6 h, confrontations 24 h, cotes 30 min. `/api/sante` indique la source active et la dernière erreur éventuelle.

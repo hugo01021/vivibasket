@@ -1,30 +1,45 @@
 /**
  * Couche « API de statistiques basket ».
  *
- * Pour démarrer, un fournisseur mock produit des données fictives mais
- * déterministes (même journée → même programme, mêmes fiches). Pour brancher
- * un vrai fournisseur, implémentez `BasketStatsProvider` et remplacez
- * `basketApi` ci-dessous ; le reste de l'application ne change pas.
+ * Deux fournisseurs implémentent `BasketStatsProvider` :
+ *  - `mockProvider` : données fictives mais déterministes (démarrage, tests) ;
+ *  - `apiSportsProvider` : données réelles via api-basketball (API-Sports),
+ *    activé dès que `BASKET_API_KEY` est défini.
  */
 import { buildCustomFixture, getDayFixtures, getFixtureById, resolveMatchup, searchTeams, sportsDayKey } from "./fixtures";
+import { generateH2H } from "./engine";
 import { getTeamSheet } from "./sheets";
 import { getTeam } from "./teams";
+import type { AnalysisData, Fixture, LeagueId, Team } from "./types";
 import type { MatchupResolution } from "./fixtures";
-import type { Fixture, LeagueId, Team, TeamSheet } from "./types";
 
 export type { MatchupResolution };
 
 export interface BasketStatsProvider {
+  readonly name: "mock" | "api-sports";
   /** Programme de la journée sportive courante, directs en tête. */
   getTodayFixtures(now?: Date, league?: LeagueId): Promise<Fixture[]>;
   getFixture(id: string, now?: Date): Promise<Fixture | undefined>;
-  getTeamSheet(teamId: string, dateKey: string): Promise<TeamSheet | undefined>;
+  /** Fiches, confrontations et cotes nécessaires au moteur d'analyse. */
+  getAnalysisData(fixture: Fixture): Promise<AnalysisData>;
   searchTeams(query: string, limit?: number): Promise<Team[]>;
   resolveMatchup(query: string, now?: Date): Promise<MatchupResolution>;
   buildMatchup(homeId: string, awayId: string, now?: Date): Promise<Fixture | undefined>;
 }
 
+export function mockAnalysisData(fixture: Fixture): AnalysisData {
+  return {
+    home: getTeamSheet(fixture.home, fixture.dateKey),
+    away: getTeamSheet(fixture.away, fixture.dateKey),
+    h2h: generateH2H(fixture),
+    marketOdds: null,
+    source: "mock",
+    notes: ["Données de démonstration : programme, statistiques et cotes sont simulés."],
+  };
+}
+
 export const mockProvider: BasketStatsProvider = {
+  name: "mock",
   async getTodayFixtures(now = new Date(), league) {
     const all = getDayFixtures(now);
     return league ? all.filter((f) => f.league === league) : all;
@@ -32,9 +47,8 @@ export const mockProvider: BasketStatsProvider = {
   async getFixture(id, now = new Date()) {
     return getFixtureById(id, now);
   },
-  async getTeamSheet(teamId, dateKey) {
-    const team = getTeam(teamId);
-    return team ? getTeamSheet(team, dateKey) : undefined;
+  async getAnalysisData(fixture) {
+    return mockAnalysisData(fixture);
   },
   async searchTeams(query, limit) {
     return searchTeams(query, limit);
@@ -50,4 +64,13 @@ export const mockProvider: BasketStatsProvider = {
   },
 };
 
-export const basketApi: BasketStatsProvider = mockProvider;
+export function isRealDataEnabled(): boolean {
+  return Boolean(process.env.BASKET_API_KEY?.trim());
+}
+
+/** Fournisseur actif : réel si une clé est configurée, mock sinon. */
+export async function getBasketApi(): Promise<BasketStatsProvider> {
+  if (!isRealDataEnabled()) return mockProvider;
+  const { apiSportsProvider } = await import("./providers/api-sports");
+  return apiSportsProvider;
+}
