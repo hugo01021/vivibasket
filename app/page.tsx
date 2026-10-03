@@ -60,9 +60,9 @@ export default function HomePage() {
             <div className="animate-rise lg:col-start-1 lg:row-start-1">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Analyse de basket par IA</p>
               <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] text-fg sm:text-5xl lg:text-6xl">{SITE.tagline}</h1>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-fg-muted sm:text-lg">
-                Choisissez un match, laissez le modèle croiser la forme, le terrain, les confrontations, l&apos;attaque, la défense, le rythme,
-                la fatigue et les blessures. En quelques secondes, vous obtenez des probabilités chiffrées, un score projeté et un résumé rédigé.
+              <p className="mt-4 max-w-xl text-lg leading-relaxed text-fg-muted sm:text-xl">
+                DunkOne analyse n&apos;importe quel match de basket en quelques secondes et livre un verdict clair : qui va gagner, avec quelle
+                probabilité, sur quel score, et pourquoi.
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Button href="/analyser" size="lg">
